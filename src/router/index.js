@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
+import Footer from '@/components/Footer'
+import Header from '@/components/Header'
+import Navigation from '@/components/navigation'
 import Index from '@/components/Index'
 
 Vue.use(Router)
@@ -9,13 +11,23 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello
+      redirect: '/index'
     },
     {
       path: '/index',
       name: 'Index',
-      component: Index
+      component: Index,
+      children: [
+        {
+          path: '',
+          components: {
+            navigation: Navigation,
+            header: Header,
+            footer: Footer
+          }
+        }
+      ]
+
     }
   ]
 })
