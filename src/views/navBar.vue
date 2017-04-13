@@ -33,12 +33,7 @@
 
 <script>
 export default {
-  name: 'navigation',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  }
+  name: 'navBar'
 }
 </script>
 

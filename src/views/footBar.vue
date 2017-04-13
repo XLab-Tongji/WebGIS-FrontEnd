@@ -11,12 +11,7 @@
 
 <script>
 export default {
-  name: 'footer',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  }
+  name: 'footBar'
 }
 </script>
 

@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Footer from '@/components/Footer'
-import Header from '@/components/Header'
-import Navigation from '@/components/navigation'
-import Index from '@/components/Index'
+import Footer from '@/views/footBar'
+import Header from '@/views/headBar'
+import Navigation from '@/views/navBar'
+import Index from '@/views/Index'
 
 Vue.use(Router)
 
@@ -15,19 +15,18 @@ export default new Router({
     },
     {
       path: '/index',
-      name: 'Index',
-      component: Index,
-      children: [
-        {
-          path: '',
-          components: {
-            navigation: Navigation,
-            header: Header,
-            footer: Footer
-          }
-        }
-      ]
-
+      name: 'index',
+      components: {
+        navigation: Navigation,
+        header: Header,
+        mainPage: Index,
+        footer: Footer
+      }
+    },
+    {
+      path: '*',
+      name: 'others',
+      redirect: '/index'
     }
   ]
 })
