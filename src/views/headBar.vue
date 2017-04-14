@@ -11,9 +11,11 @@
           </div>
           <ul class="nav navbar-top-links navbar-right">
               <li>
-                  <a href="#">
-                      <i class="fa fa-sign-out"></i> Log out
-                  </a>
+                  <!-- <a href="#">
+                      <i ></i>
+                  </a> -->
+                  <!-- <button  @click="increment"></button> -->
+                  <router-link class="fa fa-sign-out" v-on:click.native="increment" to="#">{{count}} Log out</router-link>
               </li>
           </ul>
 
@@ -23,7 +25,17 @@
 
 <script>
 export default {
-  name: 'headBar'
+  name: 'headBar',
+  computed: {
+    count () {
+      return this.$store.state.count
+    }
+  },
+  methods: {
+    increment () {
+      this.$store.commit('increment')
+    }
+  }
 }
 </script>
 

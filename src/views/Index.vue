@@ -4,11 +4,15 @@
             <div class="col-lg-12">
                 <div class="text-center m-t-lg">
                     <h1>
-                        heyu 666
+                        {{userInfo.userName}} 666
                     </h1>
                     <small>
                         It is an application skeleton for a typical web app. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
                     </small>
+                    <button
+                      @click="login({userName:'xietiandi',userPassword: '930912'})">
+                      login
+                    </button>
                 </div>
             </div>
         </div>
@@ -17,8 +21,25 @@
 
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
-  name: 'index'
+  name: 'index',
+  computed: {
+    ...mapGetters({
+    userInfo: 'userInfo'
+    }),
+    isLoggedIn () {
+      return this.userInfo.userName != "";
+    }
+  },
+  methods:
+    mapActions([
+    'login',
+    'logout'
+    ])
+
+
 }
 </script>
 
