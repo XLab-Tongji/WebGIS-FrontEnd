@@ -15,7 +15,8 @@
                       <i ></i>
                   </a> -->
                   <!-- <button  @click="increment"></button> -->
-                  <router-link class="fa fa-sign-out" v-on:click.native="increment" to="#">{{count}} Log out</router-link>
+                  <router-link v-if="isLoggedIn" class="fa fa-sign-out" v-on:click.native="logout" to="#">{{userInfo.userName}} Log out</router-link>
+                  <router-link v-if="!isLoggedIn" class="fa fa-sign-out"  to="#"> Log in</router-link>
               </li>
           </ul>
 
@@ -24,17 +25,23 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'headBar',
   computed: {
-    count () {
-      return this.$store.state.count
+    ...mapGetters({
+    userInfo: 'userInfo'
+    }),
+    isLoggedIn () {
+      return this.userInfo.userName != "";
     }
   },
   methods: {
-    increment () {
-      this.$store.commit('increment')
-    }
+    ...mapActions([
+    'login',
+    'logout'
+    ])
   }
 }
 </script>

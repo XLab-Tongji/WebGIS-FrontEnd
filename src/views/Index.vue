@@ -9,10 +9,10 @@
                     <small>
                         It is an application skeleton for a typical web app. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
                     </small>
-                    <button
-                      @click="login({userName:'xietiandi',userPassword: '930912'})">
-                      login
-                    </button>
+                    <p>
+                      <button @click="login('xietiandi','930912')">login</button>
+                      <button @click="logout('xietiandi','930912')">logout</button>
+                    </p>
                 </div>
             </div>
         </div>
@@ -33,12 +33,12 @@ export default {
       return this.userInfo.userName != "";
     }
   },
-  methods:
-    mapActions([
+  methods:{
+    ...mapActions([
     'login',
     'logout'
     ])
-
+  }
 
 }
 </script>

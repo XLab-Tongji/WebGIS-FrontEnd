@@ -8,10 +8,10 @@ const errCb = errmsg => {
 	alert(errmsg);
 }
 
-export const login = ({dispatch}, userName, userPassword) => {
-    	dispatch(types.LOG_IN, userName, userPassword);
+export const login = ({commit}, userName, userPassword) => {
+    	commit(types.LOG_IN, userName, userPassword);
 }
 
-export const logout = ({dispatch}) => {
-    	dispatch(types.LOG_OUT);
+export const logout = ({commit}) => {
+    	commit(types.LOG_OUT);
 }

@@ -4,6 +4,6 @@
  * 2.再在mutation module里通过常量来命名mutation函数,在actions里导入该常量后即可访问到对应函数
  */
 
- //新闻
+ //
 export const LOG_IN = 'LOG_IN' // 登入
 export const LOG_OUT = 'LOG_OUT' // 登出
