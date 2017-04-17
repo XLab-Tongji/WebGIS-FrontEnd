@@ -5,6 +5,7 @@ import Header from '@/views/headBar'
 import Navigation from '@/views/navBar'
 import mapPage from '@/views/baidu'
 import Index from '@/views/Index'
+import googleMapPage from '@/views/google'
 
 Vue.use(Router)
 
@@ -30,7 +31,7 @@ export default new Router({
       components: {
         navigation: Navigation,
         header: Header,
-        mainPage: mapPage,
+        mainPage: googleMapPage,
         footer: Footer
       }
     },
