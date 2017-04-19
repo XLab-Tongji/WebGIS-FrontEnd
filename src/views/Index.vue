@@ -12,6 +12,7 @@
                     <p>
                       <button @click="login('xietiandi','930912')">login</button>
                       <button @click="logout('xietiandi','930912')">logout</button>
+                      <button @click="logger('xietiandi')">logger</button>
                     </p>
                 </div>
             </div>
@@ -37,7 +38,10 @@ export default {
     ...mapActions([
     'login',
     'logout'
-    ])
+    ]),
+    logger(msg){
+      console.log(msg)
+    }
   }
 
 }
