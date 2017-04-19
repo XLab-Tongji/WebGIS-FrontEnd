@@ -4,7 +4,7 @@ import {
 } from '../mutation-types'
 
 const state = {
-	userName: "xietiandi",
+	userName: "xiaoxuanxuan",
   userPassword: "930912"
 }
 
