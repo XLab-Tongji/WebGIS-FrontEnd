@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Footer from '@/views/footBar'
+
 import Header from '@/views/headBar'
 import Navigation from '@/views/navBar'
-import mapPage from '@/views/baidu'
+import Footer from '@/views/footBar'
+
 import Index from '@/views/Index'
+import Google from '@/views/google'
 
 Vue.use(Router)
 
@@ -25,12 +27,12 @@ export default new Router({
       }
     },
     {
-      path: '/baidu',
-      name: 'mapPage',
+      path: '/google',
+      name: 'google',
       components: {
         navigation: Navigation,
         header: Header,
-        mainPage: mapPage,
+        mainPage: Google,
         footer: Footer
       }
     },

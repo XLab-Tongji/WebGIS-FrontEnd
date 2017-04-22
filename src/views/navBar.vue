@@ -17,14 +17,11 @@
               </li>
               <li class="active">
                   <!-- <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">Main view</span></a> -->
-                  <router-link to="/">Main Page</router-link>
+                  <router-link to="/">Index</router-link>
               </li>
               <li  class="active">
                   <!-- <a href="baidu.html"><i class="fa fa-th-large"></i> <span class="nav-label">Baidu view</span> </a> -->
-                  <router-link to="/baidu">Map Page</router-link>
-              </li>
-              <li  class="active">
-                  <a href="openlayers.html"><i class="fa fa-th-large"></i> <span class="nav-label">Openlayers view</span> </a>
+                  <router-link to="/google">Google</router-link>
               </li>
           </ul>
 

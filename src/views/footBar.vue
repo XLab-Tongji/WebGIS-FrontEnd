@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
       <div class="pull-right">
-        Footer Left.
+        {{systemState}}
       </div>
       <div>
         <strong>Time: {{currentTime}}</strong>
@@ -14,13 +14,19 @@ export default {
   name: 'footBar',
   data () {
     return {
+      systemState: 'System Connecting...    ',
       currentTime: new Date().toLocaleString()
     }
   },
   created () {
-    setInterval(() => {
-      this.currentTime = new Date().toLocaleString()
-    }, 1000)
+      setInterval(() => {
+        this.currentTime = new Date().toLocaleString()
+      }, 1000)
+      this.$http.get('http://115.159.65.170:8080/test/state').then(response => (
+        this.systemState = response.bodyText
+      ), response => {
+        // error callback
+      })
   }
 }
 
