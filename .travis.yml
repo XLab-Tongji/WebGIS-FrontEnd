@@ -5,9 +5,8 @@ install:
   - npm install
   - npm run build
 script:
-  - echo '111'
-  - ls -l dist
-  - - chmod 600 ./identity/
+  - cat ./identity/known_hosts >> ~/.ssh/known_hosts
+  - chmod 600 ./identity/WebGisKey
   - scp -i ./identity/WebGisKey -r ./dist/static root@115.159.65.170:/home/nginx
   - scp -i ./identity/WebGisKey  ./dist/index.html root@115.159.65.170:/home/nginx
 
