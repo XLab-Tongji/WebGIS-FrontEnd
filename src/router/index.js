@@ -18,20 +18,14 @@ const router = new Router({
       path: '/index',
       name: 'index',
       components: {
-        navigation: Navigation,
-        header: Header,
         mainPage: Index,
-        footer: Footer
       }
     },
     {
       path: '/google',
       name: 'google',
       components: {
-        navigation: Navigation,
-        header: Header,
         mainPage: Google,
-        footer: Footer
       }
     },
     {
