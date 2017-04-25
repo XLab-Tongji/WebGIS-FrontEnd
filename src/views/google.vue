@@ -1,28 +1,28 @@
 <template>
   <div class="wrapper wrapper-content animated fadeInRight">
     <nav class="navbar navbar-default">
-      Google map
-      <select v-model="curLayerId">
-      <option value="0">选择图层</option>
-      <option v-for="selectLayer in selectLayers" v-bind:value="selectLayer.id">
-        {{selectLayer.name}}
-        </option>
-    </select>
+      <form class="form-inline">
+        <select v-model="curLayerId"  class="form-control">
+          <option value="0">选择图层</option>
+          <option v-for="selectLayer in selectLayers" v-bind:value="selectLayer.id">
+            {{selectLayer.name}}
+          </option>
+        </select>
 
-      <button type="button" v-on:click="deleteLayer">删除当前图层</button>
+        <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
 
-      <span class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <span class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           创建图层
           <span class="caret"></span>
         </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <ul class="dropdown-menu dropdown-menu-info" aria-labelledby="dropdownMenu1">
           <li><a v-on:click="createPointLayer">创建YJG图层</a></li>
           <li><a v-on:click="createLineLayer">创建XSG图层</a></li>
         </ul>
       </span>
 
-      <span class="dropdown">
+        <span class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="cheatePointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           添加点
           <span class="caret"></span>
@@ -32,18 +32,28 @@
           <li><a v-on:click="addBadPoint">添加坏点</a></li>
         </ul>
       </span>
+        <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
+      </form>
+    </nav>
 
-      <button type="button" v-on:click="submitChange">提交</button>
+    <nav class="navbar navbar-default" id="pointNav" v-if="curPoint">
+      <form class="form-inline">
+        <div class="form-group form-group-sm ">
+          <label>lng</label>
+          <input type="text" v-model="lng" class="form-control inputPos">
+        </div>
+        <div class="form-group form-group-sm">
+          <label>lat</label>
+          <input type="text" v-model="lat" class="form-control inputPos">
+        </div>
 
-      <p>
-        <strong>lng: </strong><span>{{ lng }}</span>
-        <strong>lat: </strong><span>{{ lat }}</span>
-        <select v-model="curPointStatus">
+        <select v-model="curPointStatus" class="form-control">
           <option value="0">选择状态</option>
           <option value="GOOD">状态GOOD</option>
           <option value="BAD">状态BAD</option>
         </select>
-      </p>
+        <button type="button" v-on:click="deletePointBtnClick" class="btn btn-danger">删除当前点</button>
+      </form>
     </nav>
     <div class="ibox-content" id="map" style="position: relative; height: 820px"></div>
   </div>
@@ -238,7 +248,6 @@
           let responseBody = response.body
           if (responseBody.code === 200) {
             alert("提交成功！");
-            console.log("success",responseBody);
           }
           else{
             alert("提交失败！");
@@ -265,6 +274,27 @@
           self.lng = point.center.lng().toFixed(6);
           self.lat = point.center.lat().toFixed(6);
         });
+      },
+      lngLatOnChange: function () {
+        this.curPoint.center = new google.maps.LatLng(this.lat, this.lng);
+        this.curPoint.setMap(null);
+        this.curPoint.setMap(this.map);
+      },
+      deletePointBtnClick: function () {
+        this.curPoint.setMap(null);
+        this.removeListByValue(this.curLayerMapDatas,this.curPoint);
+        this.curPoint = null;
+      },
+
+
+      // utils
+      removeListByValue: function (arr, val) {
+        for(let i=0; i<arr.length; i++) {
+          if(arr[i] === val) {
+            arr.splice(i, 1);
+            break;
+          }
+        }
       }
     },
     watch:{
@@ -285,13 +315,17 @@
         })
       },
       curPointStatus: function (newValue, oldValue) {
-        console.log(this.curPoint);
         this.curPoint.pointStaus = newValue;
         this.curPoint.fillColor = newValue==="GOOD"?"black":'#FF0000';
-        console.log(this.curPoint.strokeColor);
         this.curPoint.setMap(null);
         this.curPoint.setMap(this.map);
 
+      },
+      lng: function () {
+        this.lngLatOnChange();
+      },
+      lat: function () {
+        this.lngLatOnChange();
       }
     },
     mounted(){
@@ -304,6 +338,9 @@
 <style>
   .navbar{
     margin-bottom: 0;
+  }
+  form >div.form-group>input.inputPos{
+    width:100px;
   }
 </style>
 
