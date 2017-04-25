@@ -40,11 +40,11 @@
       <form class="form-inline">
         <div class="form-group form-group-sm ">
           <label>lng</label>
-          <input type="text" v-model="lng" class="form-control inputPos">
+          <input type="text" v-model="lng" class="form-control inputPos" v-on:keyup="lngLatOnChange">
         </div>
         <div class="form-group form-group-sm">
           <label>lat</label>
-          <input type="text" v-model="lat" class="form-control inputPos">
+          <input type="text" v-model="lat" class="form-control inputPos" v-on:keyup="lngLatOnChange">
         </div>
 
         <select v-model="curPointStatus" class="form-control">
@@ -277,9 +277,11 @@
         });
       },
       lngLatOnChange: function () {
-        this.curPoint.center = new google.maps.LatLng(this.lat, this.lng);
-        this.curPoint.setMap(null);
-        this.curPoint.setMap(this.map);
+        if(this.curPoint.center.lat()!==this.lat || this.curPoint.center.lng()!==this.lng){
+          this.curPoint.center = new google.maps.LatLng(this.lat, this.lng);
+          this.curPoint.setMap(null);
+          this.curPoint.setMap(this.map);
+        }
       },
       deletePointBtnClick: function () {
         this.curPoint.setMap(null);
@@ -323,12 +325,6 @@
         this.curPoint.setMap(null);
         this.curPoint.setMap(this.map);
 
-      },
-      lng: function () {
-        this.lngLatOnChange();
-      },
-      lat: function () {
-        this.lngLatOnChange();
       }
     },
     mounted(){
