@@ -54,19 +54,25 @@
     name: 'googleMapPage',
     data: function () {
       return {
+        map: null,
         mapId:12,
-        curLayerId:0,
+        layerDatas:null,
+
         lng: "lng",
         lat: "lat",
-        map: null,
-        layerDatas:null,
         selectLayers:[],
+
+        // 当前layer id以及map数据
+        curLayerId:0,
         curLayerMapDatas:[],
+
+        // 当前point 以及它的状态
         curPointStatus:0,
         curPoint: null
       }
     },
     methods: {
+      // 初始化 地图 从数据库得到layerDatas 初始化selectList
       initMap: function () {
         this.map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 31.23, lng: 121.47 },
@@ -98,6 +104,8 @@
           });
         })
       },
+
+      //添加图层
       createLayer:function (layerType) {
         var self = this;
         this.$http.post('http://localhost:8080/layer/emptyLayers',
@@ -125,14 +133,8 @@
       createLineLayer:function () {
         this.createLayer("XSG");
       },
-      clearMap:function (isRemoveFromMap) {
-        if(isRemoveFromMap){
-          this.curLayerMapDatas.forEach(function (curLayerMapData) {
-            curLayerMapData.setMap(null);
-          });
-        }
-        this.curLayerMapDatas = [];
-      },
+
+      // 删除图层
       deleteLayer:function () {
         var self = this;
         if(this.curLayerId!==0) {
@@ -150,6 +152,17 @@
           });
         }
       },
+
+      clearMap:function (isRemoveFromMap) {
+        if(isRemoveFromMap){
+          this.curLayerMapDatas.forEach(function (curLayerMapData) {
+            curLayerMapData.setMap(null);
+          });
+        }
+        this.curLayerMapDatas = [];
+      },
+
+      // 创建一个point
       createPoint:function (map,centerPos, color) {
         return new google.maps.Circle({
           strokeWeight: 0,
@@ -161,6 +174,8 @@
           draggable:true
         });
       },
+
+      //根据点的状态创建一个点
       addPoint:function (pointStatus) {
         var self = this;
         var mapClickListener = google.maps.event.addListener(this.map, 'click', function(event) {
@@ -181,16 +196,14 @@
           google.maps.event.removeListener(mapClickListener);
         });
       },
-
-      setPointStatusGOOD:function () {
-        this.curPoint.pointStaus = "GOOD";
-      },
       addGoodPoint: function () {
         this.addPoint("GOOD");
       },
       addBadPoint: function () {
         this.addPoint("BAD");
       },
+
+      // 根据layer id得到某一图层的数据
       getLayerData:function (layerId) {
         var layerList = this.layerDatas.layerList;
         for(let i = 0;i< layerList.length;i++){
@@ -199,6 +212,8 @@
         }
         return null;
       },
+
+      //提交当前图层的更改
       submitChange: function () {
         var curLayerData = this.getLayerData(this.curLayerId);
         curLayerData.pointList =  [];
@@ -230,6 +245,8 @@
           }
         });
       },
+
+      // 为点添加动态效果
       addPointClickListener: function (point) {
         var self = this;
         google.maps.event.addListener(point,'click',function () {
