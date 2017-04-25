@@ -22,9 +22,10 @@ export default {
       setInterval(() => {
         this.currentTime = new Date().toLocaleString()
       }, 1000)
-      this.$http.get('http://115.159.65.170:8080/test/state').then(response => (
+      this.$http.get('http://115.159.65.170:8080/test/state').then(response => {
+        console.log(response)
         this.systemState = response.bodyText
-      ), response => {
+      }, response => {
         // error callback
       })
   }
