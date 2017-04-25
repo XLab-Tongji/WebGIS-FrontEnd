@@ -23,6 +23,9 @@
                   <!-- <a href="baidu.html"><i class="fa fa-th-large"></i> <span class="nav-label">Baidu view</span> </a> -->
                   <router-link to="/google">Google</router-link>
               </li>
+              <li class="active">
+                  <router-link to="/displayMap">DisplayMap</router-link>
+              </li>
           </ul>
 
       </div>
