@@ -74,6 +74,7 @@
 
         // 当前layer id以及map数据
         curLayerId:0,
+        curLayerType:null,
         curLayerMapDatas:[],
 
         // 当前point 以及它的状态
@@ -302,6 +303,8 @@
         var self = this;
         this.clearMap(true);
         var layerDatas = this.getLayerData(newValue);
+        this.curLayerType = layerDatas.type;
+        this.curPoint = null;
         layerDatas.pointList.forEach(function (layerData) {
           var cityCircle = self.createPoint(self.map,{lng:layerData.x,lat:layerData.y},
             layerData.status==="GOOD"?"black":'#FF0000');
