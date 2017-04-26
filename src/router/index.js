@@ -1,17 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-<<<<<<< HEAD
-import Footer from '@/views/footBar'
-import Header from '@/views/headBar'
-import Navigation from '@/views/navBar'
+import Footer from '@/views/bar/footBar'
+import Header from '@/views/bar/headBar'
+import Navigation from '@/views/bar/sideBar'
 import Index from '@/views/Index'
 import googleMapPage from '@/views/google'
 import MyMap from '@/views/myMap'
-=======
-import Index from '@/views/Index'
 import Google from '@/views/google'
 import store from '../store'
->>>>>>> 0df1bee01863ed7f041335ba4080f4dbb3d42fac
 
 Vue.use(Router)
 const router = new Router({
