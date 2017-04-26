@@ -1,45 +1,346 @@
 <template>
   <div class="wrapper wrapper-content animated fadeInRight">
-      <p>Google map</p>
-      <div class="ibox-content" id="map" style="position: relative; height: 820px"></div>
+    <nav class="navbar navbar-default">
+      <form class="form-inline">
+        <select v-model="curLayerId"  class="form-control">
+          <option value="0">选择图层</option>
+          <option v-for="selectLayer in selectLayers" v-bind:value="selectLayer.id">
+            {{selectLayer.name}}
+          </option>
+        </select>
+
+        <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
+
+        <span class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          创建图层
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-info" aria-labelledby="dropdownMenu1">
+          <li><a v-on:click="createPointLayer">创建YJG图层</a></li>
+          <li><a v-on:click="createLineLayer">创建XSG图层</a></li>
+        </ul>
+      </span>
+
+        <span class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="cheatePointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          添加点
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="cheatePointMenu">
+          <li><a v-on:click="addGoodPoint">添加好点</a></li>
+          <li><a v-on:click="addBadPoint">添加坏点</a></li>
+        </ul>
+      </span>
+        <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
+      </form>
+    </nav>
+
+    <nav class="navbar navbar-default" id="pointNav" v-if="curPoint">
+      <form class="form-inline">
+        <div class="form-group form-group-sm ">
+          <label>lng</label>
+          <input type="text" v-model="lng" class="form-control inputPos" v-on:keyup="lngLatOnChange">
+        </div>
+        <div class="form-group form-group-sm">
+          <label>lat</label>
+          <input type="text" v-model="lat" class="form-control inputPos" v-on:keyup="lngLatOnChange">
+        </div>
+
+        <select v-model="curPointStatus" class="form-control">
+          <option value="0">选择状态</option>
+          <option value="GOOD">状态GOOD</option>
+          <option value="BAD">状态BAD</option>
+        </select>
+        <button type="button" v-on:click="deletePointBtnClick" class="btn btn-danger">删除当前点</button>
+      </form>
+    </nav>
+    <div class="ibox-content" id="map" style="position: relative; height: 820px"></div>
   </div>
 </template>
 
 <script>
-var map;
- function initMap() {
-       map = new google.maps.Map(document.getElementById('map'), {
-         center: {lat: 31.23, lng: 121.47 },
-         zoom: 9
-       });
+  export default {
+    name: 'googleMapPage',
+    data: function () {
+      return {
+        map: null,
+        mapId:12,
+        layerDatas:null,
 
-           var data = [[31.210400038875974, 121.5169989084655], [31.210503126351245, 121.51698596331552], [31.210859523469104, 121.51657047462004], [31.210994757716527, 121.51617489794518], [31.211110236582062, 121.51535683263552], [31.21124284687854, 121.51517250383966], [31.211573103600884, 121.51446606407748], [31.211668282362055, 121.51442123300048], [31.212259758250376, 121.51469231084857], [31.213155094908064, 121.51505907230572], [31.213870138840598, 121.51515877582395], [31.215123490796596, 121.51490379564275], [31.216457460824294, 121.51445352346427], [31.217126363764503, 121.51425628807132], [31.217395633171456, 121.51387268856142], [31.21768537856594, 121.51366844715496], [31.21815885421538, 121.51358379167955], [31.21822613549242, 121.51350009832265], [31.219363353673536, 121.51293622378842], [31.220575313092315, 121.51247100243586], [31.22070868249355, 121.51236838360145], [31.221626514741736, 121.51223394618816], [31.221749617057846, 121.51221901049372], [31.221892815205486, 121.5121751806881], [31.222026892821447, 121.51217021000109], [31.223441218263048, 121.51194813107954], [31.224420082726606, 121.51147791112965], [31.224518167191242, 121.5114649661987], [31.224666182338847, 121.51148291398404], [31.22498232378258, 121.51115113891282], [31.22510957114608, 121.51108837643852], [31.225176808550298, 121.5110196305019], [31.22542771712178, 121.51075560587108], [31.22568952041738, 121.51052844924037], [31.22625193904903, 121.50947729986251], [31.226423525815335, 121.50897612917295], [31.227095336295115, 121.50847799093738], [31.227211752167293, 121.50802564021112], [31.227765929532016, 121.50705620235571], [31.228503156649825, 121.50643053452116], [31.22944491326976, 121.5059922048761], [31.230279503685605, 121.50526092903151], [31.231121893012475, 121.50459740799275], [31.231475662722158, 121.50439616816527], [31.231722737055147, 121.50440914217175], [31.231985203168474, 121.50429458011827], [31.23201571616735, 121.50412918265899], [31.232171968180584, 121.50406941277728], [31.232242117575748, 121.50403055968222], [31.232868165902783, 121.50444112383565], [31.233516306147123, 121.50449299095487], [31.23568223123719, 121.50451409909284], [31.235722222387952, 121.50452306995955], [31.235752293191656, 121.50450414119253], [31.23579204073739, 121.50459381925158], [31.236020271869464, 121.50422019408745], [31.236475737503383, 121.50413454362356]]
-            var line = []
+        lng: "lng",
+        lat: "lat",
+        selectLayers:[],
 
-                for(var po in data[li]){
-                    line.push({lat: data[po][0], lng: data[po][1]})
-                }
-                 var flightPath = new google.maps.Polyline({
-                                    path: line,
-                                    geodesic: true,
-                                    strokeColor: '#0000ff',
-                                    strokeOpacity: 0.5,
-                                    strokeWeight: 100,
-                                  });
-                  flightPath.setMap(map);
-                line=[]
+        // 当前layer id以及map数据
+        curLayerId:0,
+        curLayerType:null,
+        curLayerMapDatas:[],
+
+        // 当前point 以及它的状态
+        curPointStatus:0,
+        curPoint: null
+      }
+    },
+    methods: {
+      // 初始化 地图 从数据库得到layerDatas 初始化selectList
+      initMap: function () {
+        this.map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 31.23, lng: 121.47 },
+          zoom: 20
+        });
+      },
+      getLayerDatas:function (mapId) {
+        var self = this;
+        this.$http.get('http://localhost:8080/layer/layers?mapId='+mapId,
+          {
+            emulateJSON: true
+          }
+        ).then(function (response){
+          let responseBody = response.body
+          if (responseBody.code === 200) {
+            self.layerDatas= responseBody.data;
+            this.setLayerSelect();
+          }
+        });
+      },
+      setLayerSelect: function () {
+        this.selectLayers = [];
+        var selectLayers = this.selectLayers;
+        var count = 1;
+        this.layerDatas.layerList.forEach(function (layerData) {
+          selectLayers.push({
+            id:layerData.id,
+            "name":"Layer"+ (count++)
+          });
+        })
+      },
+
+      //添加图层
+      createLayer:function (layerType) {
+        var self = this;
+        this.$http.post('http://localhost:8080/layer/emptyLayers',
+          {
+            mapId:this.mapId,
+            type:layerType
+          },
+          {
+            emulateJSON: true
+          }
+        ).then(function (response){
+          let responseBody = response.body
+          if (responseBody.code === 200) {
+            self.getLayerDatas(self.mapId);
+            alert("创建成功！");
+          }
+          else{
+            alert("创建失败！");
+          }
+        });
+      },
+      createPointLayer:function () {
+        this.createLayer("YJG");
+      },
+      createLineLayer:function () {
+        this.createLayer("XSG");
+      },
+
+      // 删除图层
+      deleteLayer:function () {
+        var self = this;
+        if(this.curLayerId!==0) {
+          this.$http.delete('http://localhost:8080/layer/layers/id?mapId=' + this.mapId +"&layerId="+this.curLayerId,
+            {
+              emulateJSON: true
             }
+          ).then(function (response){
+            let responseBody = response.body
+            if (responseBody.code === 200) {
+              self.getLayerDatas(self.mapId);
+              self.curLayerId = 0;
+              alert("删除成功！");
+            }
+          });
+        }
+      },
+
+      clearMap:function (isRemoveFromMap) {
+        if(isRemoveFromMap){
+          this.curLayerMapDatas.forEach(function (curLayerMapData) {
+            curLayerMapData.setMap(null);
+          });
+        }
+        this.curLayerMapDatas = [];
+      },
+
+      // 创建一个point
+      createPoint:function (map,centerPos, color) {
+        return new google.maps.Circle({
+          strokeWeight: 0,
+          fillColor: color,
+          fillOpacity: 0.35,
+          map: map,
+          center: centerPos,
+          radius: 2,
+          draggable:true
+        });
+      },
+
+      //根据点的状态创建一个点
+      addPoint:function (pointStatus) {
+        var self = this;
+        var mapClickListener = google.maps.event.addListener(this.map, 'click', function(event) {
+          var latLng = event.latLng;
+          self.lng = latLng.lng().toFixed(6);
+          self.lat = latLng.lat().toFixed(6);
+
+          var cityCircle = self.createPoint(self.map,latLng,pointStatus==="GOOD"?"black":'#FF0000');
+          cityCircle.pointStaus = pointStatus;
+          self.curLayerMapDatas.push(cityCircle);
+
+          google.maps.event.addListener(cityCircle,'drag',function () {
+            self.lng = cityCircle.center.lng().toFixed(6);
+            self.lat = cityCircle.center.lat().toFixed(6);
+          });
+          self.addPointClickListener(cityCircle);
+
+          google.maps.event.removeListener(mapClickListener);
+        });
+      },
+      addGoodPoint: function () {
+        this.addPoint("GOOD");
+      },
+      addBadPoint: function () {
+        this.addPoint("BAD");
+      },
+
+      // 根据layer id得到某一图层的数据
+      getLayerData:function (layerId) {
+        var layerList = this.layerDatas.layerList;
+        for(let i = 0;i< layerList.length;i++){
+          if(layerId===layerList[i].id)
+            return layerList[i].data;
+        }
+        return null;
+      },
+
+      //提交当前图层的更改
+      submitChange: function () {
+        var curLayerData = this.getLayerData(this.curLayerId);
+        curLayerData.pointList =  [];
+        this.curLayerMapDatas.forEach(function (curData) {
+          if(curLayerData.type==="YJG"){
+            curLayerData.pointList.push({
+              x:curData.center.lng(),
+              y:curData.center.lat(),
+              z:0,
+              status:curData.pointStaus
+            });
+          }
+        });
+        var postData = {
+          layerId:this.curLayerId,
+          data:curLayerData
+        }
+
+        this.$http.patch('http://localhost:8080/layer/layers/point/id',
+          postData
+        ).then(function (response){
+          let responseBody = response.body
+          if (responseBody.code === 200) {
+            alert("提交成功！");
+          }
+          else{
+            alert("提交失败！");
+          }
+        });
+      },
+
+      // 为点添加动态效果
+      addPointClickListener: function (point) {
+        var self = this;
+        google.maps.event.addListener(point,'click',function () {
+          if(self.curPoint){
+            self.curPoint.strokeWeight = 0;
+            self.curPoint.setMap(null);
+            self.curPoint.setMap(self.map);
+          }
+          self.curPoint = point;
+          self.curPointStatus = point.pointStaus||"BAD";
+          self.curPoint.strokeColor = self.curPoint.curPointStatus==="GOOD"?"black":'#FF0000';
+          self.curPoint.strokeOpacity = 0.8;
+          self.curPoint.strokeWeight = 2;
+          self.curPoint.setMap(null);
+          self.curPoint.setMap(self.map);
+          self.lng = point.center.lng().toFixed(6);
+          self.lat = point.center.lat().toFixed(6);
+        });
+      },
+      lngLatOnChange: function () {
+        if(this.curPoint.center.lat()!==this.lat || this.curPoint.center.lng()!==this.lng){
+          this.curPoint.center = new google.maps.LatLng(this.lat, this.lng);
+          this.curPoint.setMap(null);
+          this.curPoint.setMap(this.map);
+        }
+      },
+      deletePointBtnClick: function () {
+        this.curPoint.setMap(null);
+        this.removeListByValue(this.curLayerMapDatas,this.curPoint);
+        this.curPoint = null;
+      },
 
 
+      // utils
+      removeListByValue: function (arr, val) {
+        for(let i=0; i<arr.length; i++) {
+          if(arr[i] === val) {
+            arr.splice(i, 1);
+            break;
+          }
+        }
+      }
+    },
+    watch:{
+      curLayerId: function(newValue, oldValue) {
+        var self = this;
+        this.clearMap(true);
+        var layerDatas = this.getLayerData(newValue);
+        this.curLayerType = layerDatas.type;
+        this.curPoint = null;
+        layerDatas.pointList.forEach(function (layerData) {
+          var cityCircle = self.createPoint(self.map,{lng:layerData.x,lat:layerData.y},
+            layerData.status==="GOOD"?"black":'#FF0000');
+          cityCircle.pointStaus = layerData.status;
+          self.curLayerMapDatas.push(cityCircle);
+          google.maps.event.addListener(cityCircle,'drag',function () {
+            self.lng = cityCircle.center.lng().toFixed(6);
+            self.lat = cityCircle.center.lat().toFixed(6);
+          });
+          self.addPointClickListener(cityCircle);
+        })
+      },
+      curPointStatus: function (newValue, oldValue) {
+        this.curPoint.pointStaus = newValue;
+        this.curPoint.fillColor = newValue==="GOOD"?"black":'#FF0000';
+        this.curPoint.setMap(null);
+        this.curPoint.setMap(this.map);
 
-
-export default {
-  name: 'googleMapPage' ,
-  mounted(){
-      initMap();
-   }
-}
+      }
+    },
+    mounted(){
+      this.initMap();
+      this.getLayerDatas(12);
+    }
+  }
 </script>
 
+<style>
+  .navbar{
+    margin-bottom: 0;
+  }
+  form >div.form-group>input.inputPos{
+    width:100px;
+  }
+</style>
 
 

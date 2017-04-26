@@ -4,3 +4,7 @@ export const userInfo = state => {
     userPassword: state.session.userPassword
   }
 }
+
+export const isLoggedIn = state => {
+  return state.session.userName != ''
+}

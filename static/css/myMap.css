@@ -1,0 +1,188 @@
+/*顶部按钮*/
+.btn-content{
+  position: relative;
+}
+.btns{
+  margin:10px -15px 0px -15px;
+  height:60px;
+  line-height:60px;
+  padding-left: 10px;
+  border-bottom:1px solid rgba(0,0,0,0.2);
+}
+#back-btn{
+  width:30px;
+  height:25px;
+  -webkit-background-size:30px 30px;
+  background-size:30px 30px;
+  background-repeat:no-repeat;
+  background-image: url(../img/back.png);
+  border:none !important;
+  position: absolute;
+  right:50px;
+  top:18px;
+}
+#clearlasttoast{
+  padding:1px;
+  width:25px;
+  height:25px;
+  -webkit-background-size:21px 21px;
+  background-size:21px 21px;
+  background-repeat:no-repeat;
+  border:none !important;
+  margin-left:10px;
+  -webkit-border-radius:0;
+  -moz-border-radius:0;
+  border-radius:0;
+  position: absolute;
+  right:20px;
+  top:20px;
+}
+.list{
+  background-image: url(../img/list.png);
+}
+.thum{
+  background-image: url(../img/thumbnail.png);
+}
+
+/*主题内容*/
+.wrapper-content{
+  min-height:704px;
+}
+/*地图缩略图*/
+.ibox{
+  height:200px;
+  width:20%;
+  float:left;
+  padding-left:15px;
+  padding-right:15px;
+  clear:none;
+  position: relative;
+}
+
+/*缩略图部分*/
+.img-box{
+  background:#ffffff;
+  cursor:pointer;
+  width:100%;
+  height:90%;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px;
+  -webkit-transition: 500ms;
+  -moz-transition:  500ms;
+  -ms-transition:  500ms;
+  -o-transition:  500ms;
+  transition:  500ms;
+}
+.img-box:hover{
+  margin-top:-8px;
+  //  border-top:3px solid #e7eaec;
+}
+.map-img{
+  width:100%;
+  height:100%;
+}
+.folder-img{
+  width:70%;
+  height:80%;
+  margin:10% 15% 10% 15%;
+}
+
+/*地图或文件夹名字*/
+.icon{
+  width:20px;
+  height:20px;
+  margin-top:2px;
+  float:left;
+}
+.name{
+  display: inline-block;
+  height:20px;
+  line-height:20px;
+  margin-left:5px;
+  float:left;
+}
+
+/*删除按钮*/
+.delete{
+  width:15px;
+  height:17px;
+  position: absolute;
+  right:15px;
+  bottom:1px;
+  cursor:pointer;
+  background-image: url(../img/delete-icon.png);
+  -webkit-background-size:15px;
+  background-size:15px;
+  background-repeat: no-repeat;
+  -webkit-transition: 500ms;
+  -moz-transition:  500ms;
+  -ms-transition:  500ms;
+  -o-transition:  500ms;
+  transition:  500ms;
+}
+.img-box:hover+.delete{
+  bottom:9px;
+}
+.delete:hover{
+  bottom:4px;
+  background-image: url(../img/delete-icon-red.png);
+}
+
+/*列表模式*/
+#listTable{
+  width:94%;
+  margin-left:3%;
+  margin-top:-10px;
+}
+.thead{
+  font-size:14px;
+  font-weight:700;
+  height:50px;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+}
+.tList{
+  height:40px;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+}
+.renameList{
+  background-image: url(../img/rename.png);
+  -webkit-background-size:20px;
+  background-size:20px;
+  background-repeat: no-repeat;
+  -webkit-transition: 500ms;
+  -ms-transition:  500ms;
+  -o-transition:  500ms;
+  transition:  500ms;
+  height:20px;
+  width:20px;
+  cursor: pointer;
+}
+.renameList:hover{
+  margin-top:-10px;
+}
+.deleteList{
+  background-image: url(../img/delete.png);
+  -webkit-background-size:12px;
+  background-size:12px;
+  background-repeat: no-repeat;
+  -webkit-transition:margin 500ms;
+  -moz-transition:margin  500ms;
+  -ms-transition:margin  500ms;
+  -o-transition:margin  500ms;
+  transition:margin  500ms;
+  height:12px;
+  width:12px;
+  cursor: pointer;
+}
+.deleteList:hover{
+  background-image: url(../img/deleteRed.png);
+  margin-top:-5px;
+}
+.listName{
+  cursor:pointer;
+  width:300px;
+}
+.listName:hover{
+  color:black;
+}

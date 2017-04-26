@@ -11,10 +11,6 @@
           </div>
           <ul class="nav navbar-top-links navbar-right">
               <li>
-                  <!-- <a href="#">
-                      <i ></i>
-                  </a> -->
-                  <!-- <button  @click="increment"></button> -->
                   <router-link v-if="isLoggedIn" class="fa fa-sign-out" v-on:click.native="logout" to="#">{{userInfo.userName}} Log out</router-link>
                   <router-link v-if="!isLoggedIn" class="fa fa-sign-out"  to="#"> Log in</router-link>
               </li>
