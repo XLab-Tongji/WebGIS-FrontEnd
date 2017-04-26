@@ -1,30 +1,29 @@
 <template>
-
 <div id="app-wrapper">
-
-    <router-view name="navigation"></router-view>
-
-    <div id="page-wrapper" class="gray-bg">
-        <router-view name="header"></router-view>
-        <router-view name="mainPage"></router-view>
-        <router-view name="footer"></router-view>
-    </div>
+  <sideBar></sideBar>
+  <div id="page-wrapper" class="gray-bg">
+    <headBar></headBar>
+    <router-view name="mainPage"></router-view>
+    <footBar></footBar>
+  </div>
 </div>
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+  import headBar from '@/views/bar/headBar'
+  import sideBar from '@/views/bar/sideBar'
+  import footBar from '@/views/bar/footBar'
+
+  export default {
+    name: 'app',
+    components: {
+      'headBar': headBar,
+      'sideBar': sideBar,
+      'footBar': footBar
+    }
+  }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
