@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Footer from '@/views/footBar'
 import Header from '@/views/headBar'
 import Navigation from '@/views/navBar'
-import mapPage from '@/views/baidu'
 import Index from '@/views/Index'
 import googleMapPage from '@/views/google'
 import MyMap from '@/views/myMap'
@@ -14,7 +13,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/myMap'
+      redirect: '/index'
     },
     {
       path: '/index',
@@ -49,7 +48,7 @@ export default new Router({
     {
       path: '*',
       name: 'others',
-      redirect: '/myMap'
+      redirect: '/index'
     }
   ]
 })

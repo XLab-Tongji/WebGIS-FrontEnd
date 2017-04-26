@@ -3,9 +3,11 @@
   position: relative;
 }
 .btns{
-  margin:10px -15px 10px -15px;
+  margin:10px -15px 0px -15px;
   height:60px;
   line-height:60px;
+  padding-left: 10px;
+  border-bottom:1px solid rgba(0,0,0,0.2);
 }
 #clearlasttoast{
   padding:1px;
@@ -19,9 +21,9 @@
   -webkit-border-radius:0;
   -moz-border-radius:0;
   border-radius:0;
-  padding:2px
   position: absolute;
-  right:0;
+  right:20px;
+  top:20px;
 }
 .list{
   background-image: url(../img/list.png);
@@ -122,7 +124,7 @@
   margin-top:-10px;
 }
 .thead{
-  font-size:16px;
+  font-size:14px;
   font-weight:700;
   height:50px;
   border-bottom:1px solid rgba(0,0,0,0.1);
