@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/views/Index'
 import Google from '@/views/google'
+import DisplayMap from '@/views/displayMap'
 import store from '../store'
 
 Vue.use(Router)
@@ -23,6 +24,13 @@ const router = new Router({
       name: 'google',
       components: {
         mainPage: Google,
+      }
+    },
+    {
+      path:'/displayMap',
+      name:'displayMap',
+      components:{
+        mainPage:DisplayMap,
       }
     },
     {
