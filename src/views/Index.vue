@@ -10,8 +10,8 @@
                         It is an application skeleton for a typical web app. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
                     </small>
                     <p>
-                      <button @click="login('xiaoxuanxuan','930912')">login</button>
-                      <button @click="logout('xiaoxuanxuan','930912')">logout</button>
+                      <button @click="login('xiaoxuanxuan sb','930912')">login</button>
+                      <button @click="logout('xiaoxuanxuan sb','930912')">logout</button>
                     </p>
                 </div>
             </div>
