@@ -6,6 +6,7 @@ import Navigation from '@/views/bar/sideBar'
 import Index from '@/views/Index'
 import googleMapPage from '@/views/google'
 import MyMap from '@/views/myMap'
+import Recycled from '@/views/recycled'
 import Google from '@/views/google'
 import store from '../store'
 
@@ -41,6 +42,13 @@ const router = new Router({
         header: Header,
         mainPage:MyMap,
         footer: Footer
+      }
+    },
+    {
+      path:'/recycled',
+      name:'recycled',
+      components:{
+        mainPage:Recycled
       }
     },
     {

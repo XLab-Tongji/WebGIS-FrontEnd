@@ -26,6 +26,9 @@
             <li  class="active">
               <router-link to="/myMap">MyMap</router-link>
             </li>
+            <li  class="active">
+              <router-link to="/recycled">Recycled</router-link>
+            </li>
           </ul>
 
       </div>
