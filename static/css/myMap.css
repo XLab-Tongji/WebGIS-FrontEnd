@@ -9,6 +9,18 @@
   padding-left: 10px;
   border-bottom:1px solid rgba(0,0,0,0.2);
 }
+#back-btn{
+  width:30px;
+  height:25px;
+  -webkit-background-size:30px 30px;
+  background-size:30px 30px;
+  background-repeat:no-repeat;
+  background-image: url(../img/back.png);
+  border:none !important;
+  position: absolute;
+  right:50px;
+  top:18px;
+}
 #clearlasttoast{
   padding:1px;
   width:25px;
