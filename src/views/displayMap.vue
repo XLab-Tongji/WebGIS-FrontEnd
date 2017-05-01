@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper wrapper-content animated fadeInRight">
     <p>{{userInfo.userName}}'s Map</p>
-      <div id="displayMap">mapId:  {{data}}
-        <div class="ibox-content" id="map" style="position: relative; height: 600px">
+      <div id="displayMap">
+        <div class="ibox-content" id="map" style="position: relative; height: 640px">
 
         </div>
       </div>
@@ -13,17 +13,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 var map;
+var sp;
 function initMap(){
   map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 31.2855492031, lng: 121.2147505658 },
-      zoom: 18
+      center: sp,
+      zoom: 4
   });
 }
-var m1=new google.maps.LatLng(31.2857211186,121.2149965461);
-var m2=new google.maps.LatLng(31.2858311434,121.2148248847);
-var m3=new google.maps.LatLng(31.2858128060,121.2146478589);
-var m4=new google.maps.LatLng(31.2857257030,121.21452984170);
-var myTrip=[m1,m2,m3,m4];
+var myTrip=[];
 var myPath;
 function addPipe(){
     myPath=new google.maps.Polyline({
@@ -42,8 +39,11 @@ export default {
   data () {
     return {
       data:'',
+      layerIndex:[],
+      pointsList:[],
     }
   },
+
   computed: {
     ...mapGetters({
     userInfo: 'userInfo'
@@ -51,19 +51,55 @@ export default {
     isLoggedIn () {
       return this.userInfo.userName != "";
     },
+
   },
   mounted(){
     initMap();
-    addPipe();
+    // addPipe();
   },
   created () {
-      this.$http.get('http://115.159.65.170:8080/layer/layers',{params:{mapId:1}}).then(response => (
-        this.data = response.data.data.mapId
-        // console.log(response.data.data.mapId)
-        //console.log(response.data.data.layerList[1].id)
-      ), response => {
+      this.$http.get('http://115.159.65.170:8080/layer/layers',{params:{mapId:1}}).then(function(response){
+        this.data = response.data.data;
+        // console.log(response.data.data.layerList[1].data);
+        var i;
+        var count=0;
+        for(i=0;i<this.data.layerList.length;i++){
+          if(this.data.layerList[i].data==null){
+            this.layerIndex[i]=0;
+          }
+          else {
+            var j;
+            this.layerIndex[i]=this.data.layerList[i].data.pointList.length;
+            for(j=0;j<this.layerIndex[i];j++){
+              this.pointsList.push({
+                x:this.data.layerList[i].data.pointList[j].x,
+                y:this.data.layerList[i].data.pointList[j].y
+              })
+              // console.log(this.pointsList[count].y);
+              count=count+1;
+            }
+            // console.log(count);
+          }
+          // console.log(this.layerIndex[i]);
+
+        }
+        sp=new google.maps.LatLng(this.pointsList[1].x,this.pointsList[1].y);
+        var k;
+        count=0;
+        for(i=0;i<this.layerIndex.length;i++){
+          for(k=0;k<this.layerIndex[i];k++)
+          {
+            var p=new google.maps.LatLng(this.pointsList[count].x,this.pointsList[count].y);
+            myTrip.push(p);
+            count=count+1;
+          }
+          addPipe();
+          myTrip=[];
+        }
+      }, function(response) {
         // error callback
       })
+
   }
 }
 </script>
