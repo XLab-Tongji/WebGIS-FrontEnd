@@ -22,16 +22,28 @@
         </ul>
       </span>
 
-        <span class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" id="cheatePointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <span class="dropdown" v-if="curLayerType==='YJG'">
+        <button class="btn btn-default dropdown-toggle" type="button" id="createPointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           添加点
           <span class="caret"></span>
         </button>
-        <ul class="dropdown-menu" aria-labelledby="cheatePointMenu">
+        <ul class="dropdown-menu" aria-labelledby="createPointMenu">
           <li><a v-on:click="addGoodPoint">添加好点</a></li>
           <li><a v-on:click="addBadPoint">添加坏点</a></li>
         </ul>
       </span>
+
+        <span class="dropdown" v-if="curLayerType==='XSG'">
+        <button class="btn btn-default dropdown-toggle" type="button" id="createLineMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          添加线
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="createLineMenu">
+          <li><a v-on:click="addLine">添加好线</a></li>
+          <li><a v-on:click="addLine">添加坏线</a></li>
+        </ul>
+      </span>
+
         <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
       </form>
     </nav>
@@ -65,7 +77,7 @@
     data: function () {
       return {
         map: null,
-        mapId:12,
+        mapId: this.$route.params.mapId,
         layerDatas:null,
 
         lng: "lng",
@@ -79,7 +91,8 @@
 
         // 当前point 以及它的状态
         curPointStatus:0,
-        curPoint: null
+        curPoint: null,
+        prePoint: null
       }
     },
     methods: {
@@ -91,6 +104,7 @@
         });
       },
       getLayerDatas:function (mapId) {
+          console.log(mapId);
         var self = this;
         this.$http.get('http://localhost:8080/layer/layers?mapId='+mapId,
           {
@@ -214,6 +228,11 @@
         this.addPoint("BAD");
       },
 
+      // 添加线
+      addLine: function () {
+
+      },
+
       // 根据layer id得到某一图层的数据
       getLayerData:function (layerId) {
         var layerList = this.layerDatas.layerList;
@@ -304,20 +323,31 @@
       curLayerId: function(newValue, oldValue) {
         var self = this;
         this.clearMap(true);
+        console.log(newValue);
+        if(parseInt(newValue)=== 0){
+            this.curPoint = null;
+            this.curLayerType = 0;
+            return;
+        }
+
         var layerDatas = this.getLayerData(newValue);
         this.curLayerType = layerDatas.type;
         this.curPoint = null;
-        layerDatas.pointList.forEach(function (layerData) {
-          var cityCircle = self.createPoint(self.map,{lng:layerData.x,lat:layerData.y},
-            layerData.status==="GOOD"?"black":'#FF0000');
-          cityCircle.pointStaus = layerData.status;
-          self.curLayerMapDatas.push(cityCircle);
-          google.maps.event.addListener(cityCircle,'drag',function () {
-            self.lng = cityCircle.center.lng().toFixed(6);
-            self.lat = cityCircle.center.lat().toFixed(6);
+
+        if(this.curLayerType==="YJG"){
+          layerDatas.pointList.forEach(function (layerData) {
+            var cityCircle = self.createPoint(self.map,{lng:layerData.x,lat:layerData.y},
+              layerData.status==="GOOD"?"black":'#FF0000');
+            cityCircle.pointStaus = layerData.status;
+            self.curLayerMapDatas.push(cityCircle);
+            google.maps.event.addListener(cityCircle,'drag',function () {
+              self.lng = cityCircle.center.lng().toFixed(6);
+              self.lat = cityCircle.center.lat().toFixed(6);
+            });
+            self.addPointClickListener(cityCircle);
           });
-          self.addPointClickListener(cityCircle);
-        })
+        }
+
       },
       curPointStatus: function (newValue, oldValue) {
         this.curPoint.pointStaus = newValue;
@@ -329,7 +359,7 @@
     },
     mounted(){
       this.initMap();
-      this.getLayerDatas(12);
+      this.getLayerDatas(this.mapId);
     }
   }
 </script>
