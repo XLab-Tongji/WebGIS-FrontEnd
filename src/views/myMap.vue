@@ -208,7 +208,8 @@
         }
       },
       mapClick:function(index,event){
-        alert("you click the " + this.mapNames[index].name);
+        this.$router.push({ name: 'google', params: { mapId: this.mapNames[index].id }});
+//        alert("you click the " + this.mapNames[index].name + this.mapNames[index].id);
       },
       deleteMap:function(index,event){
         if(confirm("Do you really want to delete the map: \n     " + this.mapNames[index].name)) {
