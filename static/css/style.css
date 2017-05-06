@@ -389,6 +389,9 @@ body.canvas-menu .nav-header {
 body.mini-navbar #page-wrapper {
   margin: 0 0 0 70px;
 }
+.footer{
+  z-index:1000;
+}
 body.fixed-sidebar.mini-navbar .footer,
 body.canvas-menu.mini-navbar .footer {
   margin: 0 0 0 0 !important;

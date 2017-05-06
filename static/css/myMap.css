@@ -44,9 +44,42 @@
   background-image: url(../img/thumbnail.png);
 }
 
+/*文件路径*/
+.path{
+  display:inline-block;
+  height:100%;
+  width:800px;
+  margin-left:20px;
+}
+.path ul{
+  height:100%;
+  float:left;
+  padding:0;
+}
+.path ul li{
+  list-style: none;
+  float:left;
+}
+.split{
+    color:gray;
+}
+.path-item{
+  font-weight:500;
+  cursor:pointer;
+}
+.path-item:hover{
+  color:blue;
+}
+
 /*主题内容*/
 .wrapper-content{
   min-height:704px;
+  position:relative;
+  -webkit-transition: 1000ms;
+  -moz-transition: 1000ms;
+  -ms-transition: 1000ms;
+  -o-transition: 1000ms;
+  transition: 1000ms;
 }
 /*地图缩略图*/
 .ibox{
@@ -56,7 +89,7 @@
   padding-left:15px;
   padding-right:15px;
   clear:none;
-  position: relative;
+  position: absolute;
 }
 
 /*缩略图部分*/
@@ -125,7 +158,7 @@
   bottom:9px;
 }
 .delete:hover{
-  bottom:4px;
+  //bottom:4px;
   background-image: url(../img/delete-icon-red.png);
 }
 
@@ -185,4 +218,18 @@
 }
 .listName:hover{
   color:black;
+}
+/*拖拽展示块*/
+#dragDiv{
+  color:white;
+  background: rgba(0,0,0,0.5);
+  border:1px dotted white;
+  position: absolute;
+  z-index: 100000;
+}
+#dragDiv label{
+  padding:1px 5px 0 5px;
+  max-width:100px;
+  overflow: hidden;
+  display: inline-block;
 }
