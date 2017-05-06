@@ -24,7 +24,7 @@ const router = new Router({
       }
     },
     {
-      path: '/google',
+      path: '/google/:mapId',
       name: 'google',
       components: {
         navigation: Navigation,
