@@ -48,7 +48,10 @@ const router = new Router({
       path:'/recycled',
       name:'recycled',
       components:{
-        mainPage:Recycled
+        navigation: Navigation,
+        header: Header,
+        mainPage:Recycled,
+        footer: Footer
       }
     },
     {
