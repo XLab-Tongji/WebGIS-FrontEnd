@@ -1,4 +1,3 @@
-
 /*顶部按钮*/
 .btn-content{
   position: relative;
@@ -43,6 +42,33 @@
 }
 .thum{
   background-image: url(../img/thumbnail.png);
+}
+
+/*文件路径*/
+.path{
+  display:inline-block;
+  height:100%;
+  width:800px;
+  margin-left:20px;
+}
+.path ul{
+  height:100%;
+  float:left;
+  padding:0;
+}
+.path ul li{
+  list-style: none;
+  float:left;
+}
+.split{
+    color:gray;
+}
+.path-item{
+  font-weight:500;
+  cursor:pointer;
+}
+.path-item:hover{
+  color:blue;
 }
 
 /*主题内容*/
@@ -194,14 +220,14 @@
   color:black;
 }
 /*拖拽展示块*/
-#drapDiv{
+#dragDiv{
   color:white;
   background: rgba(0,0,0,0.5);
   border:1px dotted white;
   position: absolute;
   z-index: 100000;
 }
-#drapDiv label{
+#dragDiv label{
   padding:1px 5px 0 5px;
   max-width:100px;
   overflow: hidden;

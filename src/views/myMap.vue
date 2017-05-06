@@ -8,6 +8,13 @@
 			  <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolder">Create Folder</button>
         <button type="button" class="btn btn-white" id="back-btn" v-on:click="back" v-on:mouseup="dragBack($event)"></button>
 			  <button type="button" class="btn btn-white" v-bind:class="{list:!isList,thum:isList}" id="clearlasttoast" v-on:click="changeShowType"></button>
+        <div class="path">
+          <label></label>
+          <ul>
+            <li v-on:click="RootClick($event)"><label class="path-item">Root </label></li>
+            <li v-on:click="pathClick(index,$event)" v-for="(item,index) in folderPathName">&nbsp;<span class='split'>/</span> <label class="path-item">{{ item }} </label></li>
+          </ul>
+        </div>
 			</div>
 		</div>
 
@@ -86,6 +93,7 @@
         accoundId:1,      //账户ID
         isList:false,    //查看类型，为True代表列表模式，否则为缩略图模式
         folderPath:[0],   //存储访问路径，最后一个元素代表当前所在文件夹ID，根目录为0
+        folderPathName:[], //存储路径名称
         folderNames:[],   //当前文件夹中的所有文件夹信息
         mapNames:[],      //当前文件夹中的所有地图信息
         draged:{          //辅助拖拽功能
@@ -104,7 +112,7 @@
     methods:{
       /*文件夹事件*/
       getFolders:function(ID){
-        this.folderNames = [{name:"folder1"},{name:"folder2"}];   //模拟数据，仅用作测试
+        //this.folderNames = [{name:"folder1"},{name:"folder2"}];   //模拟数据，仅用作测试
         this.$http.get('http://wb.lab-sse.cn/folder/folders/accountidandupperfolder?accountId=1&upperFolder='+ID ,
           {
             emulateJSON: true
@@ -148,11 +156,17 @@
       },
       folderClick:function (index,event) {
         console.log("Click the folder " + this.folderNames[index].name);
+        //更新路径
+        this.folderPathName.push(this.folderNames[index].name);
+
         //把当前文件夹编号存入历史路径中
         var folderId = this.folderNames[index].id;
         this.folderPath.push(folderId);
+
+        //获取内容
         this.getFolders(folderId);
         this.getMaps(folderId);
+
         console.log("Get the folders and maps");
       },
       deleteFolder:function(index,event){
@@ -186,7 +200,7 @@
 
       /*地图事件*/
       getMaps:function(ID){
-        this.mapNames = [{name:"map1"},{name:"map2"}];  //模拟数据，仅用作测试
+        //this.mapNames = [{name:"map1"},{name:"map2"}];  //模拟数据，仅用作测试
         this.$http.get('http://wb.lab-sse.cn/map/maps/accountidandfolderid?accountId=1&folderId='+ ID ,
           {
             emulateJSON: true
@@ -442,8 +456,14 @@
 
       /*按钮事件*/
       back:function(){
+        //返回上一级
         var len = this.folderPath.length;
         if(len > 1){
+          //更新目录
+          var pathLen = this.folderPathName.length;
+          this.folderPathName.splice(pathLen - 1);
+
+          //获取内容
           this.folderPath.splice(len - 1);
           len = this.folderPath.length;
           this.getFolders(this.folderPath[len - 1]);
@@ -457,6 +477,30 @@
         }else{
           this.isList = true;
         }
+      },
+
+      /*文件路径事件*/
+      RootClick:function(event){
+        this.folderPathName = [];
+        this.folderPath = [0];
+        this.getFolders(0);
+        this.getMaps(0);
+      },
+      pathClick:function(index,event){
+        var Len = this.folderPathName.length;
+
+        //更新路径名
+        for(var i = index + 1;i < Len;i++){
+          this.folderPathName.splice(i);
+        }
+
+        //更新路径ID
+        for(var i = index + 2;i < Len + 1;i++){
+          this.folderPath.splice(i);
+        }
+
+        this.getFolders(this.folderPath[index + 1]);
+        this.getMaps(this.folderPath[index + 1]);
       }
     },
     mounted(){
