@@ -90,7 +90,7 @@
 .ibox-div-map{
   z-index: -200;
   width:100%;
-  overflow: hidden;
+  overflow: visible;
 }
 .ibox{
   width:190px;
@@ -126,9 +126,12 @@
 .folder-body:hover+.op{
   display: block;
 }
+.ibox-map:hover .op-map{
+  display: block;
+}
 
 /*操作按钮*/
-.op{
+.op,.op-map{
   position: absolute;
   right:-10px;
   top:7px;
@@ -144,6 +147,13 @@
   text-align: center;
   display: none;
 }
+.op-map{
+  top:-20px;
+  cursor:pointer;
+}
+.op-map:hover{
+  display:block;
+ }
 .op:hover{
   display: block;
 }
@@ -262,32 +272,6 @@
 .name-folder{
   line-height:40px;
   cursor:pointer;
-}
-
-/*删除按钮*/
-.delete{
-  width:15px;
-  height:17px;
-  position: absolute;
-  right:15px;
-  bottom:1px;
-  cursor:pointer;
-  background-image: url(../img/delete-icon.png);
-  -webkit-background-size:15px;
-  background-size:15px;
-  background-repeat: no-repeat;
-  -webkit-transition: 500ms;
-  -moz-transition:  500ms;
-  -ms-transition:  500ms;
-  -o-transition:  500ms;
-  transition:  500ms;
-}
-.img-box-map:hover+.delete{
-  bottom:9px;
-}
-.delete:hover{
-  //bottom:4px;
-  background-image: url(../img/delete-icon-red.png);
 }
 
 /*列表模式*/

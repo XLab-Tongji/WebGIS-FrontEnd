@@ -38,7 +38,8 @@
               </div>
               <label class="name name-folder">{{ folderName.name }}</label>
             </div>
-            <div class="op" v-on:click="opClick(index,$event)" v-on:mouseenter="fileMouseEnter(index,$event)" v-on:mouseleave="fileMouseLeave(index,$event)">
+            <div class="op" v-on:click="opClick('folder',index,$event)" v-on:mouseenter="fileMouseEnter(index,$event)"
+                 v-on:mouseleave="fileMouseLeave(index,$event)">
               <img class="op-icon" src="../assets/images/myMap/op-icon.png">
             </div>
           </div>
@@ -46,13 +47,16 @@
 
         <!--文件-->
         <div class="ibox-div-map">
-          <div class="ibox" v-for="(mapName,index) in mapNames">
+          <div class="ibox ibox-map" v-for="(mapName,index) in mapNames">
             <div class="img-box img-box-map" v-on:click="mapClick(index,$event)"
-                 v-on:mousedown="fileMouseDown('map',index,$event)">
+                 v-on:mousedown="fileMouseDown('map',index,$event) " v-on:mouseenter="mapMouseEnter(index,$event)" v-on:mouseleave="mapMouseLeave(index,$event)">
               <img class="map-img" src="../assets/images/myMap/myMap.jpg">
             </div>
-            <div class="delete" v-on:click="deleteMap(index,$event)"/>
             <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
+            <div class="op-map" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"
+                 v-on:mouseleave="opMapMouseLeave(index,$event)">
+              <img class="op-icon" src="../assets/images/myMap/op-icon.png">
+            </div>
           </div>
         </div>
       </div>
@@ -111,10 +115,10 @@
       <label>{{ dragDiv.dragValue }}</label>
     </div>
 
-    <!--文件夹操作列表-->
+    <!--文件操作列表-->
     <ul class="op-list" v-on:mouseleave="hideOpList($event)">
-      <li v-on:click="folderRename($event)"><img src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
-      <li v-on:click="deleteFolder($event)"><img src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
+      <li v-on:click="Rename($event)"><img src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
+      <li v-on:click="Delete($event)"><img src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
     </ul>
 
   </div>
@@ -143,7 +147,10 @@
           dragLeft: -100,
           dragTop: -100
         },
-        currentFolder: 0   //当前选中的文件夹
+        currentFile:{     //当前选中的文件
+          type:"folder",
+          index:0
+        }
       }
     },
     methods: {
@@ -207,25 +214,25 @@
         console.log("Get the folders and maps");
       },
       deleteFolder: function (event) {
-        if (confirm("Do you really want to delete the folder: \n     " + this.folderNames[this.currentFolder].name)) {
-          this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[this.currentFolder].id,
+        if (confirm("Do you really want to delete the folder: \n     " + this.folderNames[this.currentFile.index].name)) {
+          this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[this.currentFile.index].id,
             {
               emulateJSON: true
             }).then(function (response) {
-            console.log("delete folder " + this.folderNames[this.currentFolder].id + "successful");
+            console.log("delete folder " + this.folderNames[this.currentFile.index].id + "successful");
             var len = this.folderPath.length;
             this.getFolders(this.folderPath[len - 1]);
           });
         }
       },
-      folderRename: function (event) {
-        var newFolder = prompt("Input new folder name:", this.folderNames[this.currentFolder].name);
+      folderRename: function (index,event) {
+        var newFolder = prompt("Input new folder name:", this.folderNames[index].name);
         var len = this.folderPath.length;
         if (newFolder != null && newFolder != "") {
           this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
             {
               emulateJSON: true,
-              id: this.folderNames[this.currentFolder].id,
+              id: this.folderNames[index].id,
               name: newFolder,
               upper_folder: this.folderPath[len - 1],
               accoundId: this.accoundId
@@ -310,6 +317,14 @@
           });
         }
       },
+      mapMouseEnter:function(index,event){
+        $(".op-map").eq(index).css("display","block");
+        $(".img-box-map").eq(index).css("margin-top","-8px");
+      },
+      mapMouseLeave:function(index,event){
+        $(".op-map").eq(index).css("display","none");
+        $(".img-box-map").eq(index).css("margin-top","0px");
+      },
 
       /*拖拽事件*/
       fileMouseDown: function (type, index, event) {
@@ -386,13 +401,13 @@
           $(".ibox").eq(index).find(".delete").css("bottom", "0");
         }
         else {
-          $(".op").eq(index).css("display","block");
+          $(".op").eq(index).css("display", "block");
           $(".ibox").eq(index).find(".img-box").css("margin-top", "-8px");
           $(".ibox").eq(index).find(".delete").css("bottom", "9px");
         }
       },
       fileMouseLeave: function (index, event) {
-        if($(".op-list").css("display") == "none")$(".op").eq(index).css("display","none");
+        if ($(".op-list").css("display") == "none")$(".op").eq(index).css("display", "none");
         $(".ibox").eq(index).css("border", "none");
         $(".ibox").eq(index).css("opacity", "1");
         $(".ibox").eq(index).find(".img-box").css("cursor", "pointer");
@@ -524,20 +539,58 @@
       },
 
       /*文件操作列表事件*/
-      opClick: function (index, event) {
+      opClick: function (type, index, event) {
         var wrapperLeft = $(".wrapper-content").offset().left;
         var wrapperTop = $(".wrapper-content").offset().top;
-        var left = $(".ibox-folder").eq(index).offset().left;
-        var top = $(".ibox-folder").eq(index).offset().top;
+        var left, top;
+        if (type == "folder") {
+          left = $(".ibox-folder").eq(index).offset().left;
+          top = $(".ibox-folder").eq(index).offset().top;
+          $(".op").eq(index).css("display", "block");
+          $(".op-list").css("top", top + 40 + "px");
+        }
+        else if(type == 'map'){
+          left = $(".ibox-map").eq(index).offset().left;
+          top = $(".ibox-map").eq(index).offset().top;
+          $(".op-map").eq(index).css("display", "block");
+          $(".op-list").css("top", top + 12 + "px");
+        }
+        this.currentFile.index = index;
+        this.currentFile.type = type;
         $(".op-list").css("left", left - wrapperLeft + 152 + "px");
-        $(".op-list").css("top", top + 40 + "px");
-        $(".op").eq(index).css("display","block");
-        $(".op-list").css("display","block");
-        this.currentFolder = index;
+        $(".op-list").css("display", "block");
       },
-      hideOpList:function(evnent){
-        $(".op").css("display","none");
-        $(".op-list").css("display","none");
+      opMapMouseEnter:function(index,event){
+        $(".op-map").eq(index).css("display","block");
+        $(".img-box-map").eq(index).css("margin-top","-8px");
+      },
+      opMapMouseLeave:function(index,event){
+        if ($(".op-list").css("display") == "none"){
+          $(".op-map").eq(index).css("display", "none");
+          $(".img-box-map").eq(index).css("margin-top","0px");
+        }
+      },
+      hideOpList: function (evnent) {
+        $(".op").css("display", "none");
+        $(".op-map").css("display", "none");
+        $(".op-list").css("display", "none");
+        $(".img-box-map").css("margin-top","0px");
+      },
+      Rename:function(event){
+        if(this.currentFile.type == "folder"){
+          this.folderRename(this.currentFile.index,event);
+        }
+        else if(this.currentFile.type == "map"){
+          this.mapRename(this.currentFile.index,event);
+        }
+      },
+      Delete:function(event){
+        if(this.currentFile.type == "folder"){
+          this.deleteFolder(this.currentFile.index,event);
+        }
+        else if(this.currentFile.type == "map"){
+          this.deleteMap(this.currentFile.index,event);
+        }
       },
 
       /*文件路径事件*/
