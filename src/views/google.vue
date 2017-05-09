@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper wrapper-content animated fadeInRight">
+    <!-- 图层操作条 -->
     <nav class="navbar navbar-default">
       <form class="form-inline">
         <label>mapId: {{mapId}}</label>
@@ -12,7 +13,6 @@
 
         <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
 
-        <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-layer-modal">
           创建图层
         </button>
@@ -45,6 +45,7 @@
       </form>
     </nav>
 
+    <!-- YJG操作条 -->
     <nav class="navbar navbar-default" id="pointNav" v-if="curPoint && curLayerType==='YJG'">
       <form class="form-inline">
         <div class="form-group form-group-sm ">
@@ -64,6 +65,8 @@
         <button type="button" v-on:click="deletePointBtnClick" class="btn btn-danger">删除当前点</button>
       </form>
     </nav>
+
+    <!-- XSG操作条 -->
     <nav class="navbar navbar-default" id="lineNav" v-if="curLine">
       <form class="form-inline">
         <div class="form-group form-group-sm ">
@@ -95,6 +98,8 @@
         <button type="button" v-on:click="deleteLineBtnClick" class="btn btn-danger">删除当前线</button>
       </form>
     </nav>
+
+    <!-- google map -->
     <div class="ibox-content" id="map" style="position: relative; height: 820px"></div>
 
     <!-- create layer modal -->
