@@ -89,12 +89,6 @@
           <input type="text" v-model="lat2" class="form-control inputPos" v-on:keyup="lngLat2OnChange">
         </div>
 
-        <!--<span><label>lat:</label> {{lat}}</span>-->
-        <!--<span><label>lng:</label> {{lng}}</span>-->
-        <!--<span><label>lat2:</label> {{lat2}}</span>-->
-        <!--<span><label>lng2:</label> {{lng2}}</span>-->
-
-
         <select v-model="curPointStatus" class="form-control">
           <option value="0">选择状态</option>
           <option value="GOOD">状态GOOD</option>
@@ -243,6 +237,7 @@
         cityCircle.pointStatus = pointStatus;
         this.curLayerMapDatas.push(cityCircle);
 
+        let self = this;
         google.maps.event.addListener(cityCircle,'drag',function () {
           self.lng = cityCircle.center.lng().toFixed(6);
           self.lat = cityCircle.center.lat().toFixed(6);
@@ -287,16 +282,17 @@
       },
 
       // 添加线
+      // tmpPoint为第一个点，点击第二次以后删除该点
       addLine: function (lineStatus) {
         var self = this;
         self.mapClickListener = google.maps.event.addListener(this.map, 'click', function(event) {
           var latLng = event.latLng;
           let tmpPoint = {lng:latLng.lng(), lat:latLng.lat()}
-          tmpPoint.lineStatus = lineStatus;
           self.lng = latLng.lng().toFixed(6);
           self.lat = latLng.lat().toFixed(6);
           if(self.curPoint){
             let curLine = self.createLine(self.map, [self.curPoint, tmpPoint],self.getColorWithStatus(lineStatus));
+            curLine.lineStatus = lineStatus;
             self.curLayerMapDatas.push(curLine);
             if(self.tmpPoint){
               self.tmpPoint.setMap(null);
@@ -340,7 +336,9 @@
       submitChange: function () {
         var curLayerData = null;
         var self = this;
-        var patchUrl = null;
+        var patchUrl = self.curLayerType==="YJG" ?
+          "http://localhost:8080/layer/layers/point/id":
+          "http://localhost:8080/layer/layers/line/id";
         curLayerData = {type:self.curLayerType, pointList:[], lineList: []};
         this.curLayerMapDatas.forEach(function (curData) {
           if(self.curLayerType==="YJG"){
@@ -350,7 +348,6 @@
               z:0,
               status:curData.pointStatus
             });
-            patchUrl = "http://localhost:8080/layer/layers/point/id";
           }
           else if(self.curLayerType==="XSG"){
             let vertices = curData.getPath();
@@ -365,17 +362,17 @@
               z2: 0,
               status: curData.lineStatus
             });
-            patchUrl = "http://localhost:8080/layer/layers/line/id";
           }
         });
         var postData = {
-          layerId:this.curLayerId,
-          data:curLayerData
+          layerId: this.curLayerId,
+          data: curLayerData
         }
+        console.log("postData", postData);
 
         this.$http.patch(patchUrl, postData)
           .then(function (response){
-            let responseBody = response.body
+            let responseBody = response.body;
             if (responseBody.code === 200) {
               self.getLayerDatas(self.mapId);
               alert("提交成功！");
@@ -469,6 +466,7 @@
             break;
           }
         }
+        console.log(arr);
       }
     },
     watch:{
