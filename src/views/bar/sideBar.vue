@@ -45,8 +45,8 @@ export default {
           title: ' MyMap'
         },
         {
-        	target: '/recycled',
-        	title: 'Recycled'
+            target: '/recycled',
+            title: 'Recycled'
         }
       ]
     }
@@ -56,4 +56,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 </style>

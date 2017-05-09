@@ -71,7 +71,7 @@
   color:blue;
 }
 
-/*主题内容*/
+/*主体内容*/
 .wrapper-content{
   min-height:704px;
   position:relative;
@@ -81,19 +81,148 @@
   -o-transition: 1000ms;
   transition: 1000ms;
 }
-/*地图缩略图*/
+
+/*缩略图展示块*/
+.ibox-div-folder{
+  width:100%;
+  overflow: hidden;
+}
+.ibox-div-map{
+  z-index: -200;
+  width:100%;
+  overflow: visible;
+}
 .ibox{
+  width:190px;
   height:200px;
-  width:20%;
   float:left;
-  padding-left:15px;
-  padding-right:15px;
+  margin-left:15px;
+  margin-right:15px;
   clear:none;
-  position: absolute;
+  position:relative;
+  -webkit-transition: all 400ms;
+  -moz-transition: all 400ms;
+  -ms-transition: all 400ms;
+  -o-transition: all 400ms;
+  transition: all 400ms;
+  z-index: 200;
+}
+.ibox-folder{
+  height:40px;
+  background: white;
+  cursor:pointer;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2);
+  -moz-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2);
+  z-index: 200;
+}
+.folder-body{
+  width:100%;
+  height:100%;
+}
+.folder-body:hover+.op{
+  display: block;
+}
+.ibox-map:hover .op-map{
+  display: block;
 }
 
-/*缩略图部分*/
-.img-box{
+/*操作按钮*/
+.op,.op-map{
+  position: absolute;
+  right:-10px;
+  top:7px;
+  width:24px;
+  height:24px;
+  -webkit-border-radius:50%;
+  -moz-border-radius:50%;
+  border-radius:50%;
+  background: white;
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
+  -moz-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
+  text-align: center;
+  display: none;
+}
+.op-map{
+  top:-20px;
+  cursor:pointer;
+}
+.op-map:hover{
+  display:block;
+ }
+.op:hover{
+  display: block;
+}
+.op-icon{
+  width:50%;
+  height:50%;
+}
+
+/*文件夹操作列表*/
+.op-list{
+  width:100px;
+  position: absolute;
+  top:80px;
+  left:180px;
+  z-index: 1000;
+  padding:0;
+  background: white;
+  display:none;
+  -webkit-box-shadow: 0 1px 6px #ccc;;
+  -moz-box-shadow: 0 1px 6px #ccc;;
+  box-shadow: 0 1px 6px #ccc;;
+}
+.op-list:before {
+  position: absolute;
+  left: 50%;
+  margin-left: -8px;
+  top: -16px;
+  border: 8px solid transparent;
+  border-bottom: 8px solid #ccc;
+  content: "";
+  width: 0;
+  height: 0;
+}.op-list:after {
+   position: absolute;
+   left: 50%;
+   margin-left: -8px;
+   top: -15px;
+   border: 8px solid transparent;
+   border-bottom: 8px solid #fff;
+   content: "";
+   width: 0;
+   height: 0;
+ }
+.op-list li{
+  list-style:none;
+  width:100%;
+  overflow: hidden;
+  height:30px;
+  margin-top:5px;
+  margin-bottom:5px;
+}
+.op-list li:hover{
+  background: rgba(0,0,0,0.1);
+}
+.op-list img{
+  width:20px;
+  height:20px;
+  margin:3px 10px 5px 10px;
+}
+.op-list label{
+  display: inline-block;
+  line-height:30px;
+}
+.op-list:hover .op{
+  display: block;
+}
+
+/*缩略图图片*/
+.img-box-map{
   background:#ffffff;
   cursor:pointer;
   width:100%;
@@ -107,18 +236,23 @@
   -o-transition:  500ms;
   transition:  500ms;
 }
-.img-box:hover{
+.img-box-folder{
+  cursor:pointer;
+  margin-left:10px;
+  width:40px;
+  height:100%;
+  float:left;
+}
+.img-box-map:hover{
   margin-top:-8px;
-  //  border-top:3px solid #e7eaec;
 }
 .map-img{
   width:100%;
   height:100%;
 }
 .folder-img{
-  width:70%;
-  height:80%;
-  margin:10% 15% 10% 15%;
+  width:100%;
+  height:100%;
 }
 
 /*地图或文件夹名字*/
@@ -135,31 +269,9 @@
   margin-left:5px;
   float:left;
 }
-
-/*删除按钮*/
-.delete{
-  width:15px;
-  height:17px;
-  position: absolute;
-  right:15px;
-  bottom:1px;
+.name-folder{
+  line-height:40px;
   cursor:pointer;
-  background-image: url(../img/delete-icon.png);
-  -webkit-background-size:15px;
-  background-size:15px;
-  background-repeat: no-repeat;
-  -webkit-transition: 500ms;
-  -moz-transition:  500ms;
-  -ms-transition:  500ms;
-  -o-transition:  500ms;
-  transition:  500ms;
-}
-.img-box:hover+.delete{
-  bottom:9px;
-}
-.delete:hover{
-  //bottom:4px;
-  background-image: url(../img/delete-icon-red.png);
 }
 
 /*列表模式*/
@@ -178,6 +290,32 @@
   height:40px;
   border-bottom:1px solid rgba(0,0,0,0.1);
 }
+
+
+/*名称部分*/
+.folder-img-list{
+  width:30px;
+  height:30px;
+}
+.map-img-list{
+  width:20px;
+  height:20px;
+  margin:5px;
+}
+.listName{
+  width:35%;
+}
+.listName:hover{
+  color:black;
+}
+.listTime{
+  width:22.5%;
+}
+
+/*重命名按钮*/
+.listBtn{
+  width:10%;
+}
 .renameList{
   background-image: url(../img/rename.png);
   -webkit-background-size:20px;
@@ -190,10 +328,13 @@
   height:20px;
   width:20px;
   cursor: pointer;
+  margin-left:15px;
 }
 .renameList:hover{
   margin-top:-10px;
 }
+
+/*删除按钮*/
 .deleteList{
   background-image: url(../img/delete.png);
   -webkit-background-size:12px;
@@ -207,18 +348,13 @@
   height:12px;
   width:12px;
   cursor: pointer;
+  margin-left:15px;
 }
 .deleteList:hover{
   background-image: url(../img/deleteRed.png);
   margin-top:-5px;
 }
-.listName{
-  cursor:pointer;
-  width:300px;
-}
-.listName:hover{
-  color:black;
-}
+
 /*拖拽展示块*/
 #dragDiv{
   color:white;
