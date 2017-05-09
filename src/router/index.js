@@ -9,6 +9,9 @@ import MyMap from '@/views/myMap'
 import Recycled from '@/views/recycled'
 import Google from '@/views/google'
 import store from '../store'
+import Login from '@/views/login'
+import Signup from '@/views/signup'
+
 
 Vue.use(Router)
 const router = new Router({
@@ -54,6 +57,24 @@ const router = new Router({
         footer: Footer
       }
     },
+     {
+      path: '/signup',
+      name: 'signup',
+      components:{
+        header: Header,
+        footer: Footer,
+        mainPage: Signup
+      }
+    },
+    {
+      path: '/login',
+      name:'login',
+      components: {
+        header: Header,
+        footer: Footer,
+        mainPage: Login
+      }
+    },
     {
       path: '*',
       name: 'others',
@@ -62,16 +83,16 @@ const router = new Router({
   ]
 })
 
-router.beforeEach( (to, from, next) => {
-    console.log('beforeEach')
-    console.log(store)
-    console.log(store.getters.isLoggedIn)
-    console.log(store.state.session.userName)
-    let userName = store.state.session.userName
-    let isLoggedIn = store.getters.isLoggedIn
-    if(isLoggedIn) next()
-    else next('/index')
-  }
-)
+// router.beforeEach( (to, from, next) => {
+//     console.log('beforeEach')
+//     console.log(store)
+//     console.log(store.getters.isLoggedIn)
+//     console.log(store.state.session.userName)
+//     let userName = store.state.session.userName
+//     let isLoggedIn = store.getters.isLoggedIn
+//     if(isLoggedIn) next()
+//     else next('/index')
+//   }
+// )
 
 export default router
