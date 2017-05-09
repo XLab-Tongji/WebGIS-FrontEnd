@@ -66,7 +66,6 @@
         <table id="listTable">
           <tr>
             <td class="thead">Name</td>
-            <td class="thead">Type</td>
             <td class="thead">Create Time</td>
             <td class="thead">Latest Change Time</td>
             <td class="thead">Rename</td>
@@ -74,34 +73,33 @@
           </tr>
 
           <!--文件夹-->
-          <tr v-for="(folderName,index) in folderNames">
+          <tr v-for="(folderName,index) in folderNames" >
             <td class="tList listName" v-on:click="folderClick(index,$event)"
-                v-on:mousedown="fileMouseDown('folder',index,$event)" v-on:mouseup="fileMouseUp(index,$event)">{{
-              folderName.name }}
+                v-on:mousedown="fileMouseDown('folder',index,$event)" v-on:mouseup="fileMouseUp(index,$event)">
+              <img class="folder-img-list" src="../assets/images/myMap/folder-icon.png"/>{{ folderName.name }}
             </td>
-            <td class="tList">文件夹</td>
-            <td class="tList">{{ folderName.create_time }}</td>
-            <td class="tList">{{ folderName.update_time }}</td>
-            <td class="tList">
-              <div class="renameList"></div>
+            <td class="tList listTime" v-on:click="folderClick(index,$event)">{{ folderName.create_time }}</td>
+            <td class="tList listTime" v-on:click="folderClick(index,$event)">{{ folderName.update_time }}</td>
+            <td class="tList listBtn">
+              <div class="renameList" v-on:click="folderRename(index,$event)"></div>
             </td>
-            <td class="tList">
-              <div class="deleteList"></div>
+            <td class="tList listBtn">
+              <div class="deleteList" v-on:click="deleteFolder(index,$event)"></div>
             </td>
           </tr>
 
           <!--文件-->
           <tr v-for="(mapName,index) in mapNames">
             <td class="tList listName" v-on:click="mapClick(index,$event)"
-                v-on:mousedown="fileMouseDown('map',index,$event)">{{ mapName.name }}
+                v-on:mousedown="fileMouseDown('map',index,$event)">
+              <img class="map-img-list" src="../assets/images/myMap/map-icon.png"/>{{ mapName.name }}
             </td>
-            <td class="tList">地图</td>
-            <td class="tList">{{ mapName.create_time }}</td>
-            <td class="tList">{{ mapName.update_time }}</td>
-            <td class="tList">
+            <td class="tList listTime">{{ mapName.create_time }}</td>
+            <td class="tList listTime">{{ mapName.update_time }}</td>
+            <td class="tList listBtn">
               <div class="renameList" v-on:click="mapRename(index,$event)"/>
             </td>
-            <td class="tList">
+            <td class="tList listBtn">
               <div class="deleteList" v-on:click="deleteMap(index,$event)"/>
             </td>
           </tr>
@@ -162,9 +160,18 @@
             emulateJSON: true
           }
         ).then(function (response) {
-          var responseBody = response.body
+          var responseBody = response.body;
           if (responseBody.code === 200) {
             this.folderNames = responseBody.data;
+
+            //更改时间格式
+            var len = this.folderNames.length;
+            for(var i = 0;i < len; i++){
+              var time = new Date(this.folderNames[i].create_time);
+              this.folderNames[i].create_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+              time = new Date(this.folderNames[i].update_time);
+              this.folderNames[i].update_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+            }
           }
         });
       },
@@ -213,13 +220,13 @@
 
         console.log("Get the folders and maps");
       },
-      deleteFolder: function (event) {
-        if (confirm("Do you really want to delete the folder: \n     " + this.folderNames[this.currentFile.index].name)) {
-          this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[this.currentFile.index].id,
+      deleteFolder: function (index,event) {
+        if (confirm("Do you really want to delete the folder: \n     " + this.folderNames[index].name)) {
+          this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
             {
               emulateJSON: true
             }).then(function (response) {
-            console.log("delete folder " + this.folderNames[this.currentFile.index].id + "successful");
+            console.log("delete folder " + this.folderNames[index].id + "successful");
             var len = this.folderPath.length;
             this.getFolders(this.folderPath[len - 1]);
           });
@@ -253,6 +260,15 @@
           var responseBody = response.body
           if (responseBody.code === 200) {
             this.mapNames = responseBody.data;
+
+            //更改时间格式
+            var len = this.mapNames.length;
+            for(var i = 0;i < len; i++){
+              var time = new Date(this.mapNames[i].create_time);
+              this.mapNames[i].create_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+              time = new Date(this.mapNames[i].update_time);
+              this.mapNames[i].update_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+            }
           }
         });
       },

@@ -290,6 +290,32 @@
   height:40px;
   border-bottom:1px solid rgba(0,0,0,0.1);
 }
+
+
+/*名称部分*/
+.folder-img-list{
+  width:30px;
+  height:30px;
+}
+.map-img-list{
+  width:20px;
+  height:20px;
+  margin:5px;
+}
+.listName{
+  width:35%;
+}
+.listName:hover{
+  color:black;
+}
+.listTime{
+  width:22.5%;
+}
+
+/*重命名按钮*/
+.listBtn{
+  width:10%;
+}
 .renameList{
   background-image: url(../img/rename.png);
   -webkit-background-size:20px;
@@ -302,10 +328,13 @@
   height:20px;
   width:20px;
   cursor: pointer;
+  margin-left:15px;
 }
 .renameList:hover{
   margin-top:-10px;
 }
+
+/*删除按钮*/
 .deleteList{
   background-image: url(../img/delete.png);
   -webkit-background-size:12px;
@@ -319,18 +348,13 @@
   height:12px;
   width:12px;
   cursor: pointer;
+  margin-left:15px;
 }
 .deleteList:hover{
   background-image: url(../img/deleteRed.png);
   margin-top:-5px;
 }
-.listName{
-  cursor:pointer;
-  width:300px;
-}
-.listName:hover{
-  color:black;
-}
+
 /*拖拽展示块*/
 #dragDiv{
   color:white;
