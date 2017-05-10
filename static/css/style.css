@@ -4647,7 +4647,10 @@ ul.notes li div {
 /* FILE MANAGER */
 .file-box {
   float: left;
-  width: 220px;
+  width: 210px;
+  height: 180px;
+  position: relative;
+  margin-left: 6px;
 }
 .file-manager h5 {
   text-transform: uppercase;
@@ -4747,7 +4750,7 @@ ul.notes li div {
   color: #dadada;
 }
 .file .file-name {
-  padding: 10px;
+  padding: 15px;
   background-color: #f8f8f8;
   border-top: 1px solid #e7eaec;
 }

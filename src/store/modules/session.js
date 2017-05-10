@@ -4,8 +4,8 @@ import {
 } from '../mutation-types'
 
 const state = {
-	userName: "xiaoxuanxuan",
-  userPassword: "930912"
+	userName: "",
+  userPassword: ""
 }
 
 const mutations = {

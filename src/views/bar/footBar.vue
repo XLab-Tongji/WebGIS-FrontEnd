@@ -14,7 +14,7 @@ export default {
   name: 'footBar',
   data () {
     return {
-      systemState: 'System Connecting...    ',
+      systemState: 'System Connecting....    ',
       currentTime: new Date().toLocaleString()
     }
   },

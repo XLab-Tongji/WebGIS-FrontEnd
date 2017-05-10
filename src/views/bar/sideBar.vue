@@ -43,6 +43,10 @@ export default {
         {
           target: '/myMap',
           title: ' MyMap'
+        },
+        {
+            target: '/recycled',
+            title: 'Recycled'
         }
       ]
     }
