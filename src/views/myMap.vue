@@ -65,6 +65,7 @@
       <div class="row" v-if="isList">
         <table id="listTable">
           <tr>
+            <td class="thead"><input type="checkbox"/></td>
             <td class="thead">Name</td>
             <td class="thead">Create Time</td>
             <td class="thead">Latest Change Time</td>
@@ -74,6 +75,7 @@
 
           <!--文件夹-->
           <tr v-for="(folderName,index) in folderNames" >
+            <td><input type="checkbox"/></td>
             <td class="tList listName" v-on:click="folderClick(index,$event)"
                 v-on:mousedown="fileMouseDown('folder',index,$event)" v-on:mouseup="fileMouseUp(index,$event)">
               <img class="folder-img-list" src="../assets/images/myMap/folder-icon.png"/>{{ folderName.name }}
@@ -90,6 +92,7 @@
 
           <!--文件-->
           <tr v-for="(mapName,index) in mapNames">
+            <td><input type="checkbox"/></td>
             <td class="tList listName" v-on:click="mapClick(index,$event)"
                 v-on:mousedown="fileMouseDown('map',index,$event)">
               <img class="map-img-list" src="../assets/images/myMap/map-icon.png"/>{{ mapName.name }}
@@ -105,7 +108,18 @@
           </tr>
         </table>
       </div>
+
+
+      <!--分页-->
+      <div class="pages">
+        <ul class="pagination">
+          <li v-if="pages.isLeft" v-on:click="getMapsByPage(pages.currentPage - 1,$event)"><a>&laquo;</a></li>
+          <li v-if="pages.pages.length > 1" v-bind:class="{pageChoosed:index == pages.currentPage}" v-for="(item,index) in pages.pages" v-on:click="getMapsByPage(index,$event)"><a>{{ item }}</a></li>
+          <li v-if="pages.isRight" v-on:click="getMapsByPage(pages.currentPage + 1,$event)"><a>&raquo;</a></li>
+        </ul>
+      </div>
     </div>
+
 
     <!--拖拽浮窗-->
     <div id="dragDiv"
@@ -148,6 +162,13 @@
         currentFile:{     //当前选中的文件
           type:"folder",
           index:0
+        },
+        pages:{           //分页信息
+          currentPage:0,
+          isLeft:false,
+          isRight:true,
+          pages:[1],
+          total:20
         }
       }
     },
@@ -209,6 +230,7 @@
         console.log("Click the folder " + this.folderNames[index].name);
         //更新路径
         this.folderPathName.push(this.folderNames[index].name);
+        this.pages.currentPage = 0;
 
         //把当前文件夹编号存入历史路径中
         var folderId = this.folderNames[index].id;
@@ -250,27 +272,9 @@
       },
 
       /*地图事件*/
-      getMaps: function (ID) {
+      getMaps: function (ID,event) {
+        this.getMapsByPage(this.pages.currentPage,event);
         //this.mapNames = [{name:"map1"},{name:"map2"}];  //模拟数据，仅用作测试
-        this.$http.get('http://wb.lab-sse.cn/map/maps/accountidandfolderid?accountId=1&folderId=' + ID,
-          {
-            emulateJSON: true
-          }
-        ).then(function (response) {
-          var responseBody = response.body
-          if (responseBody.code === 200) {
-            this.mapNames = responseBody.data;
-
-            //更改时间格式
-            var len = this.mapNames.length;
-            for(var i = 0;i < len; i++){
-              var time = new Date(this.mapNames[i].create_time);
-              this.mapNames[i].create_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
-              time = new Date(this.mapNames[i].update_time);
-              this.mapNames[i].update_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
-            }
-          }
-        });
       },
       createMap: function (event) {
         //弹出对话框并获取地图名
@@ -541,6 +545,8 @@
           //获取内容
           this.folderPath.splice(len - 1);
           len = this.folderPath.length;
+
+          this.pages.currentPage = 0;
           this.getFolders(this.folderPath[len - 1]);
           this.getMaps(this.folderPath[len - 1]);
         }
@@ -631,6 +637,86 @@
 
         this.getFolders(this.folderPath[index + 1]);
         this.getMaps(this.folderPath[index + 1]);
+      },
+
+      /*分页事件*/
+      getMapsByPage:function(index,event){
+        //计算实际页数和父文件夹ID
+        var page = this.pages.pages.length > index ? this.pages.pages[index] : 1;
+        var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
+
+        //访问后端获取地图数据
+        this.$http.get('http://wb.lab-sse.cn/map/maps/accountidandfolderidandpageid?accountId=1&folderId=' + folderId + '&pageId=' + page,
+          {
+            emulateJSON: true
+          }
+        ).then(function (response) {
+          var responseBody = response.body
+          if (responseBody.code === 200) {
+            this.mapNames = responseBody.data.map;
+            if(this.mapNames.length == 0 && page > 1)this.getMapsByPage(index - 1,event);
+            this.pages.total = responseBody.data.pageNum;
+
+            //更改时间格式
+            var len = this.mapNames.length;
+            for(var i = 0;i < len; i++){
+              var time = new Date(this.mapNames[i].create_time);
+              this.mapNames[i].create_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+              time = new Date(this.mapNames[i].update_time);
+              this.mapNames[i].update_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+            }
+
+            //如果页面总数小于等于1，则格式化pages属性
+            if(this.pages.total <= 1){
+              this.pages.pages = [1];
+              this.pages.isRight = false;
+              this.pages.isLeft = false;
+              return;
+            }
+
+            //更新当前被选中页
+            this.pages.currentPage = index;
+
+            //如果选中的是第一页，要么更新目录结构，要么取消左箭头
+            if(index == 0){
+              if(this.pages.pages[0] == 1)this.pages.isLeft = false;
+              else this.pages.isLeft = true;
+
+              //更新目录结构
+              var begin = page - 5 > 0 ? page - 5 : 1;        //分页栏起始页面
+              var end = 9 + begin > this.pages.total ? this.pages.total : 9 + begin;  //分页栏结束页面
+              this.pages.currentPage = page - begin
+              this.pages.pages = [];
+              for(var i = begin; i <= end;i++){
+                this.pages.pages.push(i);
+              }
+            }
+            else{
+              this.pages.isLeft = true;
+            }
+
+            //如果选中的是最后一页，要么更新目录结构，要么取消右箭头
+            var len = this.pages.pages.length;
+            if(index + 1 == len ){
+              if(this.pages.pages[len - 1] == this.pages.total) this.pages.isRight = false;
+              else this.pages.isRight = true;
+
+              //更新目录结构
+              var end = page + 4 > this.pages.total ? this.pages.total : page + 4; //分页栏结束页面
+              var begin = end - 9 > 0 ? end - 9 : 1;        //分页栏起始页面
+              this.pages.currentPage = page - begin
+              this.pages.pages = [];
+              for(var i = begin; i <= end;i++){
+                this.pages.pages.push(i);
+              }
+
+            }
+            else{
+              this.pages.isRight = true;
+            }
+
+          }
+        });
       }
     },
     mounted(){
