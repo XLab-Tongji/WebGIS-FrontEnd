@@ -273,6 +273,7 @@
 .name-folder{
   line-height:40px;
   cursor:pointer;
+  overflow: visible;
 }
 
 /*列表模式*/

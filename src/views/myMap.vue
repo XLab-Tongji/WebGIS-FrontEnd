@@ -4,8 +4,8 @@
     <!--顶部按钮条-->
     <div class="row btns white-bg ">
       <div class="col-lg-12 btn-content">
-        <button type="button" class="btn btn-primary" id="showtoast" v-on:click="createMap">Create Map</button>
-        <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolder">Create Folder</button>
+        <button type="button" class="btn btn-primary" id="showtoast" v-on:click="createMapInit" data-toggle="modal" data-target="#popup">Create Map</button>
+        <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolderInit" data-toggle="modal" data-target="#popup">Create Folder</button>
         <button type="button" class="btn btn-white" id="back-btn" v-on:click="back"
                 v-on:mouseup="dragBack($event)"></button>
         <button type="button" class="btn btn-white" v-bind:class="{list:!isList,thum:isList}" id="clearlasttoast"
@@ -83,10 +83,10 @@
             <td class="tList listTime" v-on:click="folderClick(index,$event)">{{ folderName.create_time }}</td>
             <td class="tList listTime" v-on:click="folderClick(index,$event)">{{ folderName.update_time }}</td>
             <td class="tList listBtn">
-              <div class="renameList" v-on:click="folderRename(index,$event)"></div>
+              <div class="renameList" v-on:click="RenameList('folder',index,$event)"   data-toggle="modal" data-target="#popup"></div>
             </td>
             <td class="tList listBtn">
-              <div class="deleteList" v-on:click="deleteFolder(index,$event)"></div>
+              <div class="deleteList" v-on:click="DeleteList('folder',index,$event)"   data-toggle="modal" data-target="#popup"></div>
             </td>
           </tr>
 
@@ -100,10 +100,10 @@
             <td class="tList listTime">{{ mapName.create_time }}</td>
             <td class="tList listTime">{{ mapName.update_time }}</td>
             <td class="tList listBtn">
-              <div class="renameList" v-on:click="mapRename(index,$event)"/>
+              <div class="renameList" v-on:click="RenameList('map',index,$event)"   data-toggle="modal" data-target="#popup"/>
             </td>
             <td class="tList listBtn">
-              <div class="deleteList" v-on:click="deleteMap(index,$event)"/>
+              <div class="deleteList" v-on:click="DeleteList('map',index,$event)"   data-toggle="modal" data-target="#popup"/>
             </td>
           </tr>
         </table>
@@ -129,9 +129,30 @@
 
     <!--文件操作列表-->
     <ul class="op-list" v-on:mouseleave="hideOpList($event)">
-      <li v-on:click="Rename($event)"><img src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
-      <li v-on:click="Delete($event)"><img src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
+      <li v-on:click="Rename($event)"  data-toggle="modal" data-target="#popup"><img src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
+      <li v-on:click="Delete($event)" data-toggle="modal" data-target="#popup"><img src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
     </ul>
+
+    <!--通用弹出框-->
+    <div class="modal fade" id="popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">{{ popup.title }}</h4>
+          </div>
+          <div class="modal-body">
+            <input v-if="popup.type != 'delete'" class = "form-control" v-model="popup.input" v-bind:placeholder="popup.msg"/>
+            <p v-if="popup.type == 'delete'">{{ popup.msg }}</p>
+            <label>{{ popup.errorMsg }}</label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">&nbsp;取消&nbsp;</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="popupConfirm($event)">&nbsp;确认&nbsp;</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 
@@ -169,6 +190,13 @@
           isRight:true,
           pages:[1],
           total:20
+        },
+        popup:{         //弹出框相关信息
+          type:"",
+          title:"",
+          msg:"",
+          errorMsg:"",
+          input:""
         }
       }
     },
@@ -196,35 +224,28 @@
           }
         });
       },
-      createFolder: function (event) {
-        //弹出对话框并获取文件夹名
-        var newIndex = this.folderNames.length + 1;
-        var newFolder = prompt("Input your folder name:", "folder" + newIndex);
-
-        //获取创建文件夹的父文件夹编号
-        var len = this.folderPath.length;
-        var parentFolder = this.folderPath[len - 1];
-
-        //如果文件夹名符合规范，则向后端请求创建文件夹
-        if (newFolder != null && newFolder != "") {
-          console.log("try to create a new folder");
-          this.$http.post('http://wb.lab-sse.cn/folder/folders',
-            {
-              "accountId": this.accoundId,
-              "name": newFolder,
-              "upper_folder": parentFolder
-            }
-          ).then(function (response) {
-            console.log("get a response after create a folder");
-            var responseBody = response.body;
-            if (responseBody.code === 200 && responseBody.message == "successful") {
-              this.getFolders(parentFolder);    //更新界面
-            }
-            else {
-              alert("Fail to create a new folder!");
-            }
-          });
-        }
+      createFolderInit: function (event) {
+        this.popup.type = "folder";
+        this.popup.title = "Create Folder";
+        this.popup.msg = "please input your folder name";
+      },
+      createFolder:function(name,parentFolder,event){
+        this.$http.post('http://wb.lab-sse.cn/folder/folders',
+          {
+            "accountId": this.accoundId,
+            "name": name,
+            "upper_folder": parentFolder
+          }
+        ).then(function (response) {
+          console.log("get a response after create a folder");
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            this.getFolders(parentFolder);    //更新界面
+          }
+          else {
+            alert("Fail to create a new folder!");
+          }
+        });
       },
       folderClick: function (index, event) {
         console.log("Click the folder " + this.folderNames[index].name);
@@ -243,32 +264,26 @@
         console.log("Get the folders and maps");
       },
       deleteFolder: function (index,event) {
-        if (confirm("Do you really want to delete the folder: \n     " + this.folderNames[index].name)) {
-          this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
-            {
-              emulateJSON: true
-            }).then(function (response) {
-            console.log("delete folder " + this.folderNames[index].id + "successful");
-            var len = this.folderPath.length;
-            this.getFolders(this.folderPath[len - 1]);
-          });
-        }
+        this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
+          {
+            emulateJSON: true
+          }).then(function (response) {
+          console.log("delete folder " + this.folderNames[index].id + "successful");
+          var len = this.folderPath.length;
+          this.getFolders(this.folderPath[len - 1]);
+        });
       },
-      folderRename: function (index,event) {
-        var newFolder = prompt("Input new folder name:", this.folderNames[index].name);
-        var len = this.folderPath.length;
-        if (newFolder != null && newFolder != "") {
-          this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
-            {
-              emulateJSON: true,
-              id: this.folderNames[index].id,
-              name: newFolder,
-              upper_folder: this.folderPath[len - 1],
-              accoundId: this.accoundId
-            }).then(function (response) {
-            this.getFolders(this.folderPath[len - 1]);
-          });
-        }
+      folderRename:function(name,event){
+        this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+          {
+            emulateJSON: true,
+            id: this.folderNames[this.currentFile.index].id,
+            name: name,
+            upper_folder: this.folderPath[this.folderPath.length - 1],
+            accoundId: this.accoundId
+          }).then(function (response) {
+          this.getFolders(this.folderPath[this.folderPath.length - 1]);
+        });
       },
 
       /*地图事件*/
@@ -276,66 +291,53 @@
         this.getMapsByPage(this.pages.currentPage,event);
         //this.mapNames = [{name:"map1"},{name:"map2"}];  //模拟数据，仅用作测试
       },
-      createMap: function (event) {
-        //弹出对话框并获取地图名
-        var newIndex = this.mapNames.length + 1;
-        var newMap = prompt("Input your map name:", "map" + newIndex);
-
-        //获取创建地图的父文件夹编号
-        var len = this.folderPath.length;
-        var parentFolder = this.folderPath[len - 1];
-
-        //如果地图名符合规范，则向后端请求创建文件夹
-        if (newMap != null && newMap != "") {
-          console.log("try to create a new map");
-          this.$http.post('http://wb.lab-sse.cn/map/maps',
-            {
-              "accountId": this.accoundId,
-              "name": newMap,
-              "folder": parentFolder
-            }
-          ).then(function (response) {
-            console.log("get a response after create a map");
-            var responseBody = response.body;
-            if (responseBody.code === 200 && responseBody.message == "successful") {
-              this.getMaps(parentFolder);    //更新界面
-            }
-            else {
-              alert("Fail to create a new map!");
-            }
-          });
-        }
+      createMapInit: function (event) {
+        this.popup.type = "map";
+        this.popup.title = "Create Map";
+        this.popup.msg = "please input your map name";
+      },
+      createMap:function(name,parentFolder,event){
+        this.$http.post('http://wb.lab-sse.cn/map/maps',
+          {
+            "accountId": this.accoundId,
+            "name": name,
+            "folder": parentFolder
+          }
+        ).then(function (response) {
+          console.log("get a response after create a map");
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            this.getMaps(parentFolder);    //更新界面
+          }
+          else {
+            alert("Fail to create a new map!");
+          }
+        });
       },
       mapClick: function (index, event) {
         this.$router.push({name: 'google', params: {mapId: this.mapNames[index].id}});
 //        alert("you click the " + this.mapNames[index].name + this.mapNames[index].id);
       },
-      deleteMap: function (index, event) {
-        if (confirm("Do you really want to delete the map: \n     " + this.mapNames[index].name)) {
-          this.$http.delete("http://wb.lab-sse.cn/map/maps/id?mapId=" + this.mapNames[index].id,
-            {
-              emulateJSON: true
-            }).then(function (response) {
-            var len = this.folderPath.length;
-            this.getMaps(this.folderPath[len - 1]);
-          });
-        }
+      mapRename:function(name,event){
+        this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+          {
+            emulateJSON: true,
+            id: this.mapNames[this.currentFile.index].id,
+            name: name,
+            folder: this.folderPath[this.folderPath.length - 1],
+            accoundId: this.accoundId
+          }).then(function (response) {
+          this.getMaps(this.folderPath[this.folderPath.length - 1]);
+        });
       },
-      mapRename: function (index, event) {
-        var newMap = prompt("Input new map name:", this.mapNames[index].name);
-        var len = this.folderPath.length;
-        if (newMap != null && newMap != "") {
-          this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
-            {
-              emulateJSON: true,
-              id: this.mapNames[index].id,
-              name: newMap,
-              folder: this.folderPath[len - 1],
-              accoundId: this.accoundId
-            }).then(function (response) {
-            this.getMaps(this.folderPath[len - 1]);
-          });
-        }
+      deleteMap: function (index, event) {
+        this.$http.delete("http://wb.lab-sse.cn/map/maps/id?mapId=" + this.mapNames[index].id,
+          {
+            emulateJSON: true
+          }).then(function (response) {
+          var len = this.folderPath.length;
+          this.getMaps(this.folderPath[len - 1]);
+        });
       },
       mapMouseEnter:function(index,event){
         $(".op-map").eq(index).css("display","block");
@@ -383,7 +385,6 @@
           //二次确认是否移入文件夹
           if (confirm("是否确定将 " + (this.draged.type == "folder" ? this.folderNames[this.draged.index].name : this.mapNames[this.draged.index].name) + " 移入" + this.folderNames[index].name)) {
             var len = this.folderPath.length;
-
             //修改目录
             if (this.draged.type == "map") {
               this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
@@ -599,20 +600,30 @@
         $(".img-box-map").css("margin-top","0px");
       },
       Rename:function(event){
-        if(this.currentFile.type == "folder"){
-          this.folderRename(this.currentFile.index,event);
-        }
-        else if(this.currentFile.type == "map"){
-          this.mapRename(this.currentFile.index,event);
-        }
+        this.popup.type = "rename";
+        this.popup.title = "Rename";
+        this.popup.msg = "please input the new name";
       },
       Delete:function(event){
-        if(this.currentFile.type == "folder"){
-          this.deleteFolder(this.currentFile.index,event);
-        }
-        else if(this.currentFile.type == "map"){
-          this.deleteMap(this.currentFile.index,event);
-        }
+        this.popup.type = "delete";
+        this.popup.title = "Delete";
+        var name = this.currentFile.type == "folder" ? this.folderNames[this.currentFile.index].name : this.mapNames[this.currentFile.index].name;
+        this.popup.msg = "Do you really want to delete the " + name;
+      },
+      RenameList:function(type,index,event){
+        this.currentFile.type = type;
+        this.currentFile.index = index;
+        this.popup.type = "rename";
+        this.popup.title = "Rename";
+        this.popup.msg = "please input the new name";
+      },
+      DeleteList:function(type,index,event){
+        this.currentFile.type = type;
+        this.currentFile.index = index;
+        this.popup.type = "delete";
+        this.popup.title = "Delete";
+        var name = this.currentFile.type == "folder" ? this.folderNames[this.currentFile.index].name : this.mapNames[this.currentFile.index].name;
+        this.popup.msg = "Do you really want to delete the " + name;
       },
 
       /*文件路径事件*/
@@ -717,6 +728,46 @@
 
           }
         });
+      },
+
+      /*弹出框确认*/
+      popupConfirm:function(event){
+
+        var name = this.popup.input;                    //用户输入信息
+        var len = this.folderPath.length;               //文件路径长度
+        var parentFolder = this.folderPath[len - 1];
+
+        //创建地图文件
+        if(this.popup.type == "map" && name != null && name != ""){
+          this.createMap(name,parentFolder,event);
+        }
+
+        //创建文件夹
+        else if(this.popup.type == "folder" && name != null && name != ""){
+          this.createFolder(name,parentFolder,event);
+        }
+
+        //重命名
+        else if(this.popup.type == "rename"){
+          if(this.currentFile.type == "folder" && name != null && name != ""){
+              this.folderRename(name,event);
+          }
+          else if(this.currentFile.type == "map" && name != null && name != ""){
+              this.mapRename(name,event);
+          }
+        }
+
+        //删除
+        else if(this.popup.type == "delete"){
+          if(this.currentFile.type == "folder"){
+            this.deleteFolder(this.currentFile.index,event);
+          }
+          else if(this.currentFile.type == "map"){
+            this.deleteMap(this.currentFile.index,event);
+          }
+        }
+
+        this.popup.input = "";
       }
     },
     mounted(){
