@@ -10,6 +10,7 @@
         <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolderInit" data-toggle="modal"
                 data-target="#popup">Create Folder
         </button>
+        <button type="button" class="btn btn-white" id="check-icon" v-on:click="checkIconClick($event)"></button>
         <button type="button" class="btn btn-white" id="back-btn" v-on:click="back"
                 v-on:mouseup="dragBack($event)"></button>
         <button type="button" class="btn btn-white" v-bind:class="{list:!isList,thum:isList}" id="clearlasttoast"
@@ -58,6 +59,7 @@
               <img class="map-img" src="../assets/images/myMap/myMap.jpg">
             </div>
             <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
+            <div class="checkBox-map" v-if="isCheck"><input type="checkbox" v-on:click="checkBoxCLick('map',index,$event)"/></div>
             <div class="op-map" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"
                  v-on:mouseleave="opMapMouseLeave(index,$event)">
               <img class="op-icon" src="../assets/images/myMap/op-icon.png">
@@ -70,7 +72,7 @@
       <div class="row" v-if="isList">
         <table id="listTable">
           <tr>
-            <td class="thead"><input type="checkbox"/></td>
+            <td class="thead"><input v-if="isCheck" id = "checkBoxAll" type="checkbox" v-on:click="checkBoxAllClick($event)"/></td>
             <td class="thead">Name</td>
             <td class="thead">Create Time</td>
             <td class="thead">Latest Change Time</td>
@@ -80,7 +82,7 @@
 
           <!--文件夹-->
           <tr v-for="(folderName,index) in folderNames">
-            <td><input type="checkbox"/></td>
+            <td class="tList listBox"></td>
             <td class="tList listName" v-on:click="folderClick(index,$event)"
                 v-on:mousedown="fileMouseDown('folder',index,$event)" v-on:mouseup="fileMouseUp(index,$event)">
               <img class="folder-img-list" src="../assets/images/myMap/folder-icon.png"/>{{ folderName.name }}
@@ -99,7 +101,7 @@
 
           <!--文件-->
           <tr v-for="(mapName,index) in mapNames">
-            <td><input type="checkbox"/></td>
+            <td class="tList listBox"><div class="checkBox-map" v-if="isCheck"><input type="checkbox" v-on:click="checkBoxCLick('map',index,$event)"/></div></td>
             <td class="tList listName" v-on:click="mapClick(index,$event)"
                 v-on:mousedown="fileMouseDown('map',index,$event)">
               <img class="map-img-list" src="../assets/images/myMap/map-icon.png"/>{{ mapName.name }}
@@ -134,7 +136,7 @@
     <!--拖拽浮窗-->
     <div id="dragDiv"
          v-bind:style="{ left: dragDiv.dragLeft + 'px', top: dragDiv.dragTop + 'px',display:draged.isdrag ? 'block' : 'none' }">
-      <label>{{ dragDiv.dragValue }}</label>
+      <label><pre>{{ dragDiv.dragValue }}</pre></label>
     </div>
 
     <!--文件操作列表-->
@@ -186,7 +188,9 @@
         draged: {          //辅助拖拽功能
           isdrag: false,  //是否正在拖拽
           type: "",        //被拖拽的文件类型
-          index: 0         //被拖拽的文件序号
+          index:0,         //最后被选中的文件序号
+          mapIndex: [] ,        //被拖拽的文件序号
+          folderIndex: []         //被拖拽的文件夹序号
         },
         dragDiv: {         //拖拽浮窗
           move: false,     //按下鼠标等待1s才能移动
@@ -211,12 +215,16 @@
           msg: "",
           errorMsg: "",
           input: ""
-        }
+        },
+        isCheck:false    //判断是否是批处理
       }
     },
     methods: {
       /*文件夹事件*/
       getFolders: function (ID) {
+        this.isCheck = false;
+        this.draged.mapIndex = [];
+        this.draged.folderIndex = [];
         //this.folderNames = [{name:"folder1"},{name:"folder2"}];   //模拟数据，仅用作测试
         this.$http.get('http://wb.lab-sse.cn/folder/folders/accountidandupperfolder?accountId=1&upperFolder=' + ID,
           {
@@ -313,29 +321,42 @@
         });
       },
       moveFolder:function(folderId,folderName,event){
+        this.isCheck = false;
         if(folderName == "")folderName = "parent folder";
-        this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
-          {
-            emulateJSON: true,
-            id: this.folderNames[this.draged.index].id,
-            name: this.folderNames[this.draged.index].name,
-            upper_folder: folderId,
-            accoundId: this.accoundId
-          }).then(function (response) {
+        //拖拽文件夹
+        var names = []
+        for(var i = 0;i < this.draged.folderIndex.length;i++){
+          names.push(this.folderNames[this.draged.folderIndex[i]].name);
+          this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+            {
+              emulateJSON: true,
+              id: this.folderNames[this.draged.folderIndex[i]].id,
+              name: this.folderNames[this.draged.folderIndex[i]].name,
+              upper_folder: folderId,
+              accoundId: this.accoundId
+            }).then(function (response) {
             console.log(response);
-          var responseBody = response.body;
-          if (responseBody.code === 200 && responseBody.message == "successful") {
-            this.getFolders(this.folderPath[this.folderPath.length - 1]);
-            this.msgResult("success", "Successful to move the folder " + this.folderNames[this.draged.index].name + " to " + folderName + "!");
-          }
-          else {
-            this.msgResult("error", "Failed to move the folder " + this.folderNames[this.draged.index].name + " to " + folderName + "!");
-          }
-        });
+            var responseBody = response.body;
+            if (responseBody.code === 200 && responseBody.message == "successful") {
+              this.getFolders(this.folderPath[this.folderPath.length - 1]);
+              this.msgResult("success", "Successful to move the folder " + names[0] + " to " + folderName + "!");
+            }
+            else {
+              this.msgResult("error", "Failed to move the folder " + names[0] + " to " + folderName + "!");
+            }
+            names.splice(0,1);
+          });
+        }
+
+        //清空选中列表
+        this.draged.folderIndex = [];
       },
 
       /*地图事件*/
       getMaps: function (ID, event) {
+        this.isCheck = false;
+        this.draged.mapIndex = [];
+        this.draged.folderIndex = [];
         this.getMapsByPage(this.pages.currentPage, event);
         //this.mapNames = [{name:"map1"},{name:"map2"}];  //模拟数据，仅用作测试
       },
@@ -411,24 +432,34 @@
         $(".img-box-map").eq(index).css("margin-top", "0px");
       },
       moveMap:function(folderId,folderName,event){
+        this.isCheck = false;
         if(folderName == "")folderName = "parent folder";
-        this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
-          {
-            emulateJSON: true,
-            id: this.mapNames[this.draged.index].id,
-            name: this.mapNames[this.draged.index].name,
-            folder: folderId,
-            accoundId: this.accoundId
-          }).then(function (response) {
-          var responseBody = response.body;
-          if (responseBody.code === 200 && responseBody.message == "successful") {
-            this.getMaps(this.folderPath[this.folderPath.length - 1]);
-            this.msgResult("success", "Successful to move the map " + this.mapNames[this.draged.index].name + " to " + folderName + "!");
-          }
-          else {
-            this.msgResult("error", "Failed to move the map " + this.mapNames[this.draged.index].name + " to " + folderName + "!");
-          }
-        });
+        //拖拽文件
+        var names = []
+        for(var i = 0;i < this.draged.mapIndex.length;i++){
+          names.push(this.mapNames[this.draged.mapIndex[i]].name);
+          this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+            {
+              emulateJSON: true,
+              id: this.mapNames[this.draged.mapIndex[i]].id,
+              name: this.mapNames[this.draged.mapIndex[i]].name,
+              folder: folderId,
+              accoundId: this.accoundId
+            }).then(function (response) {
+            var responseBody = response.body;
+            if (responseBody.code === 200 && responseBody.message == "successful") {
+              this.getMaps(this.folderPath[this.folderPath.length - 1]);
+              this.msgResult("success", "Successful to move the map " + names[0] + " to " + folderName + "!");
+            }
+            else {
+              this.msgResult("error", "Failed to move the map " + names[0] + " to " + folderName + "!");
+            }
+            names.splice(0,1);
+          });
+
+        }
+        //清空选中列表
+        this.draged.mapIndex = [];
       },
 
       /*拖拽事件*/
@@ -437,14 +468,20 @@
         //设置选中属性
         this.draged.type = type;
         this.draged.index = index;
+        if(type == "folder" && this.draged.folderIndex.indexOf(index) == -1)this.draged.folderIndex.push(index);
+        else if(type == "map" && this.draged.mapIndex.indexOf(index) == -1 )this.draged.mapIndex.push(index);
         this.draged.isdrag = true;
 
         //500ms后如果还是选中状态，则修改样式
         function changeStatus(outThis) {
           if (outThis.draged.isdrag == true && outThis.draged.type == type && outThis.draged.index == index) {
             //修改被选中模块的样式
-            var eq = type == "folder" ? index : outThis.folderNames.length + index;
-            $(".ibox").eq(eq).css("opacity", "0.5");
+            for(var i = 0;i < outThis.draged.folderIndex.length;i++){
+              $(".ibox").eq(outThis.draged.folderIndex[i]).css("opacity", "0.5");
+            }
+            for(var i = 0;i < outThis.draged.mapIndex.length;i++){
+              $(".ibox").eq(outThis.folderNames.length + outThis.draged.mapIndex[i]).css("opacity", "0.5");
+            }
 
             //修改窗口鼠标形状
             $("body").css("cursor", "move");
@@ -455,23 +492,34 @@
         setTimeout(changeStatus, 200, this);
 
         //隐藏拖拽浮窗，只有移动超过5个像素点才会显示
-        this.dragDiv.dragValue = type == "folder" ? this.folderNames[index].name : this.mapNames[index].name;
+        var msg = "";
+        for(var i = 0;i < this.draged.folderIndex.length;i++){
+          msg += "<" + this.folderNames[this.draged.folderIndex[i]].name + ">";
+          if(i != this.draged.folderIndex.length - 1)msg += ",";
+        }
+        if(this.draged.folderIndex.length > 0)msg += "\n"
+        for(var i = 0;i < this.draged.mapIndex.length;i++){
+          msg += this.mapNames[this.draged.mapIndex[i]].name;
+          if(i != this.draged.mapIndex.length - 1)msg += ",";
+        }
+        console.log(msg);
+        this.dragDiv.dragValue = msg;
         this.dragDiv.dragLeft = -100;
         this.dragDiv.dragTop = -100;
       },
       fileMouseUp: function (index, event) {
         console.log("Mouse up on folder " + this.folderNames[index].name);
         if (this.draged.isdrag == true && (this.draged.type == "map" || this.draged.index != index)) {
-          //清除拖拽属性
-          this.clearDrop();
-
           //修改目录
-          if (this.draged.type == "map") this.moveMap(this.folderNames[index].id,this.folderNames[index].name,event);
-          else if (this.draged.type == "folder")this.moveFolder(this.folderNames[index].id,this.folderNames[index].name,event);
+          this.moveMap(this.folderNames[index].id,this.folderNames[index].name,event);
+          this.moveFolder(this.folderNames[index].id,this.folderNames[index].name,event);
         }
+        //清除拖拽属性
+        this.clearDrop();
       },
       fileMouseEnter: function (index, event) {
         if (this.draged.isdrag == true) {
+          if(this.draged.type == "folder" && this.draged.index == index)return;
           $(".ibox").eq(index).css("border", "2px dotted");
           $(".ibox").eq(index).css("opacity", "0.7");
           $(".ibox").eq(index).find(".img-box").css("cursor", "default");
@@ -485,6 +533,7 @@
         }
       },
       fileMouseLeave: function (index, event) {
+        if(this.draged.type == "folder" && this.draged.index == index)return;
         if ($(".op-list").css("display") == "none")$(".op").eq(index).css("display", "none");
         $(".ibox").eq(index).css("border", "none");
         $(".ibox").eq(index).css("opacity", "1");
@@ -494,15 +543,13 @@
       },
       dragBack: function (event) {
         if (this.draged.isdrag == true) {
-          console.log("move type " + this.draged.type + " index " + this.draged.index + " to upper folder");
-          this.clearDrop();
-
           //修改目录
           var len = this.folderPath.length;
           var parentFolder = len <= 1 ? 0 : this.folderPath[len - 2];
-          if (this.draged.type == "map") this.moveMap(parentFolder,"",event);
-          else if (this.draged.type == "folder") this.moveFolder(parentFolder,"",event);
+          this.moveMap(parentFolder,"",event);
+          this.moveFolder(parentFolder,"",event);
         }
+        this.clearDrop();
       },
       clearDrop: function () {
         //修改窗口鼠标样式
@@ -510,7 +557,24 @@
 
         //取消拖拽属性
         this.draged.isdrag = false;
+        this.draged.index = 0;
         this.dragDiv.move = false;
+
+        //重新计算被选中文件
+        this.draged.mapIndex = [];
+        this.draged.folderIndex = [];
+        var mapBoxes = $(".checkBox-map input");
+        for(var i = 0;i < mapBoxes.length;i++){
+          if(mapBoxes.eq(i).is(':checked')){
+            this.draged.mapIndex.push(i);
+          }
+        }
+        /*var folderBoxes = $(".checkBox-folder input");
+        for(var i = 0;i < folderBoxes.length;i++){
+          if(folderBoxes.eq(i).is(':checked')){
+            this.draged.folderIndex.push(i);
+          }
+        }*/
 
         $(".ibox").css("opacity", "1");
       },
@@ -659,6 +723,31 @@
         this.popup.msg = "Do you really want to delete the " + name;
       },
 
+      /*批处理事件*/
+      checkIconClick:function(event){
+        this.isCheck = this.isCheck == true ? false : true;
+        this.draged.mapIndex = [];
+        this.draged.folderIndex = [];
+      },
+      checkBoxCLick:function(type,index,event){
+        if(type == "map"){
+          if(this.draged.mapIndex.indexOf(index) == -1)this.draged.mapIndex.push(index);
+          else this.draged.mapIndex.splice(this.draged.mapIndex.indexOf(index),1);
+        }
+      },
+      checkBoxAllClick:function(event){
+        if($("#checkBoxAll").is(':checked')){
+          $(".checkBox-map input").attr("checked","true");
+          this.clearDrop();
+        }
+        else{
+          $(".checkBox-map input").prop("checked",function(){
+            return false;
+          });
+          this.clearDrop();
+        }
+      },
+
       /*文件路径事件*/
       RootClick: function (event) {
         this.folderPathName = [];
@@ -685,6 +774,10 @@
 
       /*分页事件*/
       getMapsByPage: function (index, event) {
+        this.isCheck = false;
+        this.draged.mapIndex = [];
+        this.draged.folderIndex = [];
+
         //计算实际页数和父文件夹ID
         var page = this.pages.pages.length > index ? this.pages.pages[index] : 1;
         var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
