@@ -4,8 +4,12 @@
     <!--顶部按钮条-->
     <div class="row btns white-bg ">
       <div class="col-lg-12 btn-content">
-        <button type="button" class="btn btn-primary" id="showtoast" v-on:click="createMapInit" data-toggle="modal" data-target="#popup">Create Map</button>
-        <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolderInit" data-toggle="modal" data-target="#popup">Create Folder</button>
+        <button type="button" class="btn btn-primary" id="showtoast" v-on:click="createMapInit" data-toggle="modal"
+                data-target="#popup">Create Map
+        </button>
+        <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolderInit" data-toggle="modal"
+                data-target="#popup">Create Folder
+        </button>
         <button type="button" class="btn btn-white" id="back-btn" v-on:click="back"
                 v-on:mouseup="dragBack($event)"></button>
         <button type="button" class="btn btn-white" v-bind:class="{list:!isList,thum:isList}" id="clearlasttoast"
@@ -49,7 +53,8 @@
         <div class="ibox-div-map">
           <div class="ibox ibox-map" v-for="(mapName,index) in mapNames">
             <div class="img-box img-box-map" v-on:click="mapClick(index,$event)"
-                 v-on:mousedown="fileMouseDown('map',index,$event) " v-on:mouseenter="mapMouseEnter(index,$event)" v-on:mouseleave="mapMouseLeave(index,$event)">
+                 v-on:mousedown="fileMouseDown('map',index,$event) " v-on:mouseenter="mapMouseEnter(index,$event)"
+                 v-on:mouseleave="mapMouseLeave(index,$event)">
               <img class="map-img" src="../assets/images/myMap/myMap.jpg">
             </div>
             <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
@@ -74,7 +79,7 @@
           </tr>
 
           <!--文件夹-->
-          <tr v-for="(folderName,index) in folderNames" >
+          <tr v-for="(folderName,index) in folderNames">
             <td><input type="checkbox"/></td>
             <td class="tList listName" v-on:click="folderClick(index,$event)"
                 v-on:mousedown="fileMouseDown('folder',index,$event)" v-on:mouseup="fileMouseUp(index,$event)">
@@ -83,10 +88,12 @@
             <td class="tList listTime" v-on:click="folderClick(index,$event)">{{ folderName.create_time }}</td>
             <td class="tList listTime" v-on:click="folderClick(index,$event)">{{ folderName.update_time }}</td>
             <td class="tList listBtn">
-              <div class="renameList" v-on:click="RenameList('folder',index,$event)"   data-toggle="modal" data-target="#popup"></div>
+              <div class="renameList" v-on:click="RenameList('folder',index,$event)" data-toggle="modal"
+                   data-target="#popup"></div>
             </td>
             <td class="tList listBtn">
-              <div class="deleteList" v-on:click="DeleteList('folder',index,$event)"   data-toggle="modal" data-target="#popup"></div>
+              <div class="deleteList" v-on:click="DeleteList('folder',index,$event)" data-toggle="modal"
+                   data-target="#popup"></div>
             </td>
           </tr>
 
@@ -100,10 +107,12 @@
             <td class="tList listTime">{{ mapName.create_time }}</td>
             <td class="tList listTime">{{ mapName.update_time }}</td>
             <td class="tList listBtn">
-              <div class="renameList" v-on:click="RenameList('map',index,$event)"   data-toggle="modal" data-target="#popup"/>
+              <div class="renameList" v-on:click="RenameList('map',index,$event)" data-toggle="modal"
+                   data-target="#popup"/>
             </td>
             <td class="tList listBtn">
-              <div class="deleteList" v-on:click="DeleteList('map',index,$event)"   data-toggle="modal" data-target="#popup"/>
+              <div class="deleteList" v-on:click="DeleteList('map',index,$event)" data-toggle="modal"
+                   data-target="#popup"/>
             </td>
           </tr>
         </table>
@@ -114,7 +123,8 @@
       <div class="pages">
         <ul class="pagination">
           <li v-if="pages.isLeft" v-on:click="getMapsByPage(pages.currentPage - 1,$event)"><a>&laquo;</a></li>
-          <li v-if="pages.pages.length > 1" v-bind:class="{pageChoosed:index == pages.currentPage}" v-for="(item,index) in pages.pages" v-on:click="getMapsByPage(index,$event)"><a>{{ item }}</a></li>
+          <li v-if="pages.pages.length > 1" v-bind:class="{pageChoosed:index == pages.currentPage}"
+              v-for="(item,index) in pages.pages" v-on:click="getMapsByPage(index,$event)"><a>{{ item }}</a></li>
           <li v-if="pages.isRight" v-on:click="getMapsByPage(pages.currentPage + 1,$event)"><a>&raquo;</a></li>
         </ul>
       </div>
@@ -129,8 +139,10 @@
 
     <!--文件操作列表-->
     <ul class="op-list" v-on:mouseleave="hideOpList($event)">
-      <li v-on:click="Rename($event)"  data-toggle="modal" data-target="#popup"><img src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
-      <li v-on:click="Delete($event)" data-toggle="modal" data-target="#popup"><img src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
+      <li v-on:click="Rename($event)" data-toggle="modal" data-target="#popup"><img
+        src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
+      <li v-on:click="Delete($event)" data-toggle="modal" data-target="#popup"><img
+        src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
     </ul>
 
     <!--通用弹出框-->
@@ -138,11 +150,13 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel">{{ popup.title }}</h4>
           </div>
           <div class="modal-body">
-            <input v-if="popup.type != 'delete'" class = "form-control" v-model="popup.input" v-bind:placeholder="popup.msg"/>
+            <input v-if="popup.type != 'delete'" class="form-control" v-model="popup.input"
+                   v-bind:placeholder="popup.msg"/>
             <p v-if="popup.type == 'delete'">{{ popup.msg }}</p>
             <label>{{ popup.errorMsg }}</label>
           </div>
@@ -180,23 +194,23 @@
           dragLeft: -100,
           dragTop: -100
         },
-        currentFile:{     //当前选中的文件
-          type:"folder",
-          index:0
+        currentFile: {     //当前选中的文件
+          type: "folder",
+          index: 0
         },
-        pages:{           //分页信息
-          currentPage:0,
-          isLeft:false,
-          isRight:true,
-          pages:[1],
-          total:20
+        pages: {           //分页信息
+          currentPage: 0,
+          isLeft: false,
+          isRight: true,
+          pages: [1],
+          total: 20
         },
-        popup:{         //弹出框相关信息
-          type:"",
-          title:"",
-          msg:"",
-          errorMsg:"",
-          input:""
+        popup: {         //弹出框相关信息
+          type: "",
+          title: "",
+          msg: "",
+          errorMsg: "",
+          input: ""
         }
       }
     },
@@ -215,7 +229,7 @@
 
             //更改时间格式
             var len = this.folderNames.length;
-            for(var i = 0;i < len; i++){
+            for (var i = 0; i < len; i++) {
               var time = new Date(this.folderNames[i].create_time);
               this.folderNames[i].create_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
               time = new Date(this.folderNames[i].update_time);
@@ -229,7 +243,7 @@
         this.popup.title = "Create Folder";
         this.popup.msg = "please input your folder name";
       },
-      createFolder:function(name,parentFolder,event){
+      createFolder: function (name, parentFolder, event) {
         this.$http.post('http://wb.lab-sse.cn/folder/folders',
           {
             "accountId": this.accoundId,
@@ -241,14 +255,15 @@
           var responseBody = response.body;
           if (responseBody.code === 200 && responseBody.message == "successful") {
             this.getFolders(parentFolder);    //更新界面
+            this.msgResult("success", "Successful to create the folder " + name + "!")
           }
           else {
-            alert("Fail to create a new folder!");
+            this.msgResult("error", "Failed to create the folder " + name + "!")
           }
         });
       },
       folderClick: function (index, event) {
-        console.log("Click the folder " + this.folderNames[index].name);
+        //console.log("Click the folder " + this.folderNames[index].name);
         //更新路径
         this.folderPathName.push(this.folderNames[index].name);
         this.pages.currentPage = 0;
@@ -260,20 +275,24 @@
         //获取内容
         this.getFolders(folderId);
         this.getMaps(folderId);
-
-        console.log("Get the folders and maps");
       },
-      deleteFolder: function (index,event) {
+      deleteFolder: function (index, event) {
         this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {
-          console.log("delete folder " + this.folderNames[index].id + "successful");
-          var len = this.folderPath.length;
-          this.getFolders(this.folderPath[len - 1]);
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            console.log("delete folder " + this.folderNames[index].id + " successful");
+            this.getFolders(this.folderPath[this.folderPath.length - 1]);
+            this.msgResult("success", "Successful to delete the folder " + this.folderNames[index].name + "!")
+          }
+          else {
+            this.msgResult("error", "Failed to delete the folder " + this.folderNames[index].name + "!")
+          }
         });
       },
-      folderRename:function(name,event){
+      folderRename: function (name, event) {
         this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
           {
             emulateJSON: true,
@@ -282,13 +301,42 @@
             upper_folder: this.folderPath[this.folderPath.length - 1],
             accoundId: this.accoundId
           }).then(function (response) {
-          this.getFolders(this.folderPath[this.folderPath.length - 1]);
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            console.log("rename folder " + name + " successful");
+            this.getFolders(this.folderPath[this.folderPath.length - 1]);
+            this.msgResult("success", "Successful to rename the folder " + name + "!")
+          }
+          else {
+            this.msgResult("error", "Failed to rename the folder " + name + "!")
+          }
+        });
+      },
+      moveFolder:function(folderId,folderName,event){
+        if(folderName == "")folderName = "parent folder";
+        this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+          {
+            emulateJSON: true,
+            id: this.folderNames[this.draged.index].id,
+            name: this.folderNames[this.draged.index].name,
+            upper_folder: folderId,
+            accoundId: this.accoundId
+          }).then(function (response) {
+            console.log(response);
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            this.getFolders(this.folderPath[this.folderPath.length - 1]);
+            this.msgResult("success", "Successful to move the folder " + this.folderNames[this.draged.index].name + " to " + folderName + "!");
+          }
+          else {
+            this.msgResult("error", "Failed to move the folder " + this.folderNames[this.draged.index].name + " to " + folderName + "!");
+          }
         });
       },
 
       /*地图事件*/
-      getMaps: function (ID,event) {
-        this.getMapsByPage(this.pages.currentPage,event);
+      getMaps: function (ID, event) {
+        this.getMapsByPage(this.pages.currentPage, event);
         //this.mapNames = [{name:"map1"},{name:"map2"}];  //模拟数据，仅用作测试
       },
       createMapInit: function (event) {
@@ -296,7 +344,7 @@
         this.popup.title = "Create Map";
         this.popup.msg = "please input your map name";
       },
-      createMap:function(name,parentFolder,event){
+      createMap: function (name, parentFolder, event) {
         this.$http.post('http://wb.lab-sse.cn/map/maps',
           {
             "accountId": this.accoundId,
@@ -308,9 +356,10 @@
           var responseBody = response.body;
           if (responseBody.code === 200 && responseBody.message == "successful") {
             this.getMaps(parentFolder);    //更新界面
+            this.msgResult("success", "Successful to create the map " + name + "!")
           }
           else {
-            alert("Fail to create a new map!");
+            this.msgResult("error", "Failed to create the map " + name + "!")
           }
         });
       },
@@ -318,7 +367,7 @@
         this.$router.push({name: 'google', params: {mapId: this.mapNames[index].id}});
 //        alert("you click the " + this.mapNames[index].name + this.mapNames[index].id);
       },
-      mapRename:function(name,event){
+      mapRename: function (name, event) {
         this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
           {
             emulateJSON: true,
@@ -327,7 +376,14 @@
             folder: this.folderPath[this.folderPath.length - 1],
             accoundId: this.accoundId
           }).then(function (response) {
-          this.getMaps(this.folderPath[this.folderPath.length - 1]);
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            this.getMaps(this.folderPath[this.folderPath.length - 1]);
+            this.msgResult("success", "Successful to rename the map " + name + "!")
+          }
+          else {
+            this.msgResult("error", "Failed to rename the map " + name + "!")
+          }
         });
       },
       deleteMap: function (index, event) {
@@ -335,17 +391,44 @@
           {
             emulateJSON: true
           }).then(function (response) {
-          var len = this.folderPath.length;
-          this.getMaps(this.folderPath[len - 1]);
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            var len = this.folderPath.length;
+            this.getMaps(this.folderPath[len - 1]);
+            this.msgResult("success", "Successful to delete the map " + this.mapNames[index].name + "!")
+          }
+          else {
+            this.msgResult("error", "Failed to delete the map " + this.mapNames[index].name + "!")
+          }
         });
       },
-      mapMouseEnter:function(index,event){
-        $(".op-map").eq(index).css("display","block");
-        $(".img-box-map").eq(index).css("margin-top","-8px");
+      mapMouseEnter: function (index, event) {
+        $(".op-map").eq(index).css("display", "block");
+        $(".img-box-map").eq(index).css("margin-top", "-8px");
       },
-      mapMouseLeave:function(index,event){
-        $(".op-map").eq(index).css("display","none");
-        $(".img-box-map").eq(index).css("margin-top","0px");
+      mapMouseLeave: function (index, event) {
+        $(".op-map").eq(index).css("display", "none");
+        $(".img-box-map").eq(index).css("margin-top", "0px");
+      },
+      moveMap:function(folderId,folderName,event){
+        if(folderName == "")folderName = "parent folder";
+        this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+          {
+            emulateJSON: true,
+            id: this.mapNames[this.draged.index].id,
+            name: this.mapNames[this.draged.index].name,
+            folder: folderId,
+            accoundId: this.accoundId
+          }).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            this.getMaps(this.folderPath[this.folderPath.length - 1]);
+            this.msgResult("success", "Successful to move the map " + this.mapNames[this.draged.index].name + " to " + folderName + "!");
+          }
+          else {
+            this.msgResult("error", "Failed to move the map " + this.mapNames[this.draged.index].name + " to " + folderName + "!");
+          }
+        });
       },
 
       /*拖拽事件*/
@@ -369,7 +452,7 @@
           }
         }
 
-        setTimeout(changeStatus, 500, this);
+        setTimeout(changeStatus, 200, this);
 
         //隐藏拖拽浮窗，只有移动超过5个像素点才会显示
         this.dragDiv.dragValue = type == "folder" ? this.folderNames[index].name : this.mapNames[index].name;
@@ -382,35 +465,9 @@
           //清除拖拽属性
           this.clearDrop();
 
-          //二次确认是否移入文件夹
-          if (confirm("是否确定将 " + (this.draged.type == "folder" ? this.folderNames[this.draged.index].name : this.mapNames[this.draged.index].name) + " 移入" + this.folderNames[index].name)) {
-            var len = this.folderPath.length;
-            //修改目录
-            if (this.draged.type == "map") {
-              this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
-                {
-                  emulateJSON: true,
-                  id: this.mapNames[this.draged.index].id,
-                  name: this.mapNames[this.draged.index].name,
-                  folder: this.folderNames[index].id,
-                  accoundId: this.accoundId
-                }).then(function (response) {
-                this.getMaps(this.folderPath[len - 1]);
-              });
-            }
-            else if (this.draged.type == "folder") {
-              this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
-                {
-                  emulateJSON: true,
-                  id: this.folderNames[this.draged.index].id,
-                  name: this.folderNames[this.draged.index].name,
-                  upper_folder: this.folderNames[index].id,
-                  accoundId: this.accoundId
-                }).then(function (response) {
-                this.getFolders(this.folderPath[len - 1]);
-              });
-            }
-          }
+          //修改目录
+          if (this.draged.type == "map") this.moveMap(this.folderNames[index].id,this.folderNames[index].name,event);
+          else if (this.draged.type == "folder")this.moveFolder(this.folderNames[index].id,this.folderNames[index].name,event);
         }
       },
       fileMouseEnter: function (index, event) {
@@ -439,36 +496,12 @@
         if (this.draged.isdrag == true) {
           console.log("move type " + this.draged.type + " index " + this.draged.index + " to upper folder");
           this.clearDrop();
-          if (confirm("是否确定将 " + (this.draged.type == "folder" ? this.folderNames[this.draged.index].name : this.mapNames[this.draged.index].name) + " 移到父文件夹")) {
-            var len = this.folderPath.length;
-            var parentFolder = len <= 1 ? 0 : this.folderPath[len - 2];
-            //修改目录
-            if (this.draged.type == "map") {
-              this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
-                {
-                  emulateJSON: true,
-                  id: this.mapNames[this.draged.index].id,
-                  name: this.mapNames[this.draged.index].name,
-                  folder: parentFolder,
-                  accoundId: this.accoundId
-                }).then(function (response) {
-                this.getMaps(this.folderPath[len - 1]);
-              });
-            }
-            else if (this.draged.type == "folder") {
-              this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
-                {
-                  emulateJSON: true,
-                  id: this.folderNames[this.draged.index].id,
-                  name: this.folderNames[this.draged.index].name,
-                  upper_folder: parentFolder,
-                  accoundId: this.accoundId
-                }).then(function (response) {
-                this.getFolders(this.folderPath[len - 1]);
-              });
-            }
-          }
 
+          //修改目录
+          var len = this.folderPath.length;
+          var parentFolder = len <= 1 ? 0 : this.folderPath[len - 2];
+          if (this.draged.type == "map") this.moveMap(parentFolder,"",event);
+          else if (this.draged.type == "folder") this.moveFolder(parentFolder,"",event);
         }
       },
       clearDrop: function () {
@@ -572,7 +605,7 @@
           $(".op").eq(index).css("display", "block");
           $(".op-list").css("top", top + 40 + "px");
         }
-        else if(type == 'map'){
+        else if (type == 'map') {
           left = $(".ibox-map").eq(index).offset().left;
           top = $(".ibox-map").eq(index).offset().top;
           $(".op-map").eq(index).css("display", "block");
@@ -583,41 +616,41 @@
         $(".op-list").css("left", left - wrapperLeft + 152 + "px");
         $(".op-list").css("display", "block");
       },
-      opMapMouseEnter:function(index,event){
-        $(".op-map").eq(index).css("display","block");
-        $(".img-box-map").eq(index).css("margin-top","-8px");
+      opMapMouseEnter: function (index, event) {
+        $(".op-map").eq(index).css("display", "block");
+        $(".img-box-map").eq(index).css("margin-top", "-8px");
       },
-      opMapMouseLeave:function(index,event){
-        if ($(".op-list").css("display") == "none"){
+      opMapMouseLeave: function (index, event) {
+        if ($(".op-list").css("display") == "none") {
           $(".op-map").eq(index).css("display", "none");
-          $(".img-box-map").eq(index).css("margin-top","0px");
+          $(".img-box-map").eq(index).css("margin-top", "0px");
         }
       },
       hideOpList: function (evnent) {
         $(".op").css("display", "none");
         $(".op-map").css("display", "none");
         $(".op-list").css("display", "none");
-        $(".img-box-map").css("margin-top","0px");
+        $(".img-box-map").css("margin-top", "0px");
       },
-      Rename:function(event){
+      Rename: function (event) {
         this.popup.type = "rename";
         this.popup.title = "Rename";
         this.popup.msg = "please input the new name";
       },
-      Delete:function(event){
+      Delete: function (event) {
         this.popup.type = "delete";
         this.popup.title = "Delete";
         var name = this.currentFile.type == "folder" ? this.folderNames[this.currentFile.index].name : this.mapNames[this.currentFile.index].name;
         this.popup.msg = "Do you really want to delete the " + name;
       },
-      RenameList:function(type,index,event){
+      RenameList: function (type, index, event) {
         this.currentFile.type = type;
         this.currentFile.index = index;
         this.popup.type = "rename";
         this.popup.title = "Rename";
         this.popup.msg = "please input the new name";
       },
-      DeleteList:function(type,index,event){
+      DeleteList: function (type, index, event) {
         this.currentFile.type = type;
         this.currentFile.index = index;
         this.popup.type = "delete";
@@ -651,7 +684,7 @@
       },
 
       /*分页事件*/
-      getMapsByPage:function(index,event){
+      getMapsByPage: function (index, event) {
         //计算实际页数和父文件夹ID
         var page = this.pages.pages.length > index ? this.pages.pages[index] : 1;
         var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
@@ -665,12 +698,12 @@
           var responseBody = response.body
           if (responseBody.code === 200) {
             this.mapNames = responseBody.data.map;
-            if(this.mapNames.length == 0 && page > 1)this.getMapsByPage(index - 1,event);
+            if (this.mapNames.length == 0 && page > 1)this.getMapsByPage(index - 1, event);
             this.pages.total = responseBody.data.pageNum;
 
             //更改时间格式
             var len = this.mapNames.length;
-            for(var i = 0;i < len; i++){
+            for (var i = 0; i < len; i++) {
               var time = new Date(this.mapNames[i].create_time);
               this.mapNames[i].create_time = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
               time = new Date(this.mapNames[i].update_time);
@@ -678,7 +711,7 @@
             }
 
             //如果页面总数小于等于1，则格式化pages属性
-            if(this.pages.total <= 1){
+            if (this.pages.total <= 1) {
               this.pages.pages = [1];
               this.pages.isRight = false;
               this.pages.isLeft = false;
@@ -689,8 +722,8 @@
             this.pages.currentPage = index;
 
             //如果选中的是第一页，要么更新目录结构，要么取消左箭头
-            if(index == 0){
-              if(this.pages.pages[0] == 1)this.pages.isLeft = false;
+            if (index == 0) {
+              if (this.pages.pages[0] == 1)this.pages.isLeft = false;
               else this.pages.isLeft = true;
 
               //更新目录结构
@@ -698,18 +731,18 @@
               var end = 9 + begin > this.pages.total ? this.pages.total : 9 + begin;  //分页栏结束页面
               this.pages.currentPage = page - begin
               this.pages.pages = [];
-              for(var i = begin; i <= end;i++){
+              for (var i = begin; i <= end; i++) {
                 this.pages.pages.push(i);
               }
             }
-            else{
+            else {
               this.pages.isLeft = true;
             }
 
             //如果选中的是最后一页，要么更新目录结构，要么取消右箭头
             var len = this.pages.pages.length;
-            if(index + 1 == len ){
-              if(this.pages.pages[len - 1] == this.pages.total) this.pages.isRight = false;
+            if (index + 1 == len) {
+              if (this.pages.pages[len - 1] == this.pages.total) this.pages.isRight = false;
               else this.pages.isRight = true;
 
               //更新目录结构
@@ -717,12 +750,12 @@
               var begin = end - 9 > 0 ? end - 9 : 1;        //分页栏起始页面
               this.pages.currentPage = page - begin
               this.pages.pages = [];
-              for(var i = begin; i <= end;i++){
+              for (var i = begin; i <= end; i++) {
                 this.pages.pages.push(i);
               }
 
             }
-            else{
+            else {
               this.pages.isRight = true;
             }
 
@@ -730,44 +763,55 @@
         });
       },
 
-      /*弹出框确认*/
-      popupConfirm:function(event){
+      /*弹出框*/
+      popupConfirm: function (event) {
 
         var name = this.popup.input;                    //用户输入信息
         var len = this.folderPath.length;               //文件路径长度
         var parentFolder = this.folderPath[len - 1];
 
         //创建地图文件
-        if(this.popup.type == "map" && name != null && name != ""){
-          this.createMap(name,parentFolder,event);
+        if (this.popup.type == "map" && name != null && name != "") {
+          this.createMap(name, parentFolder, event);
         }
 
         //创建文件夹
-        else if(this.popup.type == "folder" && name != null && name != ""){
-          this.createFolder(name,parentFolder,event);
+        else if (this.popup.type == "folder" && name != null && name != "") {
+          this.createFolder(name, parentFolder, event);
         }
 
         //重命名
-        else if(this.popup.type == "rename"){
-          if(this.currentFile.type == "folder" && name != null && name != ""){
-              this.folderRename(name,event);
+        else if (this.popup.type == "rename") {
+          if (this.currentFile.type == "folder" && name != null && name != "") {
+            this.folderRename(name, event);
           }
-          else if(this.currentFile.type == "map" && name != null && name != ""){
-              this.mapRename(name,event);
+          else if (this.currentFile.type == "map" && name != null && name != "") {
+            this.mapRename(name, event);
           }
         }
 
         //删除
-        else if(this.popup.type == "delete"){
-          if(this.currentFile.type == "folder"){
-            this.deleteFolder(this.currentFile.index,event);
+        else if (this.popup.type == "delete") {
+          if (this.currentFile.type == "folder") {
+            this.deleteFolder(this.currentFile.index, event);
           }
-          else if(this.currentFile.type == "map"){
-            this.deleteMap(this.currentFile.index,event);
+          else if (this.currentFile.type == "map") {
+            this.deleteMap(this.currentFile.index, event);
           }
         }
 
         this.popup.input = "";
+      },
+      msgResult: function (type, msg, event) {
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: 'slideDown',
+          timeOut: 4000
+        };
+        if (type == "success")toastr.success(msg);
+        else if (type == "error")toastr.error(msg);
+        else if (type == "info")toastr.info(msg);
       }
     },
     mounted(){
@@ -778,6 +822,9 @@
 
       //初始化窗口鼠标事件
       this.windowMouseMoveAndUp();
+
+      //欢迎
+      this.msgResult("info", "Welcome to my map page!")
     },
     updated(){
     }
