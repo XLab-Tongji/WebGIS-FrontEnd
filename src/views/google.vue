@@ -85,37 +85,59 @@
           </option>
         </select>
 
-        <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
+        <span v-if="!curHistory">
+          <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
 
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-layer-modal">
-          创建图层
-        </button>
-
-        <span class="dropdown" v-if="curLayerType==='YJG'">
-          <button class="btn btn-default dropdown-toggle" type="button" id="createPointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            添加点
-            <span class="caret"></span>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-layer-modal">
+            创建图层
           </button>
-          <ul class="dropdown-menu" aria-labelledby="createPointMenu">
+
+          <span class="dropdown" v-if="curLayerType==='YJG'">
+            <button class="btn btn-default dropdown-toggle" type="button" id="createPointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              添加点
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="createPointMenu">
           <li><a v-on:click="addGoodPoint">添加好点</a></li>
           <li><a v-on:click="addBadPoint">添加坏点</a></li>
         </ul>
+          </span>
+
+          <span class="dropdown" v-if="curLayerType==='XSG' && curPoint===null">
+            <button class="btn btn-default dropdown-toggle" type="button" id="createLineMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              添加线
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="createLineMenu">
+              <li><a v-on:click="addGoodLine">添加好线</a></li>
+              <li><a v-on:click="addBadLine">添加坏线</a></li>
+            </ul>
+          </span>
+
+          <button type="button" v-on:click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
+          <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
+
+          <button type="button" v-on:click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
+          <button type="button" v-on:click="createHistory" class="btn btn-info right-float">创建历史版本</button>
         </span>
 
-        <span class="dropdown" v-if="curLayerType==='XSG' && curPoint===null">
-          <button class="btn btn-default dropdown-toggle" type="button" id="createLineMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            添加线
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="createLineMenu">
-            <li><a v-on:click="addGoodLine">添加好线</a></li>
-            <li><a v-on:click="addBadLine">添加坏线</a></li>
-          </ul>
+        <span v-if="curHistory">
+
+          <a v-on:click="reverseCurHistory" class="right-float gis-icon">
+            <i class="fa fa-chevron-circle-left fa-2x" aria-hidden="true"></i>
+          </a>
+
+
+          <select v-model="curHistory"  class="form-control">
+            <option value="1">选择历史版本</option>
+            <option v-for="history in histories" v-bind:value="history.id">
+              {{history.description}}
+            </option>
+          </select>
+
+          <button type="button" v-on:click="deleteHistory" class="btn btn-danger">删除当前版本</button>
+          
         </span>
-
-        <button type="button" v-on:click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
-
-        <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
       </form>
     </nav>
 
@@ -191,7 +213,11 @@
 
         isCreatingWithFile: false,
         createLayerType: 0,
-        curFile: null
+        curFile: null,
+
+        /* history */
+        curHistory: 0,
+        histories: null
       }
     },
     methods: {
@@ -202,9 +228,9 @@
           zoom: 20
         });
       },
-      getLayerDatas:function (mapId) {
+      getLayerDatas:function (mapId, getUrl) {
         var self = this;
-        this.$http.get('http://localhost:8080/layer/layers?mapId='+mapId,
+        this.$http.get(getUrl ||('http://localhost:8080/layer/layers?mapId='+mapId),
           {
             emulateJSON: true
           }
@@ -212,17 +238,19 @@
           let responseBody = response.body
           if (responseBody.code === 200) {
             self.layerDatas= responseBody.data;
-            this.setLayerSelect();
+            console.log(self.layerDatas);
+            self.setLayerSelect(self.layerDatas.layerList || self.layerDatas.data);
           }
         });
       },
-      setLayerSelect: function () {
+      setLayerSelect: function (layerList) {
         this.selectLayers = [];
-        var selectLayers = this.selectLayers;
-        this.layerDatas.layerList.forEach(function (layerData) {
+        let selectLayers = this.selectLayers;
+        let self = this;
+        layerList.forEach(function (layerData, index) {
           selectLayers.push({
-            id:layerData.id,
-            "name": layerData.data.type
+            id: layerData.id || index + 1,
+            "name": self.getLayerNameWithType(layerData.type || layerData.data.type)
           });
         })
       },
@@ -314,6 +342,7 @@
         });
       },
       createPointDetail: function (pointPos, pointStatus, radius) {
+        console.log('createPointDetail ', pointPos, radius);
         var cityCircle = this.createPoint(this.map, pointPos, this.getColorWithStatus(pointStatus), radius);
         cityCircle.pointStatus = pointStatus;
         this.curLayerMapDatas.push(cityCircle);
@@ -353,6 +382,12 @@
           self.lng = latLng.lng().toFixed(6);
           self.lat = latLng.lat().toFixed(6);
 
+          if(self.checkPointConflict(latLng, radius)){
+            google.maps.event.removeListener(mapClickListener);
+            alert('当前窨井盖与其他窨井盖有覆盖关系，无法创建！');
+            return;
+          }
+
           self.createPointDetail(latLng, pointStatus, radius);
           google.maps.event.removeListener(mapClickListener);
         });
@@ -362,6 +397,15 @@
       },
       addBadPoint: function () {
         this.addPoint("BAD");
+      },
+      checkPointConflict: function (point, radius) {
+        let self = this;
+        let flag = false;
+        this.curLayerMapDatas.forEach(function (point2) {
+          if(self.getTwoPointsDis(point2.center, point) <= Math.abs(point2.radius+radius))
+            flag = true;
+        });
+        return flag;
       },
 
       // 添加线
@@ -407,10 +451,15 @@
 
       // 根据layer id得到某一图层的数据
       getLayerData:function (layerId) {
-        var layerList = this.layerDatas.layerList;
-        for(let i = 0;i< layerList.length;i++){
-          if(layerId===layerList[i].id)
-            return layerList[i].data;
+        if(this.layerDatas.layerList){
+          let layerList = this.layerDatas.layerList;
+          for(let i = 0;i< layerList.length;i++){
+            if(layerId===layerList[i].id)
+              return layerList[i].data;
+          }
+        }
+        else if(this.layerDatas.data){
+          return this.layerDatas.data[layerId-1];
         }
         return null;
       },
@@ -556,7 +605,6 @@
         let vertices = this.curLine.getPath();
         vertices.removeAt(1);
         vertices.insertAt(1, new google.maps.LatLng(this.lat2, this.lng2))
-        console.log("xy2", vertices.getAt(1).lat(),vertices.getAt(1).lng());
         this.curLine.setMap(null);
         this.curLine.setMap(this.map);
       },
@@ -571,8 +619,58 @@
         this.curLine = null;
       },
 
+      /* history */
+      reverseCurHistory: function () {
+        this.curHistory = this.curHistory ? 0 : 1;
+        this.curLayerId = 0;
+        console.log('reverseCurHistory ', this.curHistory)
+        if(this.curHistory)
+          this.setHistory();
+      },
+      setHistory: function () {
+        let self = this;
+        this.$http.get('http://localhost:8080/history/histories/mapId?mapId='+this.mapId, {
+          emulateJSON: true
+        }).then(function (response) {
+          let responseBody = response.body
+          if(responseBody.code===200){
+            self.histories = responseBody.data;
+          }
+        });
+      },
 
-      // utils
+      createHistory: function () {
+        let desc = prompt('请输入历史版本描述信息', '');
+        if(!desc)
+          return;
+        this.$http.post('http://localhost:8080/history/histories', {
+          mapId: this.mapId,
+          description: desc
+        }).then(function (response) {
+          let responseBody = response.body
+          if(responseBody.code===200)
+            alert('创建成功！');
+          else
+            alert('创建失败！');
+        }, function (result) {
+          alert('创建失败！');
+        });
+      },
+      deleteHistory: function () {
+        this.$http.delete('http://localhost:8080/history/histories/id?mapId='+this.mapId+'&historyId='+this.curHistory)
+          .then(function (response) {
+            let responseBody = response.body
+            if(responseBody.code===200)
+              alert('删除成功！');
+            else
+              alert('删除失败！');
+          }, function () {
+            alert('删除失败！');
+          });
+      },
+      /* #history */
+
+      /* utils */
       removeListByValue: function (arr, val) {
         for(let i=0; i<arr.length; i++) {
           if(arr[i] === val) {
@@ -580,15 +678,18 @@
             break;
           }
         }
-        console.log(arr);
       },
-      // #utils
 
-      // google map utils
+      getLayerNameWithType: function (type) {
+        return type==='YJG'?'窨井盖':'道路维修';
+      },
+      /* #utils */
+
+      /* google map utils */
       getTwoPointsDis: function (point1, point2 ) {
         return google.maps.geometry.spherical.computeDistanceBetween(point1, point2);
       },
-      // #google map utils
+      /* #google map utils */
     },
     watch:{
       curLayerId: function(newValue, oldValue) {
@@ -607,7 +708,6 @@
         this.curLayerType = layerDatas.type;
 
         if(this.curLayerType==="YJG"){
-          console.log(layerDatas);
           layerDatas.pointList.forEach(function (layerData) {
             self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z);
           });
@@ -637,6 +737,11 @@
           this.curLine.setMap(null);
           this.curLine.setMap(this.map);
         }
+      },
+      curHistory: function (newValue, oldValue) {
+        if(newValue!==1)
+          this.getLayerDatas(this.mapId,
+            'http://localhost:8080/history/histories/id?historyId='+newValue);
       }
     },
     mounted(){
@@ -658,4 +763,15 @@
     margin-right: 6%!important;
   }
 
+  .right-float{
+    float: right;
+    margin-left: 10px;
+  }
+
+  .gis-icon{
+    color: black;
+  }
+  .gis-icon:hover{
+    color: #1ab394;
+  }
 </style>
