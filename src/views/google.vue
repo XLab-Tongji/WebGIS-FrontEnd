@@ -117,16 +117,21 @@
           <button type="button" v-on:click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
           <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
 
-          <button type="button" v-on:click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
-          <button type="button" v-on:click="createHistory" class="btn btn-info right-float">创建历史版本</button>
+          <!--<a v-on:click="reverseCurHistory" class="gis-icon ">-->
+            <!--<i class="fa fa-upload " aria-hidden="true"></i>-->
+          <!--</a>-->
+          <div class="form-group right-float">
+            <button type="button" v-on:click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
+            <button type="button" v-on:click="createHistory" class="btn btn-info right-float">创建历史版本</button>
+            <button type="button" v-on:click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
+            <!--<label class="right-float  control-label">历史版本</label>-->
+          </div>
         </span>
 
         <span v-if="curHistory">
-
           <a v-on:click="reverseCurHistory" class="right-float gis-icon">
             <i class="fa fa-chevron-circle-left fa-2x" aria-hidden="true"></i>
           </a>
-
 
           <select v-model="curHistory"  class="form-control">
             <option value="1">选择历史版本</option>
@@ -136,7 +141,7 @@
           </select>
 
           <button type="button" v-on:click="deleteHistory" class="btn btn-danger">删除当前版本</button>
-          
+
         </span>
       </form>
     </nav>
@@ -184,7 +189,7 @@
 
 <script>
   export default {
-    name: 'googleMapPage',
+    name: 'GoogleMapPage',
     data: function () {
       return {
         map: null,
@@ -623,7 +628,6 @@
       reverseCurHistory: function () {
         this.curHistory = this.curHistory ? 0 : 1;
         this.curLayerId = 0;
-        console.log('reverseCurHistory ', this.curHistory)
         if(this.curHistory)
           this.setHistory();
       },
@@ -657,16 +661,25 @@
         });
       },
       deleteHistory: function () {
+        let self = this;
         this.$http.delete('http://localhost:8080/history/histories/id?mapId='+this.mapId+'&historyId='+this.curHistory)
           .then(function (response) {
             let responseBody = response.body
-            if(responseBody.code===200)
+            if(responseBody.code===200){
+              self.setHistory();
+              self.curHistory = 1;
+              self.curLayerId = 0;
+              self.selectLayers = [];
               alert('删除成功！');
+            }
             else
               alert('删除失败！');
           }, function () {
             alert('删除失败！');
           });
+      },
+      compareHistoryMap: function () {
+        this.$router.push({name: 'mapCompare', params: {mapId: this.mapId}});
       },
       /* #history */
 
@@ -691,7 +704,7 @@
       },
       /* #google map utils */
     },
-    watch:{
+    watch: {
       curLayerId: function(newValue, oldValue) {
         var self = this;
         this.clearMap(true);
@@ -770,6 +783,9 @@
 
   .gis-icon{
     color: black;
+  }
+  .gis-icon-white{
+    color: whitesmoke;
   }
   .gis-icon:hover{
     color: #1ab394;

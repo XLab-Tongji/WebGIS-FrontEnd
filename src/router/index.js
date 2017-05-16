@@ -4,10 +4,10 @@ import Footer from '@/views/bar/footBar'
 import Header from '@/views/bar/headBar'
 import Navigation from '@/views/bar/sideBar'
 import Index from '@/views/Index'
-import googleMapPage from '@/views/google'
+import GoogleMapPage from '@/views/google'
+import MapCompare from '@/views/mapCompare'
 import MyMap from '@/views/myMap'
 import Recycled from '@/views/recycled'
-import Google from '@/views/google'
 import store from '../store'
 import Login from '@/views/login'
 import Signup from '@/views/signup'
@@ -33,7 +33,17 @@ const router = new Router({
       components: {
         navigation: Navigation,
         header: Header,
-        mainPage: googleMapPage,
+        mainPage: GoogleMapPage,
+        footer: Footer
+      }
+    },
+    {
+      path: '/google/compare/:mapId',
+      name: 'mapCompare',
+      components: {
+        navigation: Navigation,
+        header: Header,
+        mainPage: MapCompare,
         footer: Footer
       }
     },
