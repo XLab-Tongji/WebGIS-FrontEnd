@@ -107,7 +107,7 @@
 }
 .ibox{
   width:190px;
-  height:200px;
+  height:160px;
   float:left;
   margin-left:15px;
   margin-right:15px;
@@ -243,15 +243,15 @@
 .img-box-map{
   background:#ffffff;
   width:100%;
-  height:90%;
+  height:88%;
   -webkit-border-radius:3px;
   -moz-border-radius:3px;
   border-radius:3px;
-  -webkit-transition: 500ms;
-  -moz-transition:  500ms;
-  -ms-transition:  500ms;
-  -o-transition:  500ms;
-  transition:  500ms;
+  -webkit-transition: 800ms;
+  -moz-transition:  800ms;
+  -ms-transition:  800ms;
+  -o-transition:  800ms;
+  transition:  800ms;
   border:1px solid rgba(0,0,0,0.2);
 }
 .img-box-folder{

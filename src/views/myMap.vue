@@ -526,14 +526,14 @@
           $(".ibox").eq(index).find(".img-box").css("margin-top", "0");
           $(".ibox").eq(index).find(".delete").css("bottom", "0");
         }
-        else {
+        else if($(".op-list").css("display") == "none"){
           $(".op").eq(index).css("display", "block");
           $(".ibox").eq(index).find(".img-box").css("margin-top", "-8px");
           $(".ibox").eq(index).find(".delete").css("bottom", "9px");
         }
       },
       fileMouseLeave: function (index, event) {
-        if(this.draged.type == "folder" && this.draged.index == index)return;
+        if(this.draged.isDrag == true && this.draged.type == "folder" && this.draged.index == index)return;
         if ($(".op-list").css("display") == "none")$(".op").eq(index).css("display", "none");
         $(".ibox").eq(index).css("border", "none");
         $(".ibox").eq(index).css("opacity", "1");
