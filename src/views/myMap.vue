@@ -28,6 +28,23 @@
 
     <!--主体展示块-->
     <div class="wrapper-content animated fadeInRight  white-bg">
+      <!--loading 部分-->
+      <div class = "loading" v-if="isLoading">
+        <div class="sk-circle">
+          <div class="sk-circle1 sk-child"></div>
+          <div class="sk-circle2 sk-child"></div>
+          <div class="sk-circle3 sk-child"></div>
+          <div class="sk-circle4 sk-child"></div>
+          <div class="sk-circle5 sk-child"></div>
+          <div class="sk-circle6 sk-child"></div>
+          <div class="sk-circle7 sk-child"></div>
+          <div class="sk-circle8 sk-child"></div>
+          <div class="sk-circle9 sk-child"></div>
+          <div class="sk-circle10 sk-child"></div>
+          <div class="sk-circle11 sk-child"></div>
+          <div class="sk-circle12 sk-child"></div>
+        </div>
+      </div>
 
       <!--缩略图模式-->
       <div class="row" v-if="!isList">
@@ -216,12 +233,14 @@
           errorMsg: "",
           input: ""
         },
-        isCheck:false    //判断是否是批处理
+        isCheck:false,    //判断是否是批处理
+        isLoading:true    //是否正在加载
       }
     },
     methods: {
       /*文件夹事件*/
       getFolders: function (ID) {
+        this.isLoading = true;
         this.isCheck = false;
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
@@ -245,6 +264,7 @@
             }
           }
         });
+        this.isLoading = false;
       },
       createFolderInit: function (event) {
         this.popup.type = "folder";
@@ -252,6 +272,7 @@
         this.popup.msg = "please input your folder name";
       },
       createFolder: function (name, parentFolder, event) {
+        this.isLoading = true;
         this.$http.post('http://wb.lab-sse.cn/folder/folders',
           {
             "accountId": this.accoundId,
@@ -269,6 +290,7 @@
             this.msgResult("error", "Failed to create the folder " + name + "!")
           }
         });
+        this.isLoading = false;
       },
       folderClick: function (index, event) {
         //console.log("Click the folder " + this.folderNames[index].name);
@@ -285,6 +307,7 @@
         this.getMaps(folderId);
       },
       deleteFolder: function (index, event) {
+        this.isLoading = true;
         this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
           {
             emulateJSON: true
@@ -299,8 +322,10 @@
             this.msgResult("error", "Failed to delete the folder " + this.folderNames[index].name + "!")
           }
         });
+        this.isLoading = false;
       },
       folderRename: function (name, event) {
+        this.isLoading = true;
         this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
           {
             emulateJSON: true,
@@ -319,8 +344,10 @@
             this.msgResult("error", "Failed to rename the folder " + name + "!")
           }
         });
+        this.isLoading = false;
       },
       moveFolder:function(folderId,folderName,event){
+        this.isLoading = true;
         this.isCheck = false;
         if(folderName == "")folderName = "parent folder";
         //拖拽文件夹
@@ -350,6 +377,8 @@
 
         //清空选中列表
         this.draged.folderIndex = [];
+
+        this.isLoading = false;
       },
 
       /*地图事件*/
@@ -366,6 +395,7 @@
         this.popup.msg = "please input your map name";
       },
       createMap: function (name, parentFolder, event) {
+        this.isLoading = true;
         this.$http.post('http://wb.lab-sse.cn/map/maps',
           {
             "accountId": this.accoundId,
@@ -383,12 +413,14 @@
             this.msgResult("error", "Failed to create the map " + name + "!")
           }
         });
+        this.isLoading = false;
       },
       mapClick: function (index, event) {
         this.$router.push({name: 'google', params: {mapId: this.mapNames[index].id}});
 //        alert("you click the " + this.mapNames[index].name + this.mapNames[index].id);
       },
       mapRename: function (name, event) {
+        this.isLoading = true;
         this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
           {
             emulateJSON: true,
@@ -406,8 +438,10 @@
             this.msgResult("error", "Failed to rename the map " + name + "!")
           }
         });
+        this.isLoading = false;
       },
       deleteMap: function (index, event) {
+        this.isLoading = true;
         this.$http.delete("http://wb.lab-sse.cn/map/maps/id?mapId=" + this.mapNames[index].id,
           {
             emulateJSON: true
@@ -422,6 +456,7 @@
             this.msgResult("error", "Failed to delete the map " + this.mapNames[index].name + "!")
           }
         });
+        this.isLoading = false;
       },
       mapMouseEnter: function (index, event) {
         $(".op-map").eq(index).css("display", "block");
@@ -432,6 +467,7 @@
         $(".img-box-map").eq(index).css("margin-top", "0px");
       },
       moveMap:function(folderId,folderName,event){
+        this.isLoading = true;
         this.isCheck = false;
         if(folderName == "")folderName = "parent folder";
         //拖拽文件
@@ -460,6 +496,7 @@
         }
         //清空选中列表
         this.draged.mapIndex = [];
+        this.isLoading = false;
       },
 
       /*拖拽事件*/
@@ -774,6 +811,7 @@
 
       /*分页事件*/
       getMapsByPage: function (index, event) {
+        this.isLoading = true;
         this.isCheck = false;
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
@@ -854,6 +892,7 @@
 
           }
         });
+        this.isLoading = false;
       },
 
       /*弹出框*/
