@@ -245,7 +245,7 @@
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
         //this.folderNames = [{name:"folder1"},{name:"folder2"}];   //模拟数据，仅用作测试
-        this.$http.get('http://wb.lab-sse.cn/folder/folders/accountidandupperfolder?accountId=1&upperFolder=' + ID,
+        this.$http.get(baseUrl + '/folder/folders/accountidandupperfolder?accountId=1&upperFolder=' + ID,
           {
             emulateJSON: true
           }
@@ -273,7 +273,7 @@
       },
       createFolder: function (name, parentFolder, event) {
         this.isLoading = true;
-        this.$http.post('http://wb.lab-sse.cn/folder/folders',
+        this.$http.post(baseUrl + '/folder/folders',
           {
             "accountId": this.accoundId,
             "name": name,
@@ -396,7 +396,7 @@
       },
       createMap: function (name, parentFolder, event) {
         this.isLoading = true;
-        this.$http.post('http://wb.lab-sse.cn/map/maps',
+        this.$http.post(baseUrl + '/map/maps',
           {
             "accountId": this.accoundId,
             "name": name,
@@ -821,7 +821,7 @@
         var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
 
         //访问后端获取地图数据
-        this.$http.get('http://wb.lab-sse.cn/map/maps/accountidandfolderidandpageid?accountId=1&folderId=' + folderId + '&pageId=' + page,
+        this.$http.get(baseUrl + '/map/maps/accountidandfolderidandpageid?accountId=1&folderId=' + folderId + '&pageId=' + page,
           {
             emulateJSON: true
           }

@@ -53,7 +53,7 @@
 
     methods: {
       getMaps: function (ID) {
-        this.$http.get('http://wb.lab-sse.cn/map/maps/accountidandfolderid?accountId=1&folderId=' + ID,
+        this.$http.get(baseUrl + '/map/maps/accountidandfolderid?accountId=1&folderId=' + ID,
           {
             emulateJSON: true
           }

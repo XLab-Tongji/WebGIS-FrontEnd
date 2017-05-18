@@ -44,7 +44,7 @@
     name: "signup",
     data () {
       return {
-        registerUrl: 'http://wb.lab-sse.cn/account/accounts',
+        registerUrl: baseUrl + '/account/accounts',
         registerModel: {
           name: '',
           username: '',
