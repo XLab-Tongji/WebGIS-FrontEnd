@@ -27,19 +27,14 @@
 </template>
 
 <script>
+  $("body").toggleClass("mini-navbar");
+  SmoothlyMenu();
+
 export default {
   name: 'navBar',
   data () {
     return {
       items: [
-        {
-          target: '/',
-          title: ' Index'
-        },
-        {
-          target: '/google',
-          title: ' Google'
-        },
         {
           target: '/myMap',
           title: ' MyMap'
