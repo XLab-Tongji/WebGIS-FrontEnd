@@ -34,7 +34,7 @@
     data(){
       return {
 //        name : 'rule-list',
-        getUrl: "http://wb.lab-sse.cn/account/sessions",
+        getUrl: baseUrl + "/account/sessions",
 //        items: []
       }
     },

@@ -308,7 +308,7 @@
       },
       deleteFolder: function (index, event) {
         this.isLoading = true;
-        this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
+        this.$http.delete(baseUrl + "/folder/folders/id?folderId=" + this.folderNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {
@@ -326,7 +326,7 @@
       },
       folderRename: function (name, event) {
         this.isLoading = true;
-        this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+        this.$http.patch(baseUrl + "/folder/folders/id",
           {
             emulateJSON: true,
             id: this.folderNames[this.currentFile.index].id,
@@ -354,7 +354,7 @@
         var names = []
         for(var i = 0;i < this.draged.folderIndex.length;i++){
           names.push(this.folderNames[this.draged.folderIndex[i]].name);
-          this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+          this.$http.patch(baseUrl + "/folder/folders/id",
             {
               emulateJSON: true,
               id: this.folderNames[this.draged.folderIndex[i]].id,
@@ -421,7 +421,7 @@
       },
       mapRename: function (name, event) {
         this.isLoading = true;
-        this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+        this.$http.patch(baseUrl + "/map/maps/id",
           {
             emulateJSON: true,
             id: this.mapNames[this.currentFile.index].id,
@@ -442,7 +442,7 @@
       },
       deleteMap: function (index, event) {
         this.isLoading = true;
-        this.$http.delete("http://wb.lab-sse.cn/map/maps/id?mapId=" + this.mapNames[index].id,
+        this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {
@@ -474,7 +474,7 @@
         var names = []
         for(var i = 0;i < this.draged.mapIndex.length;i++){
           names.push(this.mapNames[this.draged.mapIndex[i]].name);
-          this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+          this.$http.patch(baseUrl + "/map/maps/id",
             {
               emulateJSON: true,
               id: this.mapNames[this.draged.mapIndex[i]].id,

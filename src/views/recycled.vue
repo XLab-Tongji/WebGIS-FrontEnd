@@ -66,7 +66,7 @@
       },
       deleteMap: function (index, event) {
         if (confirm("Do you really want to delete the map completely: \n     " + this.mapNames[index].name)) {
-          this.$http.delete("http://wb.lab-sse.cn/map/maps/id?mapId=" + this.mapNames[index].id,
+          this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
             {
               emulateJSON: true
             }).then(function (response) {
