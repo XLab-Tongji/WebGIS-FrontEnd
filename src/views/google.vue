@@ -235,7 +235,7 @@
       },
       getLayerDatas: function (mapId, getUrl) {
         var self = this;
-        this.$http.get(getUrl ||('http://localhost:8080/layer/layers?mapId='+mapId),
+        this.$http.get(getUrl ||(baseUrl + '/layer/layers?mapId='+mapId),
           {
             emulateJSON: true
           }
@@ -267,7 +267,7 @@
         let postUrl = null;
         let postOptions = null;
         if(this.isCreatingWithFile) {
-          postUrl = 'http://localhost:8080/layer/layers';
+          postUrl = baseUrl + '/layer/layers';
           formData = new FormData();
           formData.append('file', this.curFile);
           formData.append('mapId', this.mapId);
@@ -279,7 +279,7 @@
           };
         }
         else{
-          postUrl = 'http://localhost:8080/layer/emptyLayers';
+          postUrl = baseUrl + '/layer/emptyLayers';
           formData = {
             mapId: this.mapId,
             type: this.createLayerType
@@ -310,7 +310,7 @@
       deleteLayer:function () {
         var self = this;
         if(this.curLayerId!==0) {
-          this.$http.delete('http://localhost:8080/layer/layers/id?mapId=' + this.mapId +"&layerId="+this.curLayerId,
+          this.$http.delete(baseUrl + '/layer/layers/id?mapId=' + this.mapId +"&layerId="+this.curLayerId,
             {
               emulateJSON: true
             }
@@ -474,8 +474,8 @@
         var curLayerData = null;
         var self = this;
         var patchUrl = self.curLayerType==="YJG" ?
-          "http://localhost:8080/layer/layers/point/id":
-          "http://localhost:8080/layer/layers/line/id";
+          baseUrl + "/layer/layers/point/id":
+          baseUrl + "/layer/layers/line/id";
         curLayerData = {type:self.curLayerType, pointList:[], lineList: []};
         this.curLayerMapDatas.forEach(function (curData) {
           if(self.curLayerType==="YJG"){
@@ -633,7 +633,7 @@
       },
       setHistory: function () {
         let self = this;
-        this.$http.get('http://localhost:8080/history/histories/mapId?mapId='+this.mapId, {
+        this.$http.get(baseUrl + '/history/histories/mapId?mapId='+this.mapId, {
           emulateJSON: true
         }).then(function (response) {
           let responseBody = response.body
@@ -647,7 +647,7 @@
         let desc = prompt('请输入历史版本描述信息', '');
         if(!desc)
           return;
-        this.$http.post('http://localhost:8080/history/histories', {
+        this.$http.post(baseUrl + '/history/histories', {
           mapId: this.mapId,
           description: desc
         }).then(function (response) {
@@ -662,7 +662,7 @@
       },
       deleteHistory: function () {
         let self = this;
-        this.$http.delete('http://localhost:8080/history/histories/id?mapId='+this.mapId+'&historyId='+this.curHistory)
+        this.$http.delete(baseUrl + '/history/histories/id?mapId='+this.mapId+'&historyId='+this.curHistory)
           .then(function (response) {
             let responseBody = response.body
             if(responseBody.code===200){
@@ -754,7 +754,7 @@
       curHistory: function (newValue, oldValue) {
         if(newValue!==1)
           this.getLayerDatas(this.mapId,
-            'http://localhost:8080/history/histories/id?historyId='+newValue);
+            baseUrl + '/history/histories/id?historyId='+newValue);
       }
     },
     mounted(){
