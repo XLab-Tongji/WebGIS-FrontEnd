@@ -1,5 +1,5 @@
 <template>
-  <login v-if="login == false"></login>
+  <login v-if="userStatus.login == false"></login>
   <logined v-else></logined>
 </template>
 
@@ -8,13 +8,19 @@
   import headBar from '@/views/bar/headBar'
   import sideBar from '@/views/bar/sideBar'
   import footBar from '@/views/bar/footBar'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'app',
     data () {
       return {
-        login: false
       }
+    },
+    computed: {
+      ...mapGetters([
+          'userStatus'
+        ]
+      )
     },
     components: {
       'login': login,
@@ -23,7 +29,7 @@
         '<sideBar></sideBar>' +
         '<div id="page-wrapper" class="gray-bg">' +
         '<headBar></headBar>' +
-        '<router-view name="main"></router-view>' +
+        '<router-view name="mainPage"></router-view>' +
         '<footBar></footBar>' +
         '</div>' +
         '</div>',
@@ -31,7 +37,7 @@
           'sideBar': sideBar,
           'footBar': footBar}
       }
-    }
+    },
   }
 </script>
 

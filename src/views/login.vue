@@ -8,12 +8,14 @@
 
       <form class="m-t" role="form" action="index.html">
         <div class="form-group">
-          <input type="text" class="form-control username" placeholder="用户名" required="" v-model="username">
+          <!--<input type="text" class="form-control username" placeholder="用户名" required="" v-model="username">-->
+          <input type="text" class="form-control " placeholder="用户名" required="" v-model="username">
         </div>
         <div class="form-group">
-          <input type="password" class="form-control password" placeholder="密码" required="" v-model="password">
+          <!--<input type="password" class="form-control password" placeholder="密码" required="" v-model="password">-->
+          <input type="password" class="form-control " placeholder="密码" required="" v-model="password">
         </div>
-        <button type="submit" class="btn btn-primary block full-width m-b" @click="getList()">登录</button>
+        <button type="submit" class="btn btn-primary block full-width m-b" @click="userLogin()">登录</button>
 
         <!--<a href="#"><small>忘记密码?</small></a>-->
         <p class="text-muted text-center"><small>没有账号?</small></p>
@@ -27,48 +29,32 @@
 </template>
 
 <script>
-  import $ from 'jquery'
+  import { mapGetters, mapActions } from 'vuex'
+
   export default {
-
-    //num : this.$route.query.num,
-    data(){
+    name: 'login',
+    data () {
       return {
-//        name : 'rule-list',
-        getUrl: baseUrl + "/account/sessions",
-//        items: []
+        getUrl: baseUrl + "",
+        username: '',
+        password: ''
       }
     },
-
     methods: {
-      //数据请求
-      getList: function () {
-        //获取 url get参数num值
-//        var num = this.$route.query.num;
+      ...mapActions([
+        'login'
+      ]),
+      ...mapGetters([
+        'userStatus'
+      ]),
 
-        //请求数据
-        var username = $('.username').val();
-        var _password = $('.password').val();
-        //请求数据
-        var _data = {
-          "username" : username,
-          "password" : _password
-        };
-        alert(username);
-        return false;
-        //post请求方法
-        this.$http.post(this.getUrl, _data, {emulateJSON: true}).then(
-          function (res) {
-            alert()
+      userLogin: function() {
+        // do something here for wangyue surui
 
-          }, function (res) {
-            //请求失败
-          }
-        );
+        // end
+        this.login()
       }
-    },
-//    created: function () {
-//      this.getList();
-//    }
+    }
   }
 
 </script>
