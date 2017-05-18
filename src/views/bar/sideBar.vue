@@ -27,9 +27,6 @@
 </template>
 
 <script>
-  $("body").toggleClass("mini-navbar");
-  SmoothlyMenu();
-
 export default {
   name: 'navBar',
   data () {
@@ -42,7 +39,7 @@ export default {
         {
             target: '/recycled',
             title: 'Recycled'
-        }
+        },
       ]
     }
   }

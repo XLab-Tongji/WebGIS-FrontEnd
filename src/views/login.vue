@@ -52,7 +52,7 @@
         // do something here for wangyue surui
 
         // end
-        this.login()
+        this.login('test name')
       }
     }
   }
