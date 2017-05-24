@@ -13,7 +13,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/myMap'
+      redirect: '/login'
     },
     {
       path: '/google/:mapId',
@@ -47,14 +47,14 @@ const router = new Router({
       path: '/signup',
       name: 'signup',
       components:{
-        mainPage: Signup
+        login: Signup
       }
     },
     {
       path: '/login',
       name:'login',
       components: {
-        mainPage: Login
+        login: Login
       }
     },
     {
