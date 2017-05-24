@@ -35,9 +35,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-    'logout'
-    ]),
+    ...mapActions({
+      s_logout: 'logout'
+    }),
+
+    logout: function () {
+      this.s_logout()
+      this.$router.push('/');
+    },
 
     toggleMenu: function () {
       $("body").toggleClass("mini-navbar");
