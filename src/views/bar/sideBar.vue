@@ -15,17 +15,10 @@
                       IN+
                   </div>
               </li>
-              <li class="active">
-                  <!-- <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">Main view</span></a> -->
-                  <router-link to="/">Index</router-link>
+
+              <li v-for="item in items">
+                  <router-link :to="item.target" class="fa fa-th-large"> <span class="nav-label"> {{item.title}}</span> </router-link>
               </li>
-              <li  class="active">
-                  <!-- <a href="baidu.html"><i class="fa fa-th-large"></i> <span class="nav-label">Baidu view</span> </a> -->
-                  <router-link to="/google">Google</router-link>
-              </li>
-            <li  class="active">
-              <router-link to="/myMap">MyMap</router-link>
-            </li>
           </ul>
 
       </div>
@@ -35,7 +28,21 @@
 
 <script>
 export default {
-  name: 'navBar'
+  name: 'navBar',
+  data () {
+    return {
+      items: [
+        {
+          target: '/myMap',
+          title: ' MyMap'
+        },
+        {
+            target: '/recycled',
+            title: 'Recycled'
+        },
+      ]
+    }
+  }
 }
 </script>
 

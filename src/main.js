@@ -7,10 +7,11 @@ import router from './router'
 import store from './store'
 import VueResource from 'vue-resource'
 
+import './global'
+
 Vue.use(VueResource);
 Vue.config.productionTip = false
 
-Vue.use(VueResource)
 
 /* eslint-disable no-new */
 new Vue({
