@@ -12,6 +12,7 @@ const mutations = {
 	[LOG_IN] (state, userName){
 	  state.login = true
 		state.userName = userName
+
 	},
 
 	[LOG_OUT] (state){
