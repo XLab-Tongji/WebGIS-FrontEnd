@@ -1,0 +1,18 @@
+
+.recoverList{
+  background-image: url(../img/recover.png);
+  -webkit-background-size:20px;
+  background-size:20px;
+  background-repeat: no-repeat;
+  -webkit-transition: 500ms;
+  -ms-transition:  500ms;
+  -o-transition:  500ms;
+  transition:  500ms;
+  height:20px;
+  width:20px;
+  cursor: pointer;
+  margin-left:15px;
+}
+.recoverList:hover{
+  margin-top:-10px;
+}

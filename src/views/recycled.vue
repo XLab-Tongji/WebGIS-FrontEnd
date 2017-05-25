@@ -7,6 +7,10 @@
         <button type="button" class="btn btn-white" id="check-icon" v-on:click="checkIconClick($event)"></button>
         <button type="button" class="btn btn-white" v-model="selectArr" v-bind:class="{list:!isList,thum:isList}" id="clearlasttoast"
                 v-on:click="changeShowType"></button>
+        <button v-if="isCheck" type="button" class="btn btn-white" v-on:click="del" ><img
+          src="../assets/images/myMap/delete-icon.png" width="20px" height="20px"></button>
+        <button v-if="isCheck" type="button" class="btn btn-white" v-on:click="rec" ><img
+          src="../assets/images/recycled/recover.png" width="20px" height="20px"></button>
       </div>
     </div>
 
@@ -23,7 +27,7 @@
               <img class="map-img" src="../assets/images/recycled/map.jpg">
             </div>
             <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
-            <div class="checkBox-map" v-if="isCheck"><input type="checkbox" v-on:click="checkBoxCLick('map',index,$event)"/></div>
+            <div class="checkBox-map" v-if="isCheck"><input type="checkbox":value="index" v-model="selectArr"/></div>
             <div class="op-map" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"
                  v-on:mouseleave="opMapMouseLeave(index,$event)">
               <img class="op-icon" src="../assets/images/myMap/op-icon.png">
@@ -36,7 +40,7 @@
       <div class="row" v-if="isList">
         <table id="listTable">
           <tr>
-            <td class="thead"><input v-if="isCheck" id = "checkBoxAll" type="checkbox" v-on:click="checkBoxAllClick($event)"/></td>
+            <td class="thead"><input v-if="isCheck" id = "checkBoxAll" type="checkbox" v-on:click="selectAll($event)"/></td>
             <td class="thead">Name</td>
             <td class="thead">Create Time</td>
             <td class="thead">Latest Change Time</td>
@@ -46,14 +50,14 @@
 
           <!--文件-->
           <tr v-for="(mapName,index) in mapNames">
-            <td class="tList listBox"><div class="checkBox-map" v-if="isCheck"><input type="checkbox" v-on:click="checkBoxCLick('map',index,$event)"/></div></td>
+            <td class="tList listBox"><div class="checkBox-map" v-if="isCheck"><input type="checkbox":value="index" v-model="selectArr"/></div></td>
             <td class="tList listName">
               <img class="map-img-list" src="../assets/images/myMap/map-icon.png"/>{{ mapName.name }}
             </td>
             <td class="tList listTime">{{ mapName.create_time }}</td>
             <td class="tList listTime">{{ mapName.update_time }}</td>
             <td class="tList listBtn">
-              <div class="renameList" v-on:click="RecoverList('map',index,$event)" data-toggle="modal"
+              <div class="recoverList" v-on:click="RecoverList('map',index,$event)" data-toggle="modal"
                    data-target="#popup" />
             </td>
             <td class="tList listBtn">
@@ -100,6 +104,7 @@
 </template>
 
 <script>
+  import '../../static/css/recycled.css'
   export default{
     name:"myWeb",
     data(){
@@ -108,6 +113,7 @@
         isList:false,
         folderPath:[0],
         mapNames:[],
+        selectArr:[],
         currentFile: {     //当前选中的文件
           type: "folder",
           index: 0
@@ -264,20 +270,52 @@
       checkIconClick:function(event){
         this.isCheck = this.isCheck == true ? false : true;
       },
-      checkBoxCLick:function(type,index,event){
-      },
-      checkBoxAllClick:function(event){
-        if($("#checkBoxAll").is(':checked')){
-          $(".checkBox-map input").attr("checked","true");
-          this.clearDrop();
+
+      del:function() {
+        var len = this.mapNames.length;
+        for (var i = len - 1;i >= 0;i--) {
+          if (this.selectArr.indexOf(i)>=0) {
+            console.log(this.selectArr.indexOf(i));
+            this.deleteMap(this.currentFile.index, event);
+          }
         }
-        else{
-          $(".checkBox-map input").prop("checked",function(){
-            return false;
+      },
+
+      rec:function() {
+        var len = this.mapNames.length;
+        for (var i = len - 1;i >= 0;i--) {
+          if (this.selectArr.indexOf(i)>=0) {
+            console.log(this.selectArr.indexOf(i));
+            this.recoverMap(this.currentFile.index, event);
+          }
+        }
+      },
+      selectAll:function(){
+        var _this = this;
+        console.log(event.currentTarget)
+        if (!event.currentTarget.checked) {
+          this.selectArr = [];
+        } else { //实现全选
+          _this.selectArr = [];
+          _this.mapNames.forEach(function(item, i) {
+            _this.selectArr.push(i);
           });
-          this.clearDrop();
         }
-      },
+      }
+
+
+
+//      del:function() {
+//        let arr = [];
+//        var len = this.mapNames.length;
+//        for (var i = len - 1;i >= 0;i--) {
+//          var index=this.mapNames[i];
+//          if (this.selectArr.indexOf(i)>=0) {
+//            console.log(this.selectArr.indexOf(i));
+//            this.mapNames.splice(i,1);
+//          }
+//        }
+//      },
     },
 
       mounted(){
