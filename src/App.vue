@@ -1,5 +1,5 @@
 <template>
-  <login v-if="userStatus.login == false"></login>
+  <router-view name="login" v-if="userStatus.login == false"></router-view>
   <logined v-else></logined>
 </template>
 
@@ -8,6 +8,7 @@
   import headBar from '@/views/bar/headBar'
   import sideBar from '@/views/bar/sideBar'
   import footBar from '@/views/bar/footBar'
+  import Signup from '@/views/signup'
   import { mapGetters, mapActions } from 'vuex'
 
   export default {
@@ -23,7 +24,7 @@
       )
     },
     components: {
-      'login': login,
+//      'login': login,
       'logined': {
         template: '<div id="app-wrapper">' +
         '<sideBar></sideBar>' +

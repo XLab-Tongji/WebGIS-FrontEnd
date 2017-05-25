@@ -124,6 +124,7 @@
             <button type="button" v-on:click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
             <button type="button" v-on:click="createHistory" class="btn btn-info right-float">创建历史版本</button>
             <button type="button" v-on:click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
+            <button type="button" v-on:click="calculateDis" id="calDis" class="btn btn-info right-float">{{disText}}</button>
             <!--<label class="right-float  control-label">历史版本</label>-->
           </div>
         </span>
@@ -195,7 +196,7 @@
         map: null,
         mapId: this.$route.params.mapId,
         layerDatas:null,
-
+        disText: "测距",
         lng: "lng",
         lat: "lat",
         radius: 0,
@@ -208,6 +209,7 @@
         curLayerId:0,
         curLayerType:null,
         curLayerMapDatas:[],
+        isDis: true,
 
         // 当前point 以及它的状态
         curPointStatus:0,
@@ -376,7 +378,19 @@
 
       //根据点的状态创建一个点
       getColorWithStatus: function (status) {
-        return status==="GOOD"?"black":'#FF0000'
+          switch(status) {
+            case "GOOD":
+                return "black";
+                break;
+            case "BAD":
+                return "#FF0000";
+                break;
+            case "DIS":
+                return "#00FF00";
+                break;
+                break;
+          }
+        return "black";
       },
       addPoint: function (pointStatus) {
         let radius = parseFloat(prompt('请输入半径', ''));
@@ -442,6 +456,22 @@
       },
       addBadLine: function () {
         this.addLine("BAD");
+      },
+      calculateDis: function () {
+        if(this.isDis) {
+          this.addLine("DIS");
+          this.isDis = false;
+          this.disText = "清空";
+        }
+        else {
+          this.curLayerMapDatas.forEach(function (f) {
+            f.setMap(null);
+          });
+          this.isDis = true;
+          this.curPoint = null;
+          this.disText = "测距";
+        }
+
       },
 
       stopAddLine: function () {
