@@ -7,10 +7,8 @@
       </div>
       <h3>注册WebGIS账号</h3>
 
-
-
       <form class="m-t middle-box loginscreen" role="form">
-        <div    class="form-group">
+        <div class="form-group">
           <input type="text" class="form-control" placeholder="账号" v-model="registerModel.username" >
         </div>
         <div class="form-group">
@@ -22,7 +20,7 @@
         <div class="form-group">
           <div class="checkbox i-checks"><label> <input type="checkbox"><i></i> 同意相关条款与政策 </label></div>
         </div>
-        <button type="submit" class="btn btn-primary block full-width m-b" v-on:click="register">注册</button>
+        <button type="button" class="btn btn-primary block full-width m-b" @click="register">注册</button>
 
         <p class="text-muted text-center"><small>已有账号?</small></p >
         <router-link class="btn btn-sm btn-white btn-block"  to="/login">登录</router-link >
@@ -56,16 +54,16 @@
       register: function() {
         this.$http.post(this.registerUrl, this.registerModel)
           .then(function(response){
-          console.log("get a response after create a map");
-          var responseBody = response.body;
-          if (responseBody.code === 200 && responseBody.message == "successful") {
-            alert("注册成功!");
-            this.$router.push('/login');
-          }
-          else{
-            alert("注册失败!");
-          }
-        });
+            console.log("get a response after create a map");
+            var responseBody = response.body;
+            if (responseBody.code === 200 && responseBody.message === "successful") {
+              alert("注册成功!");
+              this.$router.push('/login');
+            }
+            else{
+              alert("注册失败!");
+            }
+          });
 
       }
     }
