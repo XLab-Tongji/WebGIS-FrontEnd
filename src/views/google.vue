@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-group form-group-sm">
-          <button type="button" v-on:click="deletePointBtnClick" class="btn btn-info btn-half-left">删除</button>
+          <button type="button" @click="deletePointBtnClick" class="btn btn-info btn-half-left">删除</button>
           <button type="button" class="btn btn-danger btn-half-right" id="pointMapMsgBtn">关闭</button>
         </div>
       </div>
@@ -80,13 +80,13 @@
         <label>mapId: {{mapId}}</label>
         <select v-model="curLayerId"  class="form-control">
           <option value="0">选择图层</option>
-          <option v-for="selectLayer in selectLayers" v-bind:value="selectLayer.id">
+          <option v-for="selectLayer in selectLayers" :value="selectLayer.id">
             {{selectLayer.name}}
           </option>
         </select>
 
         <span v-if="!curHistory">
-          <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
+          <button type="button" @click="deleteLayer" class="btn btn-danger">删除当前图层</button>
 
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-layer-modal">
             创建图层
@@ -109,39 +109,39 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="createLineMenu">
-              <li><a v-on:click="addGoodLine">添加好线</a></li>
-              <li><a v-on:click="addBadLine">添加坏线</a></li>
+              <li><a @click="addGoodLine">添加好线</a></li>
+              <li><a @click="addBadLine">添加坏线</a></li>
             </ul>
           </span>
 
-          <button type="button" v-on:click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
-          <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
+          <button type="button" @click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
+          <button type="button" @click="submitChange" class="btn btn-info">提交</button>
 
           <!--<a v-on:click="reverseCurHistory" class="gis-icon ">-->
             <!--<i class="fa fa-upload " aria-hidden="true"></i>-->
           <!--</a>-->
           <div class="form-group right-float">
-            <button type="button" v-on:click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
-            <button type="button" v-on:click="createHistory" class="btn btn-info right-float">创建历史版本</button>
-            <button type="button" v-on:click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
-            <button type="button" v-on:click="calculateDis" id="calDis" class="btn btn-info right-float">{{disText}}</button>
+            <button type="button" @click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
+            <button type="button" @click="createHistory" class="btn btn-info right-float">创建历史版本</button>
+            <button type="button" @click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
+            <button type="button" @click="calculateDis" id="calDis" class="btn btn-info right-float">{{disText}}</button>
             <!--<label class="right-float  control-label">历史版本</label>-->
           </div>
         </span>
 
         <span v-if="curHistory">
-          <a v-on:click="reverseCurHistory" class="right-float gis-icon">
+          <a @click="reverseCurHistory" class="right-float gis-icon">
             <i class="fa fa-chevron-circle-left fa-2x" aria-hidden="true"></i>
           </a>
 
           <select v-model="curHistory"  class="form-control">
             <option value="1">选择历史版本</option>
-            <option v-for="history in histories" v-bind:value="history.id">
+            <option v-for="history in histories" :value="history.id">
               {{history.description}}
             </option>
           </select>
 
-          <button type="button" v-on:click="deleteHistory" class="btn btn-danger">删除当前版本</button>
+          <button type="button" @click="deleteHistory" class="btn btn-danger">删除当前版本</button>
 
         </span>
       </form>
@@ -173,13 +173,13 @@
                 </label>
               </div>
               <div class="form-group" v-if="isCreatingWithFile">
-                <input type="file" name="file" id="file" v-on:change="previewFile">
+                <input type="file" name="file" id="file" @change="previewFile">
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">&nbsp;取消&nbsp;</button>
-            <button type="button" class="btn btn-primary" v-on:click="createLayer">&nbsp;创建&nbsp;</button>
+            <button type="button" class="btn btn-primary" @click="createLayer">&nbsp;创建&nbsp;</button>
           </div>
         </div>
       </div>

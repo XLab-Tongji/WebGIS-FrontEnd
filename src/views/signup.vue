@@ -1,17 +1,15 @@
 <template>
 
-  <div class="middle-box text-center loginscreen   animated fadeInDown">
+  <div class="text-center   animated fadeInDown">
     <div>
       <div>
-
         <h1 class="logo-name">WebGIS</h1>
-
       </div>
       <h3>注册WebGIS账号</h3>
 
 
 
-      <form class="m-t" role="form" action=#>
+      <form class="m-t middle-box loginscreen" role="form">
         <div    class="form-group">
           <input type="text" class="form-control" placeholder="账号" v-model="registerModel.username" >
         </div>
@@ -74,3 +72,9 @@
   }
 
 </script>
+
+<style scoped>
+  .logo-name {
+    font-size: 130px;
+  }
+</style>

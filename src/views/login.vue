@@ -1,12 +1,12 @@
 <template>
-  <div class="middle-box text-center loginscreen animated fadeInDown">
-    <div>
-      <div>
-        <h1 class="logo-name">WebGIS</h1>
+  <div class=" text-center animated fadeInDown">
+    <!--<div>-->
+      <div class=" text-center">
+        <h2 class="logo-name">WebGIS</h2>
       </div>
       <h3>Welcome to WebGIS</h3>
 
-      <form class="m-t" role="form" action="index.html">
+      <form class="m-t middle-box loginscreen" >
         <div class="form-group">
           <!--<input type="text" class="form-control username" placeholder="用户名" required="" v-model="username">-->
           <input type="text" class="form-control " placeholder="用户名" required="" v-model="username">
@@ -24,7 +24,7 @@
       </form>
 
 
-    </div>
+    <!--</div>-->
   </div>
 </template>
 
@@ -62,5 +62,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+  .logo-name {
+    font-size: 130px;
+  }
 </style>
