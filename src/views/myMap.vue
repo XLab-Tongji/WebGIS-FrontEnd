@@ -196,7 +196,7 @@
     name: "myWeb",
     data(){
       return {
-        accoundId: 1,      //账户ID
+        accoundId: this.$store.state.session.userId,      //账户ID
         isList: false,    //查看类型，为True代表列表模式，否则为缩略图模式
         folderPath: [0],   //存储访问路径，最后一个元素代表当前所在文件夹ID，根目录为0
         folderPathName: [], //存储路径名称
@@ -245,7 +245,7 @@
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
         //this.folderNames = [{name:"folder1"},{name:"folder2"}];   //模拟数据，仅用作测试
-        this.$http.get(baseUrl + '/folder/folders/accountidandupperfolder?accountId=1&upperFolder=' + ID,
+        this.$http.get(baseUrl + '/folder/folders/accountidandupperfolder?accountId=' + this.accoundId + '&upperFolder=' + ID,
           {
             emulateJSON: true
           }
@@ -821,7 +821,7 @@
         var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
 
         //访问后端获取地图数据
-        this.$http.get(baseUrl + '/map/maps/accountidandfolderidandpageid?accountId=1&folderId=' + folderId + '&pageId=' + page,
+        this.$http.get(baseUrl + '/map/maps/accountidandfolderidandpageid?accountId=' + this.accoundId + '&folderId=' + folderId + '&pageId=' + page,
           {
             emulateJSON: true
           }
@@ -951,7 +951,6 @@
       var len = this.folderPath.length;
       this.getFolders(this.folderPath[len - 1]);
       this.getMaps(this.folderPath[len - 1]);
-
       //初始化窗口鼠标事件
       this.windowMouseMoveAndUp();
 

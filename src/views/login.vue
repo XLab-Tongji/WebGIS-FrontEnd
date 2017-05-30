@@ -47,7 +47,8 @@
           password: this.password
         })
         if (response.state === 0) {
-          this.login(this.username)
+          this.login({username: this.username, userId: response.userId})
+//          console.log(response.userId)
         }
         else {
             alert("密码错误！")

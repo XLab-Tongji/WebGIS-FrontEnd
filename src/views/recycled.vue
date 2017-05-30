@@ -109,7 +109,7 @@
     name:"myWeb",
     data(){
       return {
-        accoundId:1,
+        accoundId: this.$store.state.userId,
         isList:false,
         folderPath:[0],
         mapNames:[],
