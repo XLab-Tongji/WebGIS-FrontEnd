@@ -19,6 +19,9 @@
               <li v-for="item in items">
                   <router-link :to="item.target" class="fa fa-th-large"> <span class="nav-label"> {{item.title}}</span> </router-link>
               </li>
+              <li class="active">
+                  <router-link to="/displayMap">DisplayMap</router-link>
+              </li>
           </ul>
 
       </div>

@@ -6,7 +6,8 @@ import MyMap from '@/views/myMap'
 import Recycled from '@/views/recycled'
 import Login from '@/views/login'
 import Signup from '@/views/signup'
-
+import DisplayMap from '@/views/displayMap'
+import store from '../store'
 
 Vue.use(Router)
 const router = new Router({
@@ -55,6 +56,13 @@ const router = new Router({
       name:'login',
       components: {
         login: Login
+      }
+    },
+    {
+      path:'/displayMap',
+      name:'displayMap',
+      components:{
+        mainPage:DisplayMap,
       }
     },
     {
