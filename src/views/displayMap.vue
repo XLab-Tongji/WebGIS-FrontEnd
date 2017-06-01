@@ -3,20 +3,20 @@
     <div class="row">
       <div class="col-md-3 ">
          <ul class="list-group aside-bar" id="aside-b" >
-           <li class="list-group-item" v-for="item in maps">
+           <li class="list-group-item" v-for="item in mapsVersion">
               <!-- <a href="#"> -->
                 <strong class="mapName">{{item.name}}</strong>
-                <div>
-                  <p>{{item.description}}
+                <div >
+                  <p>{{item.description[selected]}}
                   </p>
-                  <small class="maptime">create time:  {{item.create_time}}</small><small class="maptime"></small><br/>
-                  <small class="maptime">update time:  {{item.update_time}}</small><small class="maptime"></small>
+                  <small class="maptime">create time:  {{item.create_time[selected]}}</small><small class="maptime"></small><br/>
+                  <small class="maptime">update time:  {{item.update_time[selected]}}</small><small class="maptime"></small>
                 </div>
               <!-- </a> -->
               <div>
               <p>choose a version:</p>
-              <select class="form-control" >
-                  <option></option>
+              <select class="form-control" v-model="selected">
+                  <option v-for="option in item.mapvid" v-bind:value="option.value">{{option.id}}</option>
               </select>
 
             </div>
@@ -63,9 +63,10 @@ export default {
   data () {
     return {
       data:'',
+      selected:'',
       //maps
-      mapsVersion:[],
       maps:[],
+      mapsVersion:[],
       //layers
       layerIndex:[],
       pointsList:[],
@@ -98,29 +99,61 @@ export default {
             description:this.data[i].description
           });
         }
-        var exit=0;
+        var name=[];
         for(i=0;i<this.maps.length;i++){
-          for(j=0;j<this.mapsVersion.length;j++)
-          {
-            if(this.maps[i].name==this.mapsVersion[j]){
-              exit=1;
-              this.mapsVersion[j].id.push(this.map[i].id);
-              break;
-            }
-          }
-          if(exit==0){
-            this.mapsVersion.push({
-              name:this.maps[i].name,
-              id:this.maps[i].id
-            });
-          }else if (exit==1) {
-            exit=0;
-          }
+          name.push({
+            name:this.maps[i].name,
+            index:i
+          });
         }
+
+        for(i =0 ; i< name.length-1; ++i) {
+        for(j = 0; j< name.length-i-1; ++j) {
+            if(name[j].name > name[j+1].name)
+            {
+                var tmp = name[j].name;
+                var indextmp=name[j].index;
+                name[j].name = name[j+1].name;
+                name[j].index = name[j+1].index;
+                name[j+1].name = tmp;
+                name[j+1].index=indextmp;
+            }
+        }
+    }
+    var v=0;
+    var mapsid=[];mapsid.push({id:this.maps[name[0].index].mapId,value:v});
+    var mapscreate_time=[];mapscreate_time.push(this.maps[name[0].index].create_time);
+    var mapsupdate_time=[];mapsupdate_time.push(this.maps[name[0].index].update_time);
+    var mapsdescription=[];mapsdescription.push(this.maps[name[0].index].description);
+    for(i=1;i<name.length;i++){
+      if(name[i].name!==name[i-1].name){v++;
+        this.mapsVersion.push({
+          mapvid:mapsid,
+          create_time:mapscreate_time,
+          update_time:mapsupdate_time,
+          name:this.maps[name[i-1].index].name,
+          description:mapsdescription
+        });
+        mapsid=[];
+        mapscreate_time=[];
+        mapsupdate_time=[];
+        mapsdescription=[];
+        v=0;
+        mapsid.push({id:this.maps[name[i].index].mapId,value:v});
+        mapscreate_time.push(this.maps[name[i].index].create_time);
+        mapsupdate_time.push(this.maps[name[i].index].update_time);
+        mapsdescription.push(this.maps[name[i].index].description);
+      }else {
+        v++;
+        mapsid.push({id:this.maps[name[i].index].mapId,value:v});
+        mapscreate_time.push(this.maps[name[i].index].create_time);
+        mapsupdate_time.push(this.maps[name[i].index].update_time);
+        mapsdescription.push(this.maps[name[i].index].description);
+      }
+    }
         for( i = 0; i < this.maps.length; i++) {
           this.$http.get('http://wb.lab-sse.cn:8080/layer/layers',{params:{mapId:this.maps[i].mapId}}).then(function(response){
             var count=0;
-            console.log(response.data.data.mapId);
             for(j=0;j<response.data.data.layerList.length;j++){
               if(response.data.data.layerList[j].data==null){
                 this.layerIndex[j]=0;
@@ -138,7 +171,7 @@ export default {
               }
 
             }
-            
+
             // sp=new google.maps.LatLng(this.pointsList[1].x,this.pointsList[1].y);
             // var k;
             // count=0;
