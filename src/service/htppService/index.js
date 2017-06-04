@@ -9,7 +9,7 @@ async function request (context, url = '', method = 'get', data = {}) {
       header = { emulateJSON: true}
       return context.$http.get(url, header)
     case 'POST':
-      // header = { emulateJSON: true }
+      header = { emulateJSON: true }
       return context.$http.post(url, data, header)
     default:
       return null
