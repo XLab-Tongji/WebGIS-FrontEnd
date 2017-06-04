@@ -4,18 +4,24 @@ import {
 } from '../mutation-types'
 
 const state = {
-	userName: "",
-  userPassword: ""
+  login: localStorage.login || false,
+	userName: localStorage.userName || null,
+  userId: localStorage.userId || null
 }
 
 const mutations = {
-	[LOG_IN] (state, userName, userPassword){
-		state.userName = userName;
-		state.userPassword = userPassword;
+	[LOG_IN] (state, userData){
+	  state.login = true
+		state.userName = userData.username
+    state.userId = userData.userId
+    localStorage.login = state.login
+    localStorage.userName = state.userName
+    localStorage.userId = state.userId
 	},
+
 	[LOG_OUT] (state){
-		state.userName = "";
-    state.userPassword = "";
+    state.login = false
+		state.userName = ""
 	}
 }
 

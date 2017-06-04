@@ -10,6 +10,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'footBar',
   data () {
@@ -19,15 +20,15 @@ export default {
     }
   },
   created () {
-      setInterval(() => {
-        this.currentTime = new Date().toLocaleString()
-      }, 1000)
-      this.$http.get('http://115.159.65.170:8080/test/state').then(response => {
-        console.log(response)
-        this.systemState = response.bodyText
-      }, response => {
-        // error callback
-      })
+    setInterval(() => {
+      this.currentTime = new Date().toLocaleString()
+    }, 1000)
+    this.$http.get(baseUrl + '/test/state').then(response => {
+      console.log(response)
+      this.systemState = response.bodyText
+    }, response => {
+      // error callback
+    })
   }
 }
 

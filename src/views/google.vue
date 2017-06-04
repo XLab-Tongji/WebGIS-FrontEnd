@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-group form-group-sm">
-          <button type="button" v-on:click="deletePointBtnClick" class="btn btn-info btn-half-left">删除</button>
+          <button type="button" @click="deletePointBtnClick" class="btn btn-info btn-half-left">删除</button>
           <button type="button" class="btn btn-danger btn-half-right" id="pointMapMsgBtn">关闭</button>
         </div>
       </div>
@@ -80,13 +80,13 @@
         <label>mapId: {{mapId}}</label>
         <select v-model="curLayerId"  class="form-control">
           <option value="0">选择图层</option>
-          <option v-for="selectLayer in selectLayers" v-bind:value="selectLayer.id">
+          <option v-for="selectLayer in selectLayers" :value="selectLayer.id">
             {{selectLayer.name}}
           </option>
         </select>
 
         <span v-if="!curHistory">
-          <button type="button" v-on:click="deleteLayer" class="btn btn-danger">删除当前图层</button>
+          <button type="button" @click="deleteLayer" class="btn btn-danger">删除当前图层</button>
 
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-layer-modal">
             创建图层
@@ -109,38 +109,39 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="createLineMenu">
-              <li><a v-on:click="addGoodLine">添加好线</a></li>
-              <li><a v-on:click="addBadLine">添加坏线</a></li>
+              <li><a @click="addGoodLine">添加好线</a></li>
+              <li><a @click="addBadLine">添加坏线</a></li>
             </ul>
           </span>
 
-          <button type="button" v-on:click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
-          <button type="button" v-on:click="submitChange" class="btn btn-info">提交</button>
+          <button type="button" @click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
+          <button type="button" @click="submitChange" class="btn btn-info">提交</button>
 
           <!--<a v-on:click="reverseCurHistory" class="gis-icon ">-->
             <!--<i class="fa fa-upload " aria-hidden="true"></i>-->
           <!--</a>-->
           <div class="form-group right-float">
-            <button type="button" v-on:click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
-            <button type="button" v-on:click="createHistory" class="btn btn-info right-float">创建历史版本</button>
-            <button type="button" v-on:click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
+            <button type="button" @click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
+            <button type="button" @click="createHistory" class="btn btn-info right-float">创建历史版本</button>
+            <button type="button" @click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
+            <button type="button" @click="calculateDis" id="calDis" class="btn btn-info right-float">{{disText}}</button>
             <!--<label class="right-float  control-label">历史版本</label>-->
           </div>
         </span>
 
         <span v-if="curHistory">
-          <a v-on:click="reverseCurHistory" class="right-float gis-icon">
+          <a @click="reverseCurHistory" class="right-float gis-icon">
             <i class="fa fa-chevron-circle-left fa-2x" aria-hidden="true"></i>
           </a>
 
           <select v-model="curHistory"  class="form-control">
             <option value="1">选择历史版本</option>
-            <option v-for="history in histories" v-bind:value="history.id">
+            <option v-for="history in histories" :value="history.id">
               {{history.description}}
             </option>
           </select>
 
-          <button type="button" v-on:click="deleteHistory" class="btn btn-danger">删除当前版本</button>
+          <button type="button" @click="deleteHistory" class="btn btn-danger">删除当前版本</button>
 
         </span>
       </form>
@@ -172,13 +173,13 @@
                 </label>
               </div>
               <div class="form-group" v-if="isCreatingWithFile">
-                <input type="file" name="file" id="file" v-on:change="previewFile">
+                <input type="file" name="file" id="file" @change="previewFile">
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">&nbsp;取消&nbsp;</button>
-            <button type="button" class="btn btn-primary" v-on:click="createLayer">&nbsp;创建&nbsp;</button>
+            <button type="button" class="btn btn-primary" @click="createLayer">&nbsp;创建&nbsp;</button>
           </div>
         </div>
       </div>
@@ -195,7 +196,7 @@
         map: null,
         mapId: this.$route.params.mapId,
         layerDatas:null,
-
+        disText: "测距",
         lng: "lng",
         lat: "lat",
         radius: 0,
@@ -208,6 +209,7 @@
         curLayerId:0,
         curLayerType:null,
         curLayerMapDatas:[],
+        isDis: true,
 
         // 当前point 以及它的状态
         curPointStatus:0,
@@ -229,13 +231,13 @@
       // 初始化 地图 从数据库得到layerDatas 初始化selectList
       initMap: function () {
         this.map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 31.23, lng: 121.47 },
-          zoom: 20
+          center: {lat: 31.285, lng: 121.215 },
+          zoom: 17
         });
       },
-      getLayerDatas:function (mapId, getUrl) {
+      getLayerDatas: function (mapId, getUrl) {
         var self = this;
-        this.$http.get(getUrl ||('http://localhost:8080/layer/layers?mapId='+mapId),
+        this.$http.get(getUrl ||(baseUrl + '/layer/layers?mapId='+mapId),
           {
             emulateJSON: true
           }
@@ -267,7 +269,7 @@
         let postUrl = null;
         let postOptions = null;
         if(this.isCreatingWithFile) {
-          postUrl = 'http://localhost:8080/layer/layers';
+          postUrl = baseUrl + '/layer/layers';
           formData = new FormData();
           formData.append('file', this.curFile);
           formData.append('mapId', this.mapId);
@@ -279,7 +281,7 @@
           };
         }
         else{
-          postUrl = 'http://localhost:8080/layer/emptyLayers';
+          postUrl = baseUrl + '/layer/emptyLayers';
           formData = {
             mapId: this.mapId,
             type: this.createLayerType
@@ -310,7 +312,7 @@
       deleteLayer:function () {
         var self = this;
         if(this.curLayerId!==0) {
-          this.$http.delete('http://localhost:8080/layer/layers/id?mapId=' + this.mapId +"&layerId="+this.curLayerId,
+          this.$http.delete(baseUrl + '/layer/layers/id?mapId=' + this.mapId +"&layerId="+this.curLayerId,
             {
               emulateJSON: true
             }
@@ -376,7 +378,19 @@
 
       //根据点的状态创建一个点
       getColorWithStatus: function (status) {
-        return status==="GOOD"?"black":'#FF0000'
+          switch(status) {
+            case "GOOD":
+                return "black";
+                break;
+            case "BAD":
+                return "#FF0000";
+                break;
+            case "DIS":
+                return "#00FF00";
+                break;
+                break;
+          }
+        return "black";
       },
       addPoint: function (pointStatus) {
         let radius = parseFloat(prompt('请输入半径', ''));
@@ -443,6 +457,22 @@
       addBadLine: function () {
         this.addLine("BAD");
       },
+      calculateDis: function () {
+        if(this.isDis) {
+          this.addLine("DIS");
+          this.isDis = false;
+          this.disText = "清空";
+        }
+        else {
+          this.curLayerMapDatas.forEach(function (f) {
+            f.setMap(null);
+          });
+          this.isDis = true;
+          this.curPoint = null;
+          this.disText = "测距";
+        }
+
+      },
 
       stopAddLine: function () {
         google.maps.event.removeListener(this.mapClickListener);
@@ -474,8 +504,8 @@
         var curLayerData = null;
         var self = this;
         var patchUrl = self.curLayerType==="YJG" ?
-          "http://localhost:8080/layer/layers/point/id":
-          "http://localhost:8080/layer/layers/line/id";
+          baseUrl + "/layer/layers/point/id":
+          baseUrl + "/layer/layers/line/id";
         curLayerData = {type:self.curLayerType, pointList:[], lineList: []};
         this.curLayerMapDatas.forEach(function (curData) {
           if(self.curLayerType==="YJG"){
@@ -633,7 +663,7 @@
       },
       setHistory: function () {
         let self = this;
-        this.$http.get('http://localhost:8080/history/histories/mapId?mapId='+this.mapId, {
+        this.$http.get(baseUrl + '/history/histories/mapId?mapId='+this.mapId, {
           emulateJSON: true
         }).then(function (response) {
           let responseBody = response.body
@@ -647,7 +677,7 @@
         let desc = prompt('请输入历史版本描述信息', '');
         if(!desc)
           return;
-        this.$http.post('http://localhost:8080/history/histories', {
+        this.$http.post(baseUrl + '/history/histories', {
           mapId: this.mapId,
           description: desc
         }).then(function (response) {
@@ -662,7 +692,7 @@
       },
       deleteHistory: function () {
         let self = this;
-        this.$http.delete('http://localhost:8080/history/histories/id?mapId='+this.mapId+'&historyId='+this.curHistory)
+        this.$http.delete(baseUrl + '/history/histories/id?mapId='+this.mapId+'&historyId='+this.curHistory)
           .then(function (response) {
             let responseBody = response.body
             if(responseBody.code===200){
@@ -754,7 +784,7 @@
       curHistory: function (newValue, oldValue) {
         if(newValue!==1)
           this.getLayerDatas(this.mapId,
-            'http://localhost:8080/history/histories/id?historyId='+newValue);
+            baseUrl + '/history/histories/id?historyId='+newValue);
       }
     },
     mounted(){

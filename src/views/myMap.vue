@@ -196,7 +196,7 @@
     name: "myWeb",
     data(){
       return {
-        accoundId: 1,      //账户ID
+        accoundId: this.$store.state.session.userId,      //账户ID
         isList: false,    //查看类型，为True代表列表模式，否则为缩略图模式
         folderPath: [0],   //存储访问路径，最后一个元素代表当前所在文件夹ID，根目录为0
         folderPathName: [], //存储路径名称
@@ -245,7 +245,7 @@
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
         //this.folderNames = [{name:"folder1"},{name:"folder2"}];   //模拟数据，仅用作测试
-        this.$http.get('http://wb.lab-sse.cn/folder/folders/accountidandupperfolder?accountId=1&upperFolder=' + ID,
+        this.$http.get(baseUrl + '/folder/folders/accountidandupperfolder?accountId=' + this.accoundId + '&upperFolder=' + ID,
           {
             emulateJSON: true
           }
@@ -273,7 +273,7 @@
       },
       createFolder: function (name, parentFolder, event) {
         this.isLoading = true;
-        this.$http.post('http://wb.lab-sse.cn/folder/folders',
+        this.$http.post(baseUrl + '/folder/folders',
           {
             "accountId": this.accoundId,
             "name": name,
@@ -308,7 +308,7 @@
       },
       deleteFolder: function (index, event) {
         this.isLoading = true;
-        this.$http.delete("http://wb.lab-sse.cn/folder/folders/id?folderId=" + this.folderNames[index].id,
+        this.$http.delete(baseUrl + "/folder/folders/id?folderId=" + this.folderNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {
@@ -326,7 +326,7 @@
       },
       folderRename: function (name, event) {
         this.isLoading = true;
-        this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+        this.$http.patch(baseUrl + "/folder/folders/id",
           {
             emulateJSON: true,
             id: this.folderNames[this.currentFile.index].id,
@@ -354,7 +354,7 @@
         var names = []
         for(var i = 0;i < this.draged.folderIndex.length;i++){
           names.push(this.folderNames[this.draged.folderIndex[i]].name);
-          this.$http.patch("http://wb.lab-sse.cn/folder/folders/id",
+          this.$http.patch(baseUrl + "/folder/folders/id",
             {
               emulateJSON: true,
               id: this.folderNames[this.draged.folderIndex[i]].id,
@@ -396,7 +396,7 @@
       },
       createMap: function (name, parentFolder, event) {
         this.isLoading = true;
-        this.$http.post('http://wb.lab-sse.cn/map/maps',
+        this.$http.post(baseUrl + '/map/maps',
           {
             "accountId": this.accoundId,
             "name": name,
@@ -421,7 +421,7 @@
       },
       mapRename: function (name, event) {
         this.isLoading = true;
-        this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+        this.$http.patch(baseUrl + "/map/maps/id",
           {
             emulateJSON: true,
             id: this.mapNames[this.currentFile.index].id,
@@ -442,7 +442,7 @@
       },
       deleteMap: function (index, event) {
         this.isLoading = true;
-        this.$http.delete("http://wb.lab-sse.cn/map/maps/id?mapId=" + this.mapNames[index].id,
+        this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {
@@ -474,7 +474,7 @@
         var names = []
         for(var i = 0;i < this.draged.mapIndex.length;i++){
           names.push(this.mapNames[this.draged.mapIndex[i]].name);
-          this.$http.patch("http://wb.lab-sse.cn/map/maps/id",
+          this.$http.patch(baseUrl + "/map/maps/id",
             {
               emulateJSON: true,
               id: this.mapNames[this.draged.mapIndex[i]].id,
@@ -821,7 +821,7 @@
         var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
 
         //访问后端获取地图数据
-        this.$http.get('http://wb.lab-sse.cn/map/maps/accountidandfolderidandpageid?accountId=1&folderId=' + folderId + '&pageId=' + page,
+        this.$http.get(baseUrl + '/map/maps/accountidandfolderidandpageid?accountId=' + this.accoundId + '&folderId=' + folderId + '&pageId=' + page,
           {
             emulateJSON: true
           }
@@ -952,7 +952,6 @@
       var len = this.folderPath.length;
       this.getFolders(this.folderPath[len - 1]);
       this.getMaps(this.folderPath[len - 1]);
-
       //初始化窗口鼠标事件
       this.windowMouseMoveAndUp();
 

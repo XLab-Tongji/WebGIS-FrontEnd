@@ -1,10 +1,12 @@
-export const userInfo = state => {
+
+export const userStatus = state => {
   return {
-    userName: state.session.userName,
-    userPassword: state.session.userPassword
+    login: state.session.login
   }
 }
 
-export const isLoggedIn = state => {
-  return state.session.userName != ''
+export const userInfo = state => {
+  return {
+    userName: state.session.userName,
+  }
 }

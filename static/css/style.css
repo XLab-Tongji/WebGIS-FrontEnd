@@ -8217,6 +8217,22 @@ body.md-skin {
     display: inline-block;
   }
 }
+.mapName{
+  font-size: 20px;
+  color: #696969;
+}
+small.maptime{
+  font-size: 12px;
+  color: #C0C0C0;
+}
+.aside-bar{
+  margin-top: 5px;
+  min-height: 750px;
+  max-height: 750px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 /* Only demo */
 @media (max-width: 1000px) {
   .welcome-message {
