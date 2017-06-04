@@ -947,6 +947,7 @@
       }
     },
     mounted(){
+
       //初始化文件夹和文件
       var len = this.folderPath.length;
       this.getFolders(this.folderPath[len - 1]);
