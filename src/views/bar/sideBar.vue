@@ -16,8 +16,8 @@
                   </div>
               </li>
 
-              <li v-for="item in items">
-                  <router-link :to="item.target" class="fa fa-th-large"> <span class="nav-label"> {{item.title}}</span> </router-link>
+              <li v-for="(item,index) in items" v-bind:class="{active:index==activeItem}" v-on:click="itemClick(index,$event)">
+                  <router-link :to="item.target" class="fa fa-th-large" > <span class="nav-label"> {{item.title}}</span> </router-link>
               </li>
           </ul>
 
@@ -31,6 +31,7 @@ export default {
   name: 'navBar',
   data () {
     return {
+      activeItem:0,
       items: [
         {
           target: '/myMap',
@@ -44,7 +45,16 @@ export default {
           target: '/task',
           title: 'Task'
         },
+        {
+          target: '/displayMap',
+          title: 'DisplayMap'
+        },
       ]
+    }
+  },
+  methods:{
+    itemClick:function(index,event){
+      this.activeItem = index;
     }
   }
 }
@@ -52,5 +62,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.nav li{
+  overflow: hidden;
+}
 </style>

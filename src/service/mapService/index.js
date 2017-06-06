@@ -22,28 +22,64 @@ function createInfoWindow (infoWindowId, infoWindowParentId, closeBtnId, pos, ma
 
   infowindow.open(map)
 
+  infowindow.ownClose = () => {
+    document.getElementById(infoWindowParentId).append(document.getElementById(infoWindowId))
+    infowindow.close()
+  }
+
   google.maps.event.addListener(infowindow, 'domready', function () {
     var closeBtn = $('.gm-style-iw').next()
     closeBtn.hide()
     $('#' + closeBtnId).on('click', function (event) {
-      document.getElementById(infoWindowParentId).append(document.getElementById(infoWindowId))
-      infowindow.close()
+      infowindow.ownClose()
+      // document.getElementById(infoWindowParentId).append(document.getElementById(infoWindowId))
+      // infowindow.close()
     })
   })
+
+  return infowindow
 }
 
-function createMarker (pos, map, draggable, curPos, title) {
+function createMarker (pos, map, color, draggable, curPos) {
+  color = color || MARKER_COLOR['0'];
+  let pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color,
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0,0),
+    new google.maps.Point(10, 34))
+  let pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+    new google.maps.Size(40, 37),
+    new google.maps.Point(0, 0),
+    new google.maps.Point(12, 35))
   let marker = new google.maps.Marker({
     position: pos,
     map: map,
-    title: title || '',
+    icon: pinImage,
+    shadow: pinShadow,
     draggable: draggable || false,
     animation: google.maps.Animation.DROP
   });
-  addListener(marker, 'drag', () => {
-    curPos.lat = marker.getPosition().lat()
-    curPos.lng = marker.getPosition().lng()
-  })
+  if (draggable) {
+    addListener(marker, 'drag', () => {
+      curPos.lat = marker.getPosition().lat()
+      curPos.lng = marker.getPosition().lng()
+    })
+  }
+  return marker
+}
+
+function changeMarkerColor (marker, color, map) {
+  let pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color,
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0,0),
+    new google.maps.Point(10, 34))
+  let pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+    new google.maps.Size(40, 37),
+    new google.maps.Point(0, 0),
+    new google.maps.Point(12, 35))
+  marker.setIcon(pinImage)
+  marker.setShadow(pinShadow)
+  console.log('setIcon')
+  refreshComponent(marker, map)
 }
 
 function getScaleWithZoom (zoom) {
@@ -59,6 +95,11 @@ function getUperPos (pos, zoom) {
   }
 }
 
+function refreshComponent (component, map) {
+  component.setMap(null)
+  component.setMap(map)
+}
+
 
 export default {
   initMap,
@@ -67,5 +108,6 @@ export default {
   createMarker,
   getScaleWithZoom,
   getUperPos,
+  changeMarkerColor,
   addListener: addListener
 }

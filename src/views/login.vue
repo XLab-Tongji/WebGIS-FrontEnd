@@ -22,7 +22,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex'
-  import * as UserService from  '../service/htppService/userService'
+  import UserService from  '../service/httpService/userService'
 
   export default {
     name: 'login',
@@ -48,10 +48,9 @@
         })
         if (response.state === 0) {
           this.login({username: this.username, userId: response.userId})
-//          console.log(response.userId)
         }
         else {
-            alert("密码错误！")
+          alert("密码错误！")
         }
       }
     }

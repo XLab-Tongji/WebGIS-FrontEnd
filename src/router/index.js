@@ -7,7 +7,7 @@ import Recycled from '@/views/recycled'
 import Login from '@/views/login'
 import Signup from '@/views/signup'
 import Task from '@/views/Task'
-
+import DisplayMap from '@/views/displayMap'
 
 Vue.use(Router)
 const router = new Router({
@@ -60,9 +60,16 @@ const router = new Router({
     },
     {
       path: '/task',
-      name:'task',
+      name: 'task',
       components: {
         mainPage: Task
+      }
+    },
+    {
+      path:'/displayMap',
+      name:'displayMap',
+      components:{
+        mainPage:DisplayMap
       }
     },
     {

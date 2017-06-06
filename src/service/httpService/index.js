@@ -1,4 +1,4 @@
-async function request (context, url = '', method = 'get', data = {}) {
+async function request (context, url = '', method = 'get', data = {}, isEmulareJson = false) {
   method = method.toUpperCase()
   url = baseUrl + url
   console.log(method, url)
@@ -9,8 +9,12 @@ async function request (context, url = '', method = 'get', data = {}) {
       header = { emulateJSON: true}
       return context.$http.get(url, header)
     case 'POST':
-      header = { emulateJSON: true }
+      if (isEmulareJson) {
+        header = { emulateJSON: true }
+      }
       return context.$http.post(url, data, header)
+    case 'PATCH':
+      return context.$http.patch(url)
     default:
       return null
   }
