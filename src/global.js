@@ -28,3 +28,5 @@ global.MAP = {
   INIT_LNG: 121.215,
   INIT_ZOOM: 17
 }
+
+global.KEY_CODE_ENTER = 13

@@ -115,6 +115,7 @@
       <button type="button" class="btn btn-info" data-toggle="modal" data-target="#task-list-modal">
         <i class="fa fa-eye" aria-hidden="true"></i>查看任务
       </button>
+      <input placeholder="input lat, lng" v-model="latlng" @keydown="onInputKeyDown">
       <ul>
         <li v-for="(color,state) in markerColors" :style="'color:#'+color">{{state}}</li>
       </ul>
@@ -189,12 +190,22 @@
         curInfoWindow: null,
         tasks: [],
         markers: {},
-        markerColors: MARKER_COLOR
+        markerColors: MARKER_COLOR,
+        latlng: ''
       }
     },
     methods: {
       getColorFromState (state) {
         return MARKER_COLOR[state]
+      },
+      onInputKeyDown (event) {
+        if (event.keyCode === KEY_CODE_ENTER) {
+          let latLng = /(\d+.\d*),(\s*)(\d+.\d*)/.exec(this.latlng)
+          if (latLng) {
+            MapService.updateCenter(this.map, {lat: parseFloat(latLng[1]), lng: parseFloat(latLng[3])})
+            console.log(parseFloat(latLng[1]), parseFloat(latLng[3]))
+          }
+        }
       },
       onCreateTaskClick () {
         let context = this
@@ -336,6 +347,15 @@
 
   .navbar button {
     margin-right: 2%;
+  }
+
+  .navbar input {
+    border: none;
+    padding: 5px;
+  }
+  .navbar input:focus, .navbar input:active {
+    border: none;
+    outline: none;
   }
 
   .navbar ul {

@@ -1,10 +1,15 @@
 let addListener = google.maps.event.addListener
 
 function initMap (mapId) {
-  return new google.maps.Map(document.getElementById(mapId), {
+  let map = new google.maps.Map(document.getElementById(mapId), {
     center: {lat: global.MAP.INIT_LAT, lng: global.MAP.INIT_LNG },
     zoom: global.MAP.INIT_ZOOM
   })
+  return map
+}
+
+function updateCenter (map, position) {
+  map.setCenter(position)
 }
 
 function addClickListenerOnce (map, listener) {
@@ -109,5 +114,6 @@ export default {
   getScaleWithZoom,
   getUperPos,
   changeMarkerColor,
+  updateCenter,
   addListener: addListener
 }
