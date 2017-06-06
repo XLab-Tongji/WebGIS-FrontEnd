@@ -6,6 +6,7 @@ import MyMap from '@/views/myMap'
 import Recycled from '@/views/recycled'
 import Login from '@/views/login'
 import Signup from '@/views/signup'
+import Task from '@/views/Task'
 
 
 Vue.use(Router)
@@ -55,6 +56,13 @@ const router = new Router({
       name:'login',
       components: {
         login: Login
+      }
+    },
+    {
+      path: '/task',
+      name:'task',
+      components: {
+        mainPage: Task
       }
     },
     {

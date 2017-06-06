@@ -109,7 +109,7 @@
     name:"myWeb",
     data(){
       return {
-        accoundId: this.$store.state.userId,
+        accoundId: this.$store.state.session.userId,
         isList:false,
         folderPath:[0],
         mapNames:[],
@@ -132,7 +132,7 @@
     methods: {
         //获取回收站内地图
       getMaps: function (ID) {
-        this.$http.get(baseUrl + '/recycle/recycles/1',
+        this.$http.get(baseUrl + '/recycle/recycles/' + this.accoundId,
           {
             emulateJSON: true
           }

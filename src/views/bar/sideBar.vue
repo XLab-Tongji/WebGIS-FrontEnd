@@ -40,6 +40,10 @@ export default {
             target: '/recycled',
             title: 'Recycled'
         },
+        {
+          target: '/task',
+          title: 'Task'
+        },
       ]
     }
   }

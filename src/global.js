@@ -8,3 +8,9 @@ global.baseUrl = 'http://localhost:8080'         // for deploy
 // global.baseUrl = 'http://localhost:8080'        // for local test
 
 global.BACKEND_LOGIN = '/auth/token'
+
+global.MAP = {
+  INIT_LAT: 31.285,
+  INIT_LNG: 121.215,
+  INIT_ZOOM: 17
+}

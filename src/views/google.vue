@@ -231,8 +231,8 @@
       // 初始化 地图 从数据库得到layerDatas 初始化selectList
       initMap: function () {
         this.map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 31.285, lng: 121.215 },
-          zoom: 17
+          center: {lat: global.MAP.INIT_LAT, lng: global.MAP.INIT_LNG },
+          zoom: global.MAP.INIT_ZOOM
         });
       },
       getLayerDatas: function (mapId, getUrl) {
