@@ -442,7 +442,8 @@
       },
       deleteMap: function (index, event) {
         this.isLoading = true;
-        this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
+//        this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
+          this.$http.post(baseUrl + "/recycle/recycles/" + this.mapNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {

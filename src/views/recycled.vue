@@ -132,6 +132,7 @@
     methods: {
         //获取回收站内地图
       getMaps: function (ID) {
+        console.log(baseUrl + '/recycle/recycles/' + this.accoundId)
         this.$http.get(baseUrl + '/recycle/recycles/' + this.accoundId,
           {
             emulateJSON: true

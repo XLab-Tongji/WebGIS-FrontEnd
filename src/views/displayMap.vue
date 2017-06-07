@@ -62,6 +62,7 @@ export default {
   name: 'displayMap',
   data () {
     return {
+      accoundId: this.$store.state.session.userId,
       data:'',
       selected:'',
       //maps
@@ -87,7 +88,7 @@ export default {
     // addPipe();
   },
   created () {
-      this.$http.get('http://wb.lab-sse.cn:8080/map/maps/accountid',{params:{accountId:1}}).then(function(response){
+      this.$http.get('http://wb.lab-sse.cn:8080/map/maps/accountid',{params:{accountId:this.accoundId}}).then(function(response){
         this.data = response.data.data;
         var i,j;
         for(i=0;i<this.data.length;i++){
