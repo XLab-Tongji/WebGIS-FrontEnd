@@ -49,6 +49,10 @@ export default {
           target: '/displayMap',
           title: 'DisplayMap'
         },
+        {
+          target: '/userManagement',
+          title: 'UserManagement'
+        },
       ]
     }
   },

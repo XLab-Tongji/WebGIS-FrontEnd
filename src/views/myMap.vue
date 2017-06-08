@@ -29,7 +29,7 @@
     <!--主体展示块-->
     <div class="wrapper-content animated fadeInRight  white-bg">
       <!--loading 部分-->
-      <div class = "loading" v-if="isLoading">
+      <div class="loading" v-if="isLoading">
         <div class="sk-circle">
           <div class="sk-circle1 sk-child"></div>
           <div class="sk-circle2 sk-child"></div>
@@ -76,7 +76,8 @@
               <img class="map-img" src="../assets/images/myMap/myMap.jpg">
             </div>
             <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
-            <div class="checkBox-map" v-if="isCheck"><input type="checkbox" v-on:click="checkBoxCLick('map',index,$event)"/></div>
+            <div class="checkBox-map" v-if="isCheck"><input type="checkbox"
+                                                            v-on:click="checkBoxCLick('map',index,$event)"/></div>
             <div class="op-map" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"
                  v-on:mouseleave="opMapMouseLeave(index,$event)">
               <img class="op-icon" src="../assets/images/myMap/op-icon.png">
@@ -89,7 +90,8 @@
       <div class="row" v-if="isList">
         <table id="listTable">
           <tr>
-            <td class="thead"><input v-if="isCheck" id = "checkBoxAll" type="checkbox" v-on:click="checkBoxAllClick($event)"/></td>
+            <td class="thead"><input v-if="isCheck" id="checkBoxAll" type="checkbox"
+                                     v-on:click="checkBoxAllClick($event)"/></td>
             <td class="thead">Name</td>
             <td class="thead">Create Time</td>
             <td class="thead">Latest Change Time</td>
@@ -118,7 +120,10 @@
 
           <!--文件-->
           <tr v-for="(mapName,index) in mapNames">
-            <td class="tList listBox"><div class="checkBox-map" v-if="isCheck"><input type="checkbox" v-on:click="checkBoxCLick('map',index,$event)"/></div></td>
+            <td class="tList listBox">
+              <div class="checkBox-map" v-if="isCheck"><input type="checkbox"
+                                                              v-on:click="checkBoxCLick('map',index,$event)"/></div>
+            </td>
             <td class="tList listName" v-on:click="mapClick(index,$event)"
                 v-on:mousedown="fileMouseDown('map',index,$event)">
               <img class="map-img-list" src="../assets/images/myMap/map-icon.png"/>{{ mapName.name }}
@@ -153,7 +158,9 @@
     <!--拖拽浮窗-->
     <div id="dragDiv"
          v-bind:style="{ left: dragDiv.dragLeft + 'px', top: dragDiv.dragTop + 'px',display:draged.isdrag ? 'block' : 'none' }">
-      <label><pre>{{ dragDiv.dragValue }}</pre></label>
+      <label>
+        <pre>{{ dragDiv.dragValue }}</pre>
+      </label>
     </div>
 
     <!--文件操作列表-->
@@ -162,6 +169,8 @@
         src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
       <li v-on:click="Delete($event)" data-toggle="modal" data-target="#popup"><img
         src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
+      <li v-on:click="getUsers()" v-if="currentFile.type == 'map'" data-toggle="modal" data-target="#manage-popup"><img
+        src="../assets/images/myMap/manage-icon.png"><label>分配管理员</label></li>
     </ul>
 
     <!--通用弹出框-->
@@ -187,6 +196,39 @@
       </div>
     </div>
 
+    <!--分配管理员弹出框-->
+    <div class="modal fade" id="manage-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Manage User</h4>
+          </div>
+          <div class="modal-body user-body">
+            <table id="user-table">
+              <tr>
+                <th class="list-name thead">Account</th>
+                <th class="thead list-btns">Operator</th>
+              </tr>
+              <tr v-for="(assigneduser,index) in assignedUsers">
+                <td class="list-name">{{ assigneduser }}</td>
+                <td class="list-btns">
+                  <button type="button" class="btn btn-danger" v-on:click="deleteUserFromMap(index)">Delete</button>
+                </td>
+              </tr>
+              <tr v-for="(user,index) in allUsers">
+                <td class="list-name">{{ user }}</td>
+                <td class="list-btns">
+                  <button type="button" class="btn btn-info " v-on:click="addUserToMap(index)">&nbsp;&nbsp;Add&nbsp;&nbsp; </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </template>
@@ -202,11 +244,13 @@
         folderPathName: [], //存储路径名称
         folderNames: [],   //当前文件夹中的所有文件夹信息
         mapNames: [],      //当前文件夹中的所有地图信息
+        assignedUsers: [],
+        allUsers: [],
         draged: {          //辅助拖拽功能
           isdrag: false,  //是否正在拖拽
           type: "",        //被拖拽的文件类型
-          index:0,         //最后被选中的文件序号
-          mapIndex: [] ,        //被拖拽的文件序号
+          index: 0,         //最后被选中的文件序号
+          mapIndex: [],        //被拖拽的文件序号
           folderIndex: []         //被拖拽的文件夹序号
         },
         dragDiv: {         //拖拽浮窗
@@ -233,8 +277,8 @@
           errorMsg: "",
           input: ""
         },
-        isCheck:false,    //判断是否是批处理
-        isLoading:true    //是否正在加载
+        isCheck: false,    //判断是否是批处理
+        isLoading: true    //是否正在加载
       }
     },
     methods: {
@@ -346,13 +390,13 @@
         });
         this.isLoading = false;
       },
-      moveFolder:function(folderId,folderName,event){
+      moveFolder: function (folderId, folderName, event) {
         this.isLoading = true;
         this.isCheck = false;
-        if(folderName == "")folderName = "parent folder";
+        if (folderName == "")folderName = "parent folder";
         //拖拽文件夹
         var names = []
-        for(var i = 0;i < this.draged.folderIndex.length;i++){
+        for (var i = 0; i < this.draged.folderIndex.length; i++) {
           names.push(this.folderNames[this.draged.folderIndex[i]].name);
           this.$http.patch(baseUrl + "/folder/folders/id",
             {
@@ -371,7 +415,7 @@
             else {
               this.msgResult("error", "Failed to move the folder " + names[0] + " to " + folderName + "!");
             }
-            names.splice(0,1);
+            names.splice(0, 1);
           });
         }
 
@@ -443,7 +487,7 @@
       deleteMap: function (index, event) {
         this.isLoading = true;
 //        this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
-          this.$http.post(baseUrl + "/recycle/recycles/" + this.mapNames[index].id,
+        this.$http.post(baseUrl + "/recycle/recycles/" + this.mapNames[index].id,
           {
             emulateJSON: true
           }).then(function (response) {
@@ -467,13 +511,13 @@
         $(".op-map").eq(index).css("display", "none");
         $(".img-box-map").eq(index).css("margin-top", "0px");
       },
-      moveMap:function(folderId,folderName,event){
+      moveMap: function (folderId, folderName, event) {
         this.isLoading = true;
         this.isCheck = false;
-        if(folderName == "")folderName = "parent folder";
+        if (folderName == "")folderName = "parent folder";
         //拖拽文件
         var names = []
-        for(var i = 0;i < this.draged.mapIndex.length;i++){
+        for (var i = 0; i < this.draged.mapIndex.length; i++) {
           names.push(this.mapNames[this.draged.mapIndex[i]].name);
           this.$http.patch(baseUrl + "/map/maps/id",
             {
@@ -491,7 +535,7 @@
             else {
               this.msgResult("error", "Failed to move the map " + names[0] + " to " + folderName + "!");
             }
-            names.splice(0,1);
+            names.splice(0, 1);
           });
 
         }
@@ -506,18 +550,18 @@
         //设置选中属性
         this.draged.type = type;
         this.draged.index = index;
-        if(type == "folder" && this.draged.folderIndex.indexOf(index) == -1)this.draged.folderIndex.push(index);
-        else if(type == "map" && this.draged.mapIndex.indexOf(index) == -1 )this.draged.mapIndex.push(index);
+        if (type == "folder" && this.draged.folderIndex.indexOf(index) == -1)this.draged.folderIndex.push(index);
+        else if (type == "map" && this.draged.mapIndex.indexOf(index) == -1)this.draged.mapIndex.push(index);
         this.draged.isdrag = true;
 
         //500ms后如果还是选中状态，则修改样式
         function changeStatus(outThis) {
           if (outThis.draged.isdrag == true && outThis.draged.type == type && outThis.draged.index == index) {
             //修改被选中模块的样式
-            for(var i = 0;i < outThis.draged.folderIndex.length;i++){
+            for (var i = 0; i < outThis.draged.folderIndex.length; i++) {
               $(".ibox").eq(outThis.draged.folderIndex[i]).css("opacity", "0.5");
             }
-            for(var i = 0;i < outThis.draged.mapIndex.length;i++){
+            for (var i = 0; i < outThis.draged.mapIndex.length; i++) {
               $(".ibox").eq(outThis.folderNames.length + outThis.draged.mapIndex[i]).css("opacity", "0.5");
             }
 
@@ -531,14 +575,14 @@
 
         //隐藏拖拽浮窗，只有移动超过5个像素点才会显示
         var msg = "";
-        for(var i = 0;i < this.draged.folderIndex.length;i++){
+        for (var i = 0; i < this.draged.folderIndex.length; i++) {
           msg += "<" + this.folderNames[this.draged.folderIndex[i]].name + ">";
-          if(i != this.draged.folderIndex.length - 1)msg += ",";
+          if (i != this.draged.folderIndex.length - 1)msg += ",";
         }
-        if(this.draged.folderIndex.length > 0)msg += "\n"
-        for(var i = 0;i < this.draged.mapIndex.length;i++){
+        if (this.draged.folderIndex.length > 0)msg += "\n"
+        for (var i = 0; i < this.draged.mapIndex.length; i++) {
           msg += this.mapNames[this.draged.mapIndex[i]].name;
-          if(i != this.draged.mapIndex.length - 1)msg += ",";
+          if (i != this.draged.mapIndex.length - 1)msg += ",";
         }
         console.log(msg);
         this.dragDiv.dragValue = msg;
@@ -549,29 +593,29 @@
         console.log("Mouse up on folder " + this.folderNames[index].name);
         if (this.draged.isdrag == true && (this.draged.type == "map" || this.draged.index != index)) {
           //修改目录
-          this.moveMap(this.folderNames[index].id,this.folderNames[index].name,event);
-          this.moveFolder(this.folderNames[index].id,this.folderNames[index].name,event);
+          this.moveMap(this.folderNames[index].id, this.folderNames[index].name, event);
+          this.moveFolder(this.folderNames[index].id, this.folderNames[index].name, event);
         }
         //清除拖拽属性
         this.clearDrop();
       },
       fileMouseEnter: function (index, event) {
         if (this.draged.isdrag == true) {
-          if(this.draged.type == "folder" && this.draged.index == index)return;
+          if (this.draged.type == "folder" && this.draged.index == index)return;
           $(".ibox").eq(index).css("border", "2px dotted");
           $(".ibox").eq(index).css("opacity", "0.7");
           $(".ibox").eq(index).find(".img-box").css("cursor", "default");
           $(".ibox").eq(index).find(".img-box").css("margin-top", "0");
           $(".ibox").eq(index).find(".delete").css("bottom", "0");
         }
-        else if($(".op-list").css("display") == "none"){
+        else if ($(".op-list").css("display") == "none") {
           $(".op").eq(index).css("display", "block");
           $(".ibox").eq(index).find(".img-box").css("margin-top", "-8px");
           $(".ibox").eq(index).find(".delete").css("bottom", "9px");
         }
       },
       fileMouseLeave: function (index, event) {
-        if(this.draged.isDrag == true && this.draged.type == "folder" && this.draged.index == index)return;
+        if (this.draged.isDrag == true && this.draged.type == "folder" && this.draged.index == index)return;
         if ($(".op-list").css("display") == "none")$(".op").eq(index).css("display", "none");
         $(".ibox").eq(index).css("border", "none");
         $(".ibox").eq(index).css("opacity", "1");
@@ -584,8 +628,8 @@
           //修改目录
           var len = this.folderPath.length;
           var parentFolder = len <= 1 ? 0 : this.folderPath[len - 2];
-          this.moveMap(parentFolder,"",event);
-          this.moveFolder(parentFolder,"",event);
+          this.moveMap(parentFolder, "", event);
+          this.moveFolder(parentFolder, "", event);
         }
         this.clearDrop();
       },
@@ -602,17 +646,17 @@
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
         var mapBoxes = $(".checkBox-map input");
-        for(var i = 0;i < mapBoxes.length;i++){
-          if(mapBoxes.eq(i).is(':checked')){
+        for (var i = 0; i < mapBoxes.length; i++) {
+          if (mapBoxes.eq(i).is(':checked')) {
             this.draged.mapIndex.push(i);
           }
         }
         /*var folderBoxes = $(".checkBox-folder input");
-        for(var i = 0;i < folderBoxes.length;i++){
-          if(folderBoxes.eq(i).is(':checked')){
-            this.draged.folderIndex.push(i);
-          }
-        }*/
+         for(var i = 0;i < folderBoxes.length;i++){
+         if(folderBoxes.eq(i).is(':checked')){
+         this.draged.folderIndex.push(i);
+         }
+         }*/
 
         $(".ibox").css("opacity", "1");
       },
@@ -715,7 +759,7 @@
         }
         this.currentFile.index = index;
         this.currentFile.type = type;
-        $(".op-list").css("left", left - wrapperLeft + 152 + "px");
+        $(".op-list").css("left", left - wrapperLeft + 127 + "px");
         $(".op-list").css("display", "block");
       },
       opMapMouseEnter: function (index, event) {
@@ -762,24 +806,24 @@
       },
 
       /*批处理事件*/
-      checkIconClick:function(event){
+      checkIconClick: function (event) {
         this.isCheck = this.isCheck == true ? false : true;
         this.draged.mapIndex = [];
         this.draged.folderIndex = [];
       },
-      checkBoxCLick:function(type,index,event){
-        if(type == "map"){
-          if(this.draged.mapIndex.indexOf(index) == -1)this.draged.mapIndex.push(index);
-          else this.draged.mapIndex.splice(this.draged.mapIndex.indexOf(index),1);
+      checkBoxCLick: function (type, index, event) {
+        if (type == "map") {
+          if (this.draged.mapIndex.indexOf(index) == -1)this.draged.mapIndex.push(index);
+          else this.draged.mapIndex.splice(this.draged.mapIndex.indexOf(index), 1);
         }
       },
-      checkBoxAllClick:function(event){
-        if($("#checkBoxAll").is(':checked')){
-          $(".checkBox-map input").attr("checked","true");
+      checkBoxAllClick: function (event) {
+        if ($("#checkBoxAll").is(':checked')) {
+          $(".checkBox-map input").attr("checked", "true");
           this.clearDrop();
         }
-        else{
-          $(".checkBox-map input").prop("checked",function(){
+        else {
+          $(".checkBox-map input").prop("checked", function () {
             return false;
           });
           this.clearDrop();
@@ -945,6 +989,18 @@
         if (type == "success")toastr.success(msg);
         else if (type == "error")toastr.error(msg);
         else if (type == "info")toastr.info(msg);
+      },
+
+      /*分配管理员*/
+      getUsers: function () {
+        this.assignedUsers = ["user1", "user2", "user3", "user4", "user5"];
+        this.allUsers = ["user1", "user2", "user3", "user4", "user5","user1", "user2", "user3", "user4", "user5"];
+      },
+      deleteUserFromMap:function(index){
+        alert("want to delete the user: " + this.assignedUsers[index] + " from : " + this.mapNames[this.currentFile.index].id);
+      },
+      addUserToMap:function(index){
+        alert("want to add the user: " + this.allUsers[index] + " to :" + this.mapNames[this.currentFile.index].id);
       }
     },
     mounted(){
@@ -965,5 +1021,31 @@
 </script>
 
 <style>
-
+  /*用户表格*/
+  .user-body{
+    max-height:500px;
+    overflow-y: scroll;
+    padding:10px 15px 5px 15px;
+  }
+  #user-table {
+    width:100%;
+  }
+  #user-table td{
+    height:35px;
+  }
+  #user-table tr:hover{
+    background: rgba(0,0,0,0.1);
+    font-weight:700;
+    color:white;
+  }
+  .list-name {
+    width: 80%;
+    padding-left: 10px;
+  }
+  .list-btns{
+    text-align: center;
+  }
+  .list-btns button{
+    padding:1px 6px 1px 6px;
+  }
 </style>

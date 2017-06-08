@@ -8,6 +8,7 @@ import Login from '@/views/login'
 import Signup from '@/views/signup'
 import Task from '@/views/Task'
 import DisplayMap from '@/views/displayMap'
+import userManagement from '@/views/userManagement'
 
 Vue.use(Router)
 const router = new Router({
@@ -70,6 +71,13 @@ const router = new Router({
       name:'displayMap',
       components:{
         mainPage:DisplayMap
+      }
+    },
+    {
+      path:'/userManagement',
+      name:'userManagement',
+      components:{
+        mainPage:userManagement
       }
     },
     {
