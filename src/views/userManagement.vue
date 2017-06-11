@@ -101,7 +101,24 @@
     },
     methods: {
       createUser: function () {
-        alert("want to create a new user , username: " + this.newAccount + " password: " + this.newPassword);
+        //alert("want to create a new user , username: " + this.newAccount + " password: " + this.newPassword);
+        this.$http.post(baseUrl + '/account/accounts/admin?',
+          {
+            emulateJSON: true,
+            "name":this.newAccount,
+            "username":this.newAccount,
+            "password":this.newPassword
+          }
+        ).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200) {
+            toastr.success("账号创建成功！");
+          }
+          else if(responseBody.code == 500){
+           toastr.error("账号已经存在！");
+          }
+          else toastr.error("创建管理员失败！");
+        });
       },
       deleteUser: function (index) {
         if(!$(".list-box").eq(index).is(":checked")){
