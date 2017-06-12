@@ -212,13 +212,13 @@
                 <th class="thead list-btns">Operator</th>
               </tr>
               <tr v-for="(assigneduser,index) in assignedUsers">
-                <td class="list-name">{{ assigneduser }}</td>
+                <td class="list-name">{{ assigneduser.name }}</td>
                 <td class="list-btns">
                   <button type="button" class="btn btn-danger" v-on:click="deleteUserFromMap(index)">Delete</button>
                 </td>
               </tr>
               <tr v-for="(user,index) in allUsers">
-                <td class="list-name">{{ user }}</td>
+                <td class="list-name">{{ user.name }}</td>
                 <td class="list-btns">
                   <button type="button" class="btn btn-info " v-on:click="addUserToMap(index)">&nbsp;&nbsp;Add&nbsp;&nbsp; </button>
                 </td>
@@ -992,15 +992,94 @@
       },
 
       /*分配管理员*/
+      removeDuplicateInUsers(id){
+        for(var i = 0; i < this.allUsers.length;i++){
+          if(this.allUsers[i].id == id){
+            this.allUsers.splice(i,1);
+            break;
+          }
+        }
+      },
+      getMapUsers: function () {
+        var self = this;
+        this.$http.get(baseUrl + '/account/accounts/map?mapId=' + this.mapNames[this.currentFile.index].id,
+          {
+            emulateJSON: true
+          }
+        ).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200) {
+            self.assignedUsers = [];
+            for (var i = 0; i < responseBody.data.length; i++) {
+              var item = responseBody.data[i];
+              this.removeDuplicateInUsers(item.id);
+              self.assignedUsers.push({name:item.name,id:item.id});
+            }
+          }
+          else if (responseBody.code == 500) {
+            toastr.error("您不是超级管理员，无权进行任何操作！");
+          }
+          else toastr.error("未知错误！");
+        });
+      },
       getUsers: function () {
-        this.assignedUsers = ["user1", "user2", "user3", "user4", "user5"];
-        this.allUsers = ["user1", "user2", "user3", "user4", "user5","user1", "user2", "user3", "user4", "user5"];
+        var self = this;
+        this.$http.get(baseUrl + '/account/accounts/admin?superAdminId=' + this.accoundId,
+          {
+            emulateJSON: true
+          }
+        ).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200) {
+            self.allUsers = [];
+            for (var i = 0; i < responseBody.data.length; i++) {
+              var item = responseBody.data[i];
+              self.allUsers.push({name:item.name,id:item.id});
+            }
+            this.getMapUsers();
+          }
+          else if (responseBody.code == 500) {
+            toastr.error("您不是超级管理员，无权进行任何操作！");
+          }
+          else toastr.error("未知错误！");
+        });
+
       },
-      deleteUserFromMap:function(index){
-        alert("want to delete the user: " + this.assignedUsers[index] + " from : " + this.mapNames[this.currentFile.index].id);
+      deleteUserFromMap: function (index) {
+        var self = this;
+        this.$http.delete(baseUrl + '/account/accounts/map?mapId=' + this.mapNames[this.currentFile.index].id + '&adminId=' + this.assignedUsers[index].id,
+          {
+            emulateJSON: true
+          }
+        ).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200) {
+            toastr.success("移除管理员成功！");
+            this.getUsers();
+          }
+          else if (responseBody.code == 500) {
+            toastr.error("管理员不管理该地图！");
+          }
+          else toastr.error("未知错误！");
+        });
       },
-      addUserToMap:function(index){
-        alert("want to add the user: " + this.allUsers[index] + " to :" + this.mapNames[this.currentFile.index].id);
+      addUserToMap: function (index) {
+        var self = this;
+        this.$http.post(baseUrl + '/account/accounts/map?mapId=' + this.mapNames[this.currentFile.index].id + '&adminId=' + this.allUsers[index].id,
+          {
+            emulateJSON: true
+          }
+        ).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200) {
+            toastr.success("分配管理员成功！");
+            this.getUsers();
+          }
+          else if (responseBody.code == 500) {
+            toastr.error("管理员已经管理该地图了！");
+          }
+          else toastr.error("未知错误！");
+        });
       }
     },
     mounted(){
@@ -1014,6 +1093,7 @@
 
       //欢迎
       this.msgResult("info", "Welcome to my map page!")
+      console.log(this.accountId)
     },
     updated(){
     }
@@ -1022,30 +1102,36 @@
 
 <style>
   /*用户表格*/
-  .user-body{
-    max-height:500px;
+  .user-body {
+    max-height: 500px;
     overflow-y: scroll;
-    padding:10px 15px 5px 15px;
+    padding: 10px 15px 5px 15px;
   }
+
   #user-table {
-    width:100%;
+    width: 100%;
   }
-  #user-table td{
-    height:35px;
+
+  #user-table td {
+    height: 35px;
   }
-  #user-table tr:hover{
-    background: rgba(0,0,0,0.1);
-    font-weight:700;
-    color:white;
+
+  #user-table tr:hover {
+    background: rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    color: white;
   }
+
   .list-name {
     width: 80%;
     padding-left: 10px;
   }
-  .list-btns{
+
+  .list-btns {
     text-align: center;
   }
-  .list-btns button{
-    padding:1px 6px 1px 6px;
+
+  .list-btns button {
+    padding: 1px 6px 1px 6px;
   }
 </style>

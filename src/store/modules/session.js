@@ -19,6 +19,7 @@ const mutations = {
     localStorage.userId = state.userId
 	},
 
+
 	[LOG_OUT] (state){
     state.login = false
 		state.userName = ""

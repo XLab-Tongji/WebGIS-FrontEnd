@@ -7,7 +7,7 @@ import * as types from './mutation-types'
 // }
 
 export const login = ({commit}, userData) => {
-  console.log(userData)
+  console.log("userData",userData)
   commit(types.LOG_IN, userData);
 }
 

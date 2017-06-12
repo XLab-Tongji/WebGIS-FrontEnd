@@ -45,9 +45,10 @@
         let response = await UserService.login(this, {
           username: this.username,
           password: this.password
-        })
-        if (response.state === 0) {
-          this.login({username: this.username, userId: response.userId})
+        });
+        //console.log("responce",response);
+        if (response.code === 200) {
+          this.login({username: this.username, userId: response.data.id})
         }
         else {
           alert("密码错误！")
