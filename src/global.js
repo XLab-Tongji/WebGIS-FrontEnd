@@ -16,6 +16,7 @@ global.BACKEND_URL ={
   LAYER_GET_ALL: '/layer/layers/all',
   LAYER_GET_BY_LAYER_ID: '/layer/layer?layerId=',
 
+  REPAIR_GET_ALL: '/repair/repair',
   REPAIR_GET_BY_USER: '/repair/repair/userId?userId=',
   REPAIR_UPDATE_STATE: '/repair/repair/state/',
 

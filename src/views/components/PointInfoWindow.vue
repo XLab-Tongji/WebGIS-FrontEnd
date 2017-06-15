@@ -11,7 +11,12 @@
       </div>
       <div class="icon-group">
         <i class="fa fa-flag"></i>
-        <p>{{clickPoint.status}}</p>
+        <p v-if="!editable">{{clickPoint.status}}</p>
+        <div v-if="editable">
+          <select class="form-control" v-model="clickPoint.status" @change="onPointStatusChange">
+            <option v-for="curStatus in pointStatus" :value="curStatus">{{curStatus}}</option>
+          </select>
+        </div>
       </div>
       <div class="icon-group">
         <i class="fa fa-map-marker"></i>
@@ -49,17 +54,27 @@
     props: {
       clickPoint: {
         default: ''
+      },
+      editable: {
+        default: false
       }
     },
     data () {
       return {
-        showRepairs: false
+        showRepairs: false,
+        pointStatus: ['GOOD', 'BAD', 'BLOCKED', 'LOST', 'REPAIRED']
       }
     },
     methods: {
       formatDate (date) {
         return utils.formatDate(new Date(date), 'yyyy-MM-dd')
+      },
+      onPointStatusChange(event) {
+        this.$emit('onCurPointStatusChange', event.target.value)
+        console.log('change', event.target.value)
       }
+    },
+    watched: {
     }
   }
 </script>
@@ -70,6 +85,9 @@
     margin-bottom: 5px;
     margin-top: 5px;
   }
+  p {
+    margin: 0;
+  }
   /* #common */
 
 
@@ -77,11 +95,12 @@
   .icon-group {
     display: flex;
     justify-content: space-around;
+    align-items: center;
   }
   .icon-group i{
     flex: 1;
   }
-  .icon-group p {
+  .icon-group p, .icon-group div {
     flex: 5;
   }
   /* #icon-group */

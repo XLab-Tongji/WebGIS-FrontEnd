@@ -1,37 +1,7 @@
 <template>
   <div class="wrapper wrapper-content animated fadeInRight">
 
-    <div class="hide" id="map-msg-parent">
-      <div id="map-msg">
-        <div class="form-group form-group-sm ">
-          <label>lng</label>
-          <span>{{ lng }}</span>
-          <!--<input type="text" v-model="lng" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <label>lat</label>
-          <span>{{ lat }}</span>
-          <!--<input type="text" v-model="lat" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <label>radius</label>
-          <span>{{ radius }}</span>
-          <!--<input type="text" v-model="lat" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <select v-model="curPointStatus" class="form-control">
-            <option value="0">选择状态</option>
-            <option value="GOOD">状态GOOD</option>
-            <option value="BAD">状态BAD</option>
-          </select>
-        </div>
-
-        <div class="form-group form-group-sm">
-          <button type="button" @click="deletePointBtnClick" class="btn btn-info btn-half-left">删除</button>
-          <button type="button" class="btn btn-danger btn-half-right" id="pointMapMsgBtn">关闭</button>
-        </div>
-      </div>
-    </div>
+    <PointInfoWindow :clickPoint="clickPoint" :editable="true" @onCurPointStatusChange="onCurPointStatusChange"></PointInfoWindow>
 
     <div class="hide" id="map-msg-line-parent">
       <div id="map-msg-line">
@@ -117,15 +87,12 @@
           <button type="button" @click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
           <button type="button" @click="submitChange" class="btn btn-info">提交</button>
 
-          <!--<a v-on:click="reverseCurHistory" class="gis-icon ">-->
-            <!--<i class="fa fa-upload " aria-hidden="true"></i>-->
-          <!--</a>-->
           <div class="form-group right-float">
             <button type="button" @click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
             <button type="button" @click="createHistory" class="btn btn-info right-float">创建历史版本</button>
             <button type="button" @click="compareHistoryMap" class="btn btn-info right-float">历史版本对比</button>
             <button type="button" @click="calculateDis" id="calDis" class="btn btn-info right-float">{{disText}}</button>
-            <!--<label class="right-float  control-label">历史版本</label>-->
+            <button class="btn btn-info" @click="isShowingOwnRepairs = true"><i class="fa fa-eye"></i>报修信息</button>
           </div>
         </span>
 
@@ -148,7 +115,7 @@
     </nav>
 
     <!-- google map -->
-    <div class="ibox-content" id="map" style="position: relative; height: 820px"></div>
+    <div class="ibox-content" id="map" style="position: relative; height: 620px"></div>
 
     <!-- create layer modal -->
     <div class="modal fade" id="create-layer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -185,6 +152,13 @@
       </div>
     </div>
 
+    <vodal :show="isShowingOwnRepairs"
+           :animation="'zoom'"
+           @hide="isShowingOwnRepairs = false"
+           :width="800"
+           :height="500">
+      <RepairTable :ownRepairs="ownRepairs" @onUpdateCenterClick="onUpdateCenterClick"></RepairTable>
+    </vodal>
   </div>
 </template>
 
@@ -192,6 +166,11 @@
   import utils from '../service/utils'
   import HistoryService from '@/service/httpService/HistoryService'
   import MapService from '@/service/mapService'
+  import RepairService from '@/service/httpService/RepairService'
+
+  import Vodal from 'vodal'
+  import RepairTable from './components/RepairTable.vue'
+  import PointInfoWindow from './components/PointInfoWindow.vue'
   export default {
     name: 'GoogleMapPage',
     data: function () {
@@ -216,7 +195,8 @@
 
         // 当前point 以及它的状态
         curPointStatus:0,
-        curPoint: null,
+        curPoint: '',
+        clickPoint: '',
         curLine: null,
         tmpPoint: null,
         mapClickListener: null,
@@ -227,8 +207,16 @@
 
         /* history */
         curHistory: 0,
-        histories: null
+        histories: null,
+
+        isShowingOwnRepairs: false,
+        ownRepairs: []
       }
+    },
+    components: {
+      Vodal,
+      RepairTable,
+      PointInfoWindow
     },
     methods: {
       // 初始化 地图 从数据库得到layerDatas 初始化selectList
@@ -342,7 +330,7 @@
       createPoint:function (map,centerPos, pointStatus) {
         return MapService.createWellMarker(centerPos, map, MARKER_COLOR[pointStatus])
       },
-      createPointDetail: function (pointPos, pointStatus, radius, specialId, url, pointId, repairIds) {
+      createPointDetail: function (pointPos, pointStatus, radius, specialId, url, pointId, repairIds, index) {
         console.log('createPointDetail ', pointPos, pointStatus, specialId);
         var cityCircle = this.createPoint(this.map, pointPos, pointStatus);
 
@@ -352,6 +340,7 @@
         cityCircle.url = url
         cityCircle.pointId = pointId
         cityCircle.repairIds = repairIds
+        cityCircle.index = index
 
         this.curLayerMapDatas.push(cityCircle);
 
@@ -560,10 +549,18 @@
           this.lat = point.getPosition().lat();
           this.radius = point.radius;
 
+          let layerDatas = this.getLayerData(this.curLayerId)
+          console.log('layerDatas', layerDatas.pointList[point.index])
+          this.clickPoint = layerDatas.pointList[point.index]
+
           this.curInfoWindow = MapService.createInfoWindow(
-            'map-msg', 'map-msg-parent', 'pointMapMsgBtn',
-            MapService.getUperPos({lat: point.getPosition().lat(), lng: point.getPosition().lng()}, this.map.getZoom()), this.map)
+            'point-info-div', 'point-info-parent', 'point-info-close-btn',
+            MapService.getUperPos({lat: point.getPosition().lat(), lng: point.getPosition().lng()},
+              this.map.getZoom()), this.map)
         });
+      },
+      getPointFromPointList () {
+
       },
       displayLine: function (line) {
         let vertices = line.getPath();
@@ -710,6 +707,32 @@
         this.curLayerId = 0
         this.selectLayers = []
       },
+
+      onCurPointStatusChange (status) {
+        this.curPoint.pointStatus = status;
+        MapService.changeWellColor(this.curPoint, MARKER_COLOR[status], this.map)
+      },
+
+      async getOwnRepairs () {
+        let respBody = await RepairService.getAll(this)
+        if(respBody.code === 200) {
+          respBody.data.forEach((repair) => {
+            repair.originState = repair.state
+          })
+          this.ownRepairs = respBody.data
+        } else {
+          toastr.error('加载用户报修失败！')
+        }
+      },
+
+      onUpdateCenterClick (repairIndex) {
+        MapService.updateCenter(this.map, {
+          lng: this.ownRepairs[repairIndex].point.x,
+          lat: this.ownRepairs[repairIndex].point.y
+        })
+        this.isShowingOwnRepairs = false
+        console.log(repairIndex)
+      },
       /* #utils */
 
       /* google map utils */
@@ -737,9 +760,9 @@
 
         console.log('curLayers', layerDatas)
         if(this.curLayerType==="YJG"){
-          layerDatas.pointList.forEach((layerData) => {
+          layerDatas.pointList.forEach((layerData, index) => {
             self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z,
-              layerData.specialId, layerData.url, layerData.pointId, layerData.repairIds);
+              layerData.specialId, layerData.url, layerData.pointId, layerData.repairIds, index);
           });
         }
         else if(this.curLayerType==="XSG"){
@@ -755,6 +778,9 @@
 
       },
       curPointStatus: function (newValue, oldValue) {
+        if (!oldValue) {
+          return
+        }
         if(this.curLayerType==="YJG"){
           this.curPoint.pointStatus = newValue;
           MapService.changeWellColor(this.curPoint, MARKER_COLOR[newValue], this.map)
@@ -779,6 +805,7 @@
     mounted(){
       this.initMap();
       this.getLayerDatas(this.mapId);
+      this.getOwnRepairs()
       toastr.options = {
         closeButton: true,
         progressBar: true,
@@ -790,6 +817,8 @@
 </script>
 
 <style>
+  @import "../../node_modules/vodal/common.css";
+  @import "../../node_modules/vodal/rotate.css";
   .navbar{
     margin-bottom: 0;
   }
