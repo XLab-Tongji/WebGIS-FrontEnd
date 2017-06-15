@@ -33,13 +33,13 @@
         <div class="form-group form-group-sm">
           <select v-model="curPointStatus" class="form-control">
             <option value="0">选择状态</option>
-            <option value="GOOD">状态GOOD</option>
-            <option value="BAD">状态BAD</option>
+            <option value="GOOD">GOOD</option>
+            <option value="BREAK">BREAK</option>
           </select>
         </div>
 
         <div class="form-group form-group-sm">
-          <button type="button" v-on:click="deleteLineBtnClick" class="btn btn-info btn-half-left">删除</button>
+          <button type="button" @click="deleteLineBtnClick" class="btn btn-info btn-half-left">删除</button>
           <button type="button" class="btn btn-danger btn-half-right" id="lineMapMsgBtn">关闭</button>
         </div>
       </div>
@@ -367,15 +367,15 @@
             case "GOOD":
                 return "black";
                 break;
-            case "BAD":
+            case "BREAK":
                 return "#FF0000";
                 break;
             case "DIS":
                 return "#00FF00";
                 break;
-                break;
+            default:
+              return "black";
           }
-        return "black";
       },
       addPoint: function (pointStatus) {
         let radius = parseFloat(prompt('请输入半径', ''));
@@ -575,7 +575,7 @@
         let self = this;
         google.maps.event.addListener(line,'click',function () {
           self.curLine = line;
-          self.curPointStatus = line.lineStatus||"BAD";
+          self.curPointStatus = line.lineStatus||"BREAK";
           self.displayLine(line);
 
           var infowindow = new google.maps.InfoWindow({
