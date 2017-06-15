@@ -1,47 +1,48 @@
 <template>
   <div>
-    <div id="point-info-parent" class="hide">
-      <div id="point-info-div" class="info-window">
-        <div class="icon-group">
-          <i class="fa fa-dot-circle-o"></i>
-          <p>窨井盖</p>
-        </div>
-        <div class="icon-group">
-          <i class="fa fa-info"></i>
-          <p>{{clickPoint.pointId}}</p>
-        </div>
-        <div class="icon-group">
-          <i class="fa fa-flag"></i>
-          <p>{{clickPoint.status}}</p>
-        </div>
-        <div class="icon-group">
-          <i class="fa fa-map-marker"></i>
-          <p>{{!clickPoint.x || clickPoint.x.toFixed(3)}}, {{!clickPoint.y || clickPoint.y.toFixed(3)}}</p>
-        </div>
-        <div>
-          <a @click="showRepairs = !showRepairs">报修({{!clickPoint.repairIds || clickPoint.repairIds.length}}个)</a>
-          <div v-if="showRepairs">
-            <div v-for="repair in clickPoint.repairs" class="repair-group">
-              <div class="icon-group">
-                <i class="fa fa-comment"></i>
-                <p>{{repair.desc}}</p>
-              </div>
-              <div class="icon-group">
-                <i class="fa fa-calendar"></i>
-                <p>{{formatDate(repair.createDate)}}</p>
-              </div>
-              <div class="icon-group">
-                <i class="fa fa-flag"></i>
-                <p>{{repair.state}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <button id="point-info-close-btn" class="btn btn-danger btn-block">关闭</button>
-        </div>
-      </div>
-    </div>
+    <PointInfoWindow :clickPoint="clickPoint"></PointInfoWindow>
+    <!--<div id="point-info-parent" class="hide">-->
+      <!--<div id="point-info-div" class="info-window">-->
+        <!--<div class="icon-group">-->
+          <!--<i class="fa fa-dot-circle-o"></i>-->
+          <!--<p>窨井盖</p>-->
+        <!--</div>-->
+        <!--<div class="icon-group">-->
+          <!--<i class="fa fa-info"></i>-->
+          <!--<p>{{clickPoint.pointId}}</p>-->
+        <!--</div>-->
+        <!--<div class="icon-group">-->
+          <!--<i class="fa fa-flag"></i>-->
+          <!--<p>{{clickPoint.status}}</p>-->
+        <!--</div>-->
+        <!--<div class="icon-group">-->
+          <!--<i class="fa fa-map-marker"></i>-->
+          <!--<p>{{!clickPoint.x || clickPoint.x.toFixed(3)}}, {{!clickPoint.y || clickPoint.y.toFixed(3)}}</p>-->
+        <!--</div>-->
+        <!--<div>-->
+          <!--<a @click="showRepairs = !showRepairs">报修({{!clickPoint.repairIds || clickPoint.repairIds.length}}个)</a>-->
+          <!--<div v-if="showRepairs">-->
+            <!--<div v-for="repair in clickPoint.repairs" class="repair-group">-->
+              <!--<div class="icon-group">-->
+                <!--<i class="fa fa-comment"></i>-->
+                <!--<p>{{repair.desc}}</p>-->
+              <!--</div>-->
+              <!--<div class="icon-group">-->
+                <!--<i class="fa fa-calendar"></i>-->
+                <!--<p>{{formatDate(repair.createDate)}}</p>-->
+              <!--</div>-->
+              <!--<div class="icon-group">-->
+                <!--<i class="fa fa-flag"></i>-->
+                <!--<p>{{repair.state}}</p>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div>-->
+          <!--<button id="point-info-close-btn" class="btn btn-danger btn-block">关闭</button>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
     <nav class="tools-nav">
       <div class="form-group tools-nav-item">
         <select v-model="curSelectLayerId"  class="form-control">
@@ -62,48 +63,7 @@
            @hide="isShowingOwnRepairs = false"
            :width="800"
            :height="500">
-
-      <div class="vodal-container">
-        <div>
-          <a @click="onSubmitRepairChange" class="icon"><i class="fa fa-check fa-lg" aria-hidden="true"></i></a>
-        </div>
-        <table class="table table-striped table-bordered table-hover">
-          <thead>
-          <tr>
-            <th><input type="checkbox"></th>
-            <th>lat</th>
-            <th>lng</th>
-            <th>物品状态</th>
-            <th>描述</th>
-            <th>创建时间</th>
-            <th>报修状态</th>
-            <th>操作</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="ownRepair,index in ownRepairs" :class="ownRepair.originState!==ownRepair.state?'green':''">
-            <td>
-              <input type="checkbox">
-            </td>
-            <td>{{!ownRepair.point || ownRepair.point.y}}</td>
-            <td>{{!ownRepair.point || ownRepair.point.x}}</td>
-            <td>{{!ownRepair.point || ownRepair.point.status}}</td>
-            <td>{{ownRepair.desc}}</td>
-            <td>{{formatDate(ownRepair.createDate)}}</td>
-            <td>
-              <select v-model="ownRepair.state" class="form-control">
-                <option
-                  :value="repairState"
-                  v-for="repairState in repairStates">{{repairState}}</option>
-              </select>
-            </td>
-            <td>
-              <a class="icon" @click="onUpdateCenterClick($event,index)"><i class="fa fa-map-marker fa-lg"></i></a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+      <RepairTable :ownRepairs="ownRepairs" @onUpdateCenterClick="onUpdateCenterClick"></RepairTable>
     </vodal>
   </div>
 </template>
@@ -115,6 +75,8 @@
   import LayerService from '@/service/httpService/LayerService'
   import RepairService from '@/service/httpService/RepairService'
   import utils from '@/service/utils'
+  import RepairTable from './components/RepairTable.vue'
+  import PointInfoWindow from './components/PointInfoWindow.vue'
   export default {
     data () {
       return {
@@ -129,12 +91,12 @@
         clickPoint: {},
         showRepairs: false,
         isShowingOwnRepairs: false,
-
-        repairStates: ['LOST', 'BLOCK', 'DAMAGE', 'FINISH']
       }
     },
     components: {
-      Vodal
+      Vodal,
+      RepairTable,
+      PointInfoWindow
     },
     methods: {
       ...mapGetters([
@@ -183,33 +145,6 @@
       formatDate (date) {
         return utils.formatDate(new Date(date), 'yyyy-MM-dd')
       },
-
-      async onSubmitRepairChange () {
-        let isSuccess = true
-        for(let i = 0; i < this.ownRepairs.length; i++) {
-          if (this.ownRepairs[i].originState !== this.ownRepairs[i].state) {
-            let respBody = await RepairService.updateState(this, this.ownRepairs[i].id, this.ownRepairs[i].state)
-            if (respBody.code !== 200) {
-              toastr.error('提交修改失败！')
-              isSuccess = false
-              break
-            }
-            this.ownRepairs[i].originState = this.ownRepairs[i].state
-          }
-        }
-        if (isSuccess) {
-          toastr.success('提交修改成功！')
-        }
-      },
-
-      onUpdateCenterClick(event, repairIndex){
-        console.log('onUpdateCenterClick', repairIndex)
-        MapService.updateCenter(this.map, {
-          lat: this.ownRepairs[repairIndex].point.y,
-          lng: this.ownRepairs[repairIndex].point.x
-        })
-        this.isShowingOwnRepairs = false
-      }
     },
     watch: {
       curSelectLayerId (newValue) {
@@ -305,14 +240,5 @@
   }
   /* #info-window */
 
-  /* vodal-container */
-  .vodal-container {
-    width: 95%;
-    overflow: auto;
-  }
-  /* #vodal-container */
 
-  table tr.green {
-    background-color: greenyellow;
-  }
 </style>
