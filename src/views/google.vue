@@ -237,9 +237,9 @@
           zoom: global.MAP.INIT_ZOOM
         });
       },
-      getLayerDatas: function (mapId, getUrl) {
+      getLayerDatas: function (mapId) {
         var self = this;
-        this.$http.get(getUrl ||(baseUrl + '/layer/layers?mapId='+mapId),
+        this.$http.get(baseUrl + '/layer/layers/repair?mapId='+mapId,
           {
             emulateJSON: true
           }
@@ -247,8 +247,8 @@
           let responseBody = response.body
           if (responseBody.code === 200) {
             self.layerDatas= responseBody.data;
-            console.log(self.layerDatas);
-            self.setLayerSelect(self.layerDatas.layerList || self.layerDatas.data);
+            console.log('sss', self.layerDatas);
+            self.setLayerSelect(self.layerDatas.layerList);
           }
         });
       },
@@ -349,11 +349,14 @@
           radius: radius || 2
         });
       },
-      createPointDetail: function (pointPos, pointStatus, radius, specialId) {
-        console.log('createPointDetail ', pointPos, radius);
+      createPointDetail: function (pointPos, pointStatus, radius, specialId, url, pointId, repairIds) {
+        console.log('createPointDetail ', pointPos, radius, specialId);
         var cityCircle = this.createPoint(this.map, pointPos, this.getColorWithStatus(pointStatus), radius);
         cityCircle.pointStatus = pointStatus;
         cityCircle.specialId = specialId
+        cityCircle.url = url
+        cityCircle.pointId = pointId
+        cityCircle.repairIds = repairIds
         this.curLayerMapDatas.push(cityCircle);
 
         this.addPointClickListener(cityCircle);
@@ -510,9 +513,13 @@
               x:curData.center.lng(),
               y:curData.center.lat(),
               z:curData.radius,
+              url: curData.url,
+              pointId: curData.pointId,
+              repairIds: curData.repairIds,
               specialId: curData.specialId,
               status:curData.pointStatus
             });
+            console.log(curLayerData.pointList)
           }
           else if(self.curLayerType==="XSG"){
             let vertices = curData.getPath();
@@ -749,8 +756,9 @@
 
         console.log('curLayers', layerDatas)
         if(this.curLayerType==="YJG"){
-          layerDatas.pointList.forEach(function (layerData) {
-            self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z, layerData.specialId);
+          layerDatas.pointList.forEach((layerData) => {
+            self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z,
+              layerData.specialId, layerData.url, layerData.pointId, layerData.repairIds);
           });
         }
         else if(this.curLayerType==="XSG"){
