@@ -1,6 +1,7 @@
 <template>
   <div>
     <PointInfoWindow :clickPoint="clickPoint"></PointInfoWindow>
+    <LineInfoWindow :clickLine="clickLine"></LineInfoWindow>
 
     <nav class="tools-nav">
       <div class="form-group tools-nav-item">
@@ -36,6 +37,7 @@
   import utils from '@/service/utils'
   import RepairTable from './components/RepairTable.vue'
   import PointInfoWindow from './components/PointInfoWindow.vue'
+  import LineInfoWindow from './components/LineInfoWindow.vue'
   export default {
     data () {
       return {
@@ -50,12 +52,16 @@
         clickPoint: {},
         showRepairs: false,
         isShowingOwnRepairs: false,
+
+        clickLine: [],
+        mapLines: []
       }
     },
     components: {
       Vodal,
       RepairTable,
-      PointInfoWindow
+      PointInfoWindow,
+      LineInfoWindow
     },
     methods: {
       ...mapGetters([
@@ -98,7 +104,9 @@
 
       clearMap () {
         MapService.clearMapDataList(this.mapPoints)
+        MapService.clearMapDataList(this.mapLines)
         this.mapPoints = []
+        this.mapLines = []
       },
 
       formatDate (date) {
@@ -143,7 +151,14 @@
             if(layer.data.type === newValue && layer.data.lineList) {
               console.log(layer.data.lineList)
               layer.data.lineList.forEach((line) => {
-                MapService.createLine(line.y, line.y2, line.x, line.x2, MARKER_COLOR[line.status], this.map)
+                let curLine = MapService.createLine(line.y, line.y2, line.x, line.x2, MARKER_COLOR[line.status], this.map)
+                MapService.addListener(curLine, 'click', () => {
+                  this.clickLine = line
+                  this.curInfoWindow = MapService.createInfoWindow(
+                    'line-info-div', 'line-info-parent', 'line-info-close-btn',
+                    MapService.getUperPos({lat: line.y, lng: line.x}, this.map.getZoom()), this.map)
+                })
+                this.mapLines.push(curLine)
               })
             }
           }
