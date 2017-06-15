@@ -253,14 +253,13 @@
           }
         });
       },
-      setLayerSelect: function (layerList) {
+      setLayerSelect: function (layerList, isHistory) {
         this.selectLayers = [];
-        let selectLayers = this.selectLayers;
-        let self = this;
-        layerList.forEach(function (layerData, index) {
-          selectLayers.push({
-            id: layerData.id || index + 1,
-            "name": self.getLayerNameWithType(layerData.type || layerData.data.type)
+        console.log(layerList)
+        layerList.forEach((layerData, index) => {
+          this.selectLayers.push({
+            id: isHistory? index + 1 : layerData.id,
+            "name": this.getLayerNameWithType(layerData.type || layerData.data.type)
           });
         })
       },
@@ -639,9 +638,12 @@
         this.curLayerId = 0;
         if(this.curHistory) {
           this.setHistory();
+        } else {
+          this.getLayerDatas(this.mapId);
         }
       },
       async setHistory () {
+        this.clearSelects()
         let respBody = await HistoryService.getById(this, this.mapId)
         if (respBody.code === 200) {
           this.histories = respBody.data
@@ -703,6 +705,11 @@
       getLayerNameWithType: function (type) {
         return type==='YJG'?'窨井盖':'道路维修';
       },
+
+      clearSelects () {
+        this.curLayerId = 0
+        this.selectLayers = []
+      },
       /* #utils */
 
       /* google map utils */
@@ -725,6 +732,7 @@
         }
 
         var layerDatas = this.getLayerData(newValue);
+        console.log('watch', layerDatas)
         this.curLayerType = layerDatas.type;
 
         console.log('curLayers', layerDatas)
@@ -757,13 +765,13 @@
           MapService.refreshComponent(this.curLine, this.map)
         }
       },
-      curHistory (newValue) {
-        if(newValue!==1) {
-          let respBody = HistoryService.getLayersByHistory(this, newValue)
+      async curHistory (newValue) {
+        this.clearSelects()
+        if(newValue !== 1 && newValue !== '1') {
+          let respBody = await HistoryService.getLayersByHistory(this, newValue)
           if (respBody.code === 200) {
-            this.layerDatas= respBody.data;
-            console.log(this.layerDatas);
-            this.setLayerSelect(this.layerDatas.data);
+            this.layerDatas= respBody.data
+            this.setLayerSelect(this.layerDatas.data, true)
           }
         }
       }
