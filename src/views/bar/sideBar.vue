@@ -54,7 +54,7 @@ export default {
           title: 'UserManagement'
         },
         {
-          target: 'commonMap',
+          target: '/commonMap',
           title: 'CommonMap'
         }
       ]

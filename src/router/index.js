@@ -86,7 +86,7 @@ const router = new Router({
       path:'/commonMap',
       name:'commonMap',
       components:{
-        mainPage:CommonMap
+        mainPage: CommonMap
       }
     },
     {
