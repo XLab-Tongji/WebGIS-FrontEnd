@@ -189,6 +189,7 @@
 </template>
 
 <script>
+  import utils from '../service/utils'
   export default {
     name: 'GoogleMapPage',
     data: function () {
@@ -344,21 +345,16 @@
           fillOpacity: 0.35,
           map: map,
           center: centerPos,
-          radius: radius || 2,
-//        draggable:true
+          radius: radius || 2
         });
       },
-      createPointDetail: function (pointPos, pointStatus, radius) {
+      createPointDetail: function (pointPos, pointStatus, radius, specialId) {
         console.log('createPointDetail ', pointPos, radius);
         var cityCircle = this.createPoint(this.map, pointPos, this.getColorWithStatus(pointStatus), radius);
         cityCircle.pointStatus = pointStatus;
+        cityCircle.specialId = specialId
         this.curLayerMapDatas.push(cityCircle);
 
-//      let self = this;
-//      google.maps.event.addListener(cityCircle,'drag',function () {
-//        self.lng = cityCircle.center.lng().toFixed(6);
-//        self.lat = cityCircle.center.lat().toFixed(6);
-//      });
         this.addPointClickListener(cityCircle);
       },
       createLine: function (map, pointList, color) {
@@ -407,7 +403,7 @@
             return;
           }
 
-          self.createPointDetail(latLng, pointStatus, radius);
+          self.createPointDetail(latLng, pointStatus, radius, utils.getNowTimeStamp());
           google.maps.event.removeListener(mapClickListener);
         });
       },
@@ -513,6 +509,7 @@
               x:curData.center.lng(),
               y:curData.center.lat(),
               z:curData.radius,
+              specialId: curData.specialId,
               status:curData.pointStatus
             });
           }
@@ -559,6 +556,7 @@
             self.curPoint.setMap(null);
             self.curPoint.setMap(self.map);
           }
+          self.curPoint = point;
           self.curPoint = point;
           self.curPointStatus = point.pointStatus||"BAD";
           self.curPoint.strokeColor = self.getColorWithStatus(self.curPoint.curPointStatus);
@@ -750,9 +748,10 @@
         var layerDatas = this.getLayerData(newValue);
         this.curLayerType = layerDatas.type;
 
+        console.log('curLayers', layerDatas)
         if(this.curLayerType==="YJG"){
           layerDatas.pointList.forEach(function (layerData) {
-            self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z);
+            self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z, layerData.specialId);
           });
         }
         else if(this.curLayerType==="XSG"){

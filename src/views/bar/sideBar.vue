@@ -17,7 +17,7 @@
               </li>
 
               <li v-for="(item,index) in items" v-bind:class="{active:index==activeItem}" v-on:click="itemClick(index,$event)">
-                  <router-link :to="item.target" class="fa fa-th-large" > <span class="nav-label"> {{item.title}}</span> </router-link>
+                  <router-link :to="item.target" class="fa fa-th-large" :title="item.title"> <span class="nav-label"> {{item.title}}</span> </router-link>
               </li>
           </ul>
 
@@ -53,6 +53,10 @@ export default {
           target: '/userManagement',
           title: 'UserManagement'
         },
+        {
+          target: 'commonMap',
+          title: 'CommonMap'
+        }
       ]
     }
   },

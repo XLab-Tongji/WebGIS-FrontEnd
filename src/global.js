@@ -3,24 +3,35 @@
  */
 
 // Server Address
- global.baseUrl = 'http://wb.lab-sse.cn:8080'         // for deploy
+//  global.baseUrl = 'http://wb.lab-sse.cn:8080'         // for deploy
 // global.baseUrl = 'http://115.159.65.170:8080'   // for deploy plan B
-//global.baseUrl = 'http://localhost:8080'        // for local test
+global.baseUrl = 'http://localhost:8080'        // for local test
 
 global.BACKEND_URL ={
   LOGIN: '/auth/token',
   TASK_BASE: '/task/tasks',
   TASK_CREATE: '/task/tasks',
-  TASK_GET_ALL: '/task/tasks'
+  TASK_GET_ALL: '/task/tasks',
+
+  LAYER_GET_ALL: '/layer/layers/all',
+
+  REPAIR_GET_BY_USER: '/repair/repair/userId?userId=',
+  REPAIR_UPDATE_STATE: '/repair/repair/state/'
 }
 
 global.MARKER_COLOR = {
-  'WAITING': 'F89406',
-  'ACCEPTED': '00B16A',
-  'FINISHED': '2574A9',
-  'PAID': '8E44AD',
-  'GIVENUP': 'F64747',
-  'CANCELED': 'F22613'
+  'LOST': 'black',
+  'BAD': 'red',
+  'BLOCKED': 'yellow',
+  'GOOD': 'green',
+  'REPAIRED': 'blue'
+}
+
+global.REPAIRE_COLOR = {
+  'DAMAGE': 'red',
+  'BLOCK': 'yellow',
+  'LOST': 'black',
+  'FINISH': 'green'
 }
 
 global.MAP = {
@@ -30,3 +41,7 @@ global.MAP = {
 }
 
 global.KEY_CODE_ENTER = 13
+
+global.SIZE = {
+  WELL: 40
+}

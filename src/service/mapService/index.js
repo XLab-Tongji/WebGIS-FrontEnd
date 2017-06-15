@@ -22,7 +22,8 @@ function addClickListenerOnce (map, listener) {
 function createInfoWindow (infoWindowId, infoWindowParentId, closeBtnId, pos, map) {
   let infowindow = new google.maps.InfoWindow({
     content: document.getElementById(infoWindowId),
-    position: pos
+    position: pos,
+    maxWidth: 900
   })
 
   infowindow.open(map)
@@ -37,39 +38,28 @@ function createInfoWindow (infoWindowId, infoWindowParentId, closeBtnId, pos, ma
     closeBtn.hide()
     $('#' + closeBtnId).on('click', function (event) {
       infowindow.ownClose()
-      // document.getElementById(infoWindowParentId).append(document.getElementById(infoWindowId))
-      // infowindow.close()
     })
   })
 
   return infowindow
 }
 
-function createMarker (pos, map, color, draggable, curPos) {
-  color = color || MARKER_COLOR['0'];
-  let pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color,
-    new google.maps.Size(21, 34),
-    new google.maps.Point(0,0),
-    new google.maps.Point(10, 34))
-  let pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-    new google.maps.Size(40, 37),
-    new google.maps.Point(0, 0),
-    new google.maps.Point(12, 35))
-  let marker = new google.maps.Marker({
+function createMarker (pos, map, iconUrl) {
+  iconUrl = iconUrl || '../../static/img/well_black.png'
+  return new google.maps.Marker({
     position: pos,
     map: map,
-    icon: pinImage,
-    shadow: pinShadow,
-    draggable: draggable || false,
+    icon: {
+      url: iconUrl,
+      scaledSize: new google.maps.Size(SIZE.WELL, SIZE.WELL)
+    },
     animation: google.maps.Animation.DROP
-  });
-  if (draggable) {
-    addListener(marker, 'drag', () => {
-      curPos.lat = marker.getPosition().lat()
-      curPos.lng = marker.getPosition().lng()
-    })
-  }
-  return marker
+  })
+}
+
+function createWellMarker (pos, map, color) {
+  let iconUrl = `../../static/img/well_${color}.png`
+  return createMarker(pos, map, iconUrl)
 }
 
 function changeMarkerColor (marker, color, map) {
@@ -83,7 +73,6 @@ function changeMarkerColor (marker, color, map) {
     new google.maps.Point(12, 35))
   marker.setIcon(pinImage)
   marker.setShadow(pinShadow)
-  console.log('setIcon')
   refreshComponent(marker, map)
 }
 
@@ -105,15 +94,29 @@ function refreshComponent (component, map) {
   component.setMap(map)
 }
 
+function clearMapDataList (mapDataList) {
+  if(!mapDataList) {
+    return
+  }
+  mapDataList.forEach((mapData) => {
+    mapData.setMap(null)
+  })
+}
+
 
 export default {
   initMap,
   addClickListenerOnce,
   createInfoWindow,
-  createMarker,
   getScaleWithZoom,
   getUperPos,
-  changeMarkerColor,
   updateCenter,
+
+  createWellMarker,
+  createMarker,
+  changeMarkerColor,
+
+  clearMapDataList,
+
   addListener: addListener
 }

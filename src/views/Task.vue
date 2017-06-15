@@ -168,7 +168,7 @@
 </template>
 
 <script>
-  import  MapService from '@/service/mapService'
+  import MapService from '@/service/mapService'
   import utils from '@/service/utils'
   import TaskService from '@/service/httpService/taskService'
   export default {

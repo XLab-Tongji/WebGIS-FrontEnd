@@ -9,6 +9,10 @@ const state = {
   userId: localStorage.userId || null
 }
 
+const getters = {
+  getUserId: state => state.userId
+}
+
 const mutations = {
 	[LOG_IN] (state, userData){
 	  state.login = true
@@ -23,10 +27,16 @@ const mutations = {
 	[LOG_OUT] (state){
     state.login = false
 		state.userName = ""
+    state.userId = null
+
+    localStorage.login = state.login
+    localStorage.userName = state.userName
+    localStorage.userId = state.userId
 	}
 }
 
 export default {
 	state,
+  getters,
 	mutations
 }

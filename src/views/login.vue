@@ -46,7 +46,6 @@
           username: this.username,
           password: this.password
         });
-        //console.log("responce",response);
         if (response.code === 200) {
           this.login({username: this.username, userId: response.data.id})
         }

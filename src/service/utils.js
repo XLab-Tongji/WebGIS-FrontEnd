@@ -32,6 +32,23 @@ function formatDate(date, result) {
   return result;
 }
 
+function getNowTimeStamp () {
+  return Date.parse(new Date())
+}
+
+function getLayerNameFromType (type) {
+  switch (type) {
+    case 'YJG':
+      return '窨井盖'
+    case 'XSG':
+      return '道路维修'
+    default:
+      return null
+  }
+}
+
 export default {
-  formatDate
+  formatDate,
+  getNowTimeStamp,
+  getLayerNameFromType
 }

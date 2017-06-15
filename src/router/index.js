@@ -10,6 +10,8 @@ import Task from '@/views/Task'
 import DisplayMap from '@/views/displayMap'
 import userManagement from '@/views/userManagement'
 
+import CommonMap from '@/views/CommonMap'
+
 Vue.use(Router)
 const router = new Router({
   routes: [
@@ -78,6 +80,13 @@ const router = new Router({
       name:'userManagement',
       components:{
         mainPage:userManagement
+      }
+    },
+    {
+      path:'/commonMap',
+      name:'commonMap',
+      components:{
+        mainPage:CommonMap
       }
     },
     {
