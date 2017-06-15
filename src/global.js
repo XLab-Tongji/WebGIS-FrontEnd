@@ -26,10 +26,10 @@ global.BACKEND_URL ={
 
 global.MARKER_COLOR = {
   'LOST': 'black',
-  'BAD': 'red',
-  'BLOCKED': 'yellow',
+  'BREAK': 'red',
+  'BLOCK': 'yellow',
   'GOOD': 'green',
-  'REPAIRED': 'blue'
+  'SERVICE': 'blue'
 }
 
 global.REPAIRE_COLOR = {

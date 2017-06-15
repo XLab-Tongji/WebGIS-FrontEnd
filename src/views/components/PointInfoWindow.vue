@@ -62,7 +62,7 @@
     data () {
       return {
         showRepairs: false,
-        pointStatus: ['GOOD', 'BAD', 'BLOCKED', 'LOST', 'REPAIRED']
+        pointStatus: ['LOST', 'BREAK', 'BLOCK', 'GOOD', 'SERVICE']
       }
     },
     methods: {

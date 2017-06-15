@@ -544,7 +544,8 @@
         google.maps.event.addListener(point,'click', () => {
 
           this.curPoint = point;
-          this.curPointStatus = point.pointStatus||"BAD";
+          console.log('point.pointStatus', point.pointStatus)
+          this.curPointStatus = point.pointStatus || 'GOOD';
           this.lng = point.getPosition().lng();
           this.lat = point.getPosition().lat();
           this.radius = point.radius;
@@ -782,8 +783,8 @@
           return
         }
         if(this.curLayerType==="YJG"){
-          this.curPoint.pointStatus = newValue;
-          MapService.changeWellColor(this.curPoint, MARKER_COLOR[newValue], this.map)
+//          this.curPoint.pointStatus = newValue;
+//          MapService.changeWellColor(this.curPoint, MARKER_COLOR[newValue], this.map)
         }
         else if(this.curLayerType === "XSG"){
           this.curLine.lineStatus = newValue;
