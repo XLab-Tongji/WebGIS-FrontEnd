@@ -62,17 +62,15 @@ function createWellMarker (pos, map, color) {
   return createMarker(pos, map, iconUrl)
 }
 
-function changeMarkerColor (marker, color, map) {
-  let pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color,
-    new google.maps.Size(21, 34),
-    new google.maps.Point(0,0),
-    new google.maps.Point(10, 34))
-  let pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-    new google.maps.Size(40, 37),
-    new google.maps.Point(0, 0),
-    new google.maps.Point(12, 35))
-  marker.setIcon(pinImage)
-  marker.setShadow(pinShadow)
+function changeWellColor (marker, color, map) {
+  let iconUrl = `../../static/img/well_${color}.png`
+  changeMarkerColor(marker, iconUrl, map)
+}
+function changeMarkerColor (marker, iconUrl, map) {
+  marker.setIcon({
+    url: iconUrl,
+    scaledSize: new google.maps.Size(SIZE.WELL, SIZE.WELL)
+  })
   refreshComponent(marker, map)
 }
 
@@ -115,8 +113,11 @@ export default {
   createWellMarker,
   createMarker,
   changeMarkerColor,
+  changeWellColor,
 
   clearMapDataList,
+
+  refreshComponent,
 
   addListener: addListener
 }

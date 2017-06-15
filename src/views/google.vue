@@ -191,6 +191,7 @@
 <script>
   import utils from '../service/utils'
   import HistoryService from '@/service/httpService/HistoryService'
+  import MapService from '@/service/mapService'
   export default {
     name: 'GoogleMapPage',
     data: function () {
@@ -339,24 +340,20 @@
       },
 
       // 创建一个point
-      createPoint:function (map,centerPos, color, radius) {
-        return new google.maps.Circle({
-          strokeWeight: 0,
-          fillColor: color,
-          fillOpacity: 0.35,
-          map: map,
-          center: centerPos,
-          radius: radius || 2
-        });
+      createPoint:function (map,centerPos, pointStatus) {
+        return MapService.createWellMarker(centerPos, map, MARKER_COLOR[pointStatus])
       },
       createPointDetail: function (pointPos, pointStatus, radius, specialId, url, pointId, repairIds) {
-        console.log('createPointDetail ', pointPos, radius, specialId);
-        var cityCircle = this.createPoint(this.map, pointPos, this.getColorWithStatus(pointStatus), radius);
+        console.log('createPointDetail ', pointPos, pointStatus, specialId);
+        var cityCircle = this.createPoint(this.map, pointPos, pointStatus);
+
         cityCircle.pointStatus = pointStatus;
         cityCircle.specialId = specialId
+        cityCircle.radius = radius
         cityCircle.url = url
         cityCircle.pointId = pointId
         cityCircle.repairIds = repairIds
+
         this.curLayerMapDatas.push(cityCircle);
 
         this.addPointClickListener(cityCircle);
@@ -395,19 +392,18 @@
       addPoint: function (pointStatus) {
         let radius = parseFloat(prompt('请输入半径', ''));
 
-        var self = this;
-        var mapClickListener = google.maps.event.addListener(this.map, 'click', function(event) {
+        var mapClickListener = google.maps.event.addListener(this.map, 'click', (event) => {
           var latLng = event.latLng;
-          self.lng = latLng.lng().toFixed(6);
-          self.lat = latLng.lat().toFixed(6);
+          this.lng = latLng.lng();
+          this.lat = latLng.lat();
 
-          if(self.checkPointConflict(latLng, radius)){
+          if(this.checkPointConflict(latLng, radius)){
             google.maps.event.removeListener(mapClickListener);
             alert('当前窨井盖与其他窨井盖有覆盖关系，无法创建！');
             return;
           }
 
-          self.createPointDetail(latLng, pointStatus, radius, utils.getNowTimeStamp());
+          this.createPointDetail(latLng, pointStatus, radius, utils.getNowTimeStamp());
           google.maps.event.removeListener(mapClickListener);
         });
       },
@@ -421,7 +417,7 @@
         let self = this;
         let flag = false;
         this.curLayerMapDatas.forEach(function (point2) {
-          if(self.getTwoPointsDis(point2.center, point) <= Math.abs(point2.radius+radius))
+          if(self.getTwoPointsDis(point2.getPosition(), point) <= Math.abs(point2.radius+radius))
             flag = true;
         });
         return flag;
@@ -510,8 +506,8 @@
         this.curLayerMapDatas.forEach(function (curData) {
           if(self.curLayerType==="YJG"){
             curLayerData.pointList.push({
-              x:curData.center.lng(),
-              y:curData.center.lat(),
+              x:curData.getPosition().lng(),
+              y:curData.getPosition().lat(),
               z:curData.radius,
               url: curData.url,
               pointId: curData.pointId,
@@ -547,50 +543,27 @@
             let responseBody = response.body;
             if (responseBody.code === 200) {
               self.getLayerDatas(self.mapId);
-              alert("提交成功！");
+              toastr.success("提交成功！");
             }
             else{
-              alert("提交失败！");
+              toastr.error("提交失败！");
             }
           });
       },
 
       // 为点添加动态效果
       addPointClickListener: function (point) {
-        var self = this;
-        google.maps.event.addListener(point,'click',function () {
-          if(self.curPoint){
-            self.curPoint.strokeWeight = 0;
-            self.curPoint.setMap(null);
-            self.curPoint.setMap(self.map);
-          }
-          self.curPoint = point;
-          self.curPoint = point;
-          self.curPointStatus = point.pointStatus||"BAD";
-          self.curPoint.strokeColor = self.getColorWithStatus(self.curPoint.curPointStatus);
-          self.curPoint.strokeOpacity = 0.8;
-          self.curPoint.strokeWeight = 2;
-          self.curPoint.setMap(null);
-          self.curPoint.setMap(self.map);
-          self.lng = point.center.lng().toFixed(6);
-          self.lat = point.center.lat().toFixed(6);
-          self.radius = point.radius;
+        google.maps.event.addListener(point,'click', () => {
 
-          var infowindow = new google.maps.InfoWindow({
-            content: document.getElementById("map-msg"),
-            position: point.center
-          });
+          this.curPoint = point;
+          this.curPointStatus = point.pointStatus||"BAD";
+          this.lng = point.getPosition().lng();
+          this.lat = point.getPosition().lat();
+          this.radius = point.radius;
 
-          infowindow.open(self.map);
-
-          google.maps.event.addListener(infowindow, 'domready', function () {
-            var closeBtn = $('.gm-style-iw').next();
-            closeBtn.hide();
-            $('#pointMapMsgBtn').on('click', function (event) {
-              document.getElementById('map-msg-parent').append(document.getElementById('map-msg'));
-              infowindow.close();
-            });
-          })
+          this.curInfoWindow = MapService.createInfoWindow(
+            'map-msg', 'map-msg-parent', 'pointMapMsgBtn',
+            MapService.getUperPos({lat: point.getPosition().lat(), lng: point.getPosition().lng()}, this.map.getZoom()), this.map)
         });
       },
       displayLine: function (line) {
@@ -651,7 +624,7 @@
       },
       deletePointBtnClick: function () {
         this.curPoint.setMap(null);
-        this.removeListByValue(this.curLayerMapDatas,this.curPoint);
+        this.removeListByValue(this.curLayerMapDatas, this.curPoint);
         this.curPoint = null;
       },
       deleteLineBtnClick: function () {
@@ -776,15 +749,12 @@
       curPointStatus: function (newValue, oldValue) {
         if(this.curLayerType==="YJG"){
           this.curPoint.pointStatus = newValue;
-          this.curPoint.fillColor = this.getColorWithStatus(newValue);
-          this.curPoint.setMap(null);
-          this.curPoint.setMap(this.map);
+          MapService.changeWellColor(this.curPoint, MARKER_COLOR[newValue], this.map)
         }
         else if(this.curLayerType === "XSG"){
           this.curLine.lineStatus = newValue;
           this.curLine.strokeColor = this.getColorWithStatus(newValue);
-          this.curLine.setMap(null);
-          this.curLine.setMap(this.map);
+          MapService.refreshComponent(this.curLine, this.map)
         }
       },
       curHistory (newValue) {
@@ -801,6 +771,12 @@
     mounted(){
       this.initMap();
       this.getLayerDatas(this.mapId);
+      toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        showMethod: 'slideDown',
+        timeOut: 4000
+      };
     }
   }
 </script>
