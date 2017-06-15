@@ -81,6 +81,8 @@
 </template>
 
 <script>
+  import MapService from '@/service/mapService'
+  import HistoryService from '@/service/httpService/HistoryService'
   export default {
     name: 'mapCompare',
     data: function () {
@@ -110,37 +112,24 @@
       }
     },
     methods: {
-      initMap: function (mapDivId) {
-        return new google.maps.Map(document.getElementById(mapDivId), {
-          center: {lat: 31.23, lng: 121.47 },
-          zoom: 20
-        });
+      async setHistoriesByMapId (mapId) {
+        let respBody = await HistoryService.getById(this, mapId)
+        if (respBody.code === 200) {
+          this.histories = respBody.data
+          console.log(this.histories)
+        } else {
+          toastr.error('加载历史图层信息失败!')
+        }
       },
-      setHistoriesByMapId: function (mapId) {
-        let self = this;
-        this.$http.get('http://localhost:8080/history/histories/mapId?mapId='+this.mapId, {
-          emulateJSON: true
-        }).then(function (response) {
-          let responseBody = response.body
-          if(responseBody.code===200){
-            self.histories = responseBody.data;
-          }
-        });
-      },
-      getHistoryMapDataByHistoryId: function (historyId, mapIndex) {
-        console.log('getHistoryMapDataByHistoryId', historyId, mapIndex)
-        var self = this;
-        this.$http.get('http://localhost:8080/history/histories/id?historyId='+historyId,
-          {
-            emulateJSON: true
-          }
-        ).then(function (response){
-          let responseBody = response.body
-          if (responseBody.code === 200) {
-            self.mapData[mapIndex] = responseBody.data;
-            self.setLayerSelect(responseBody.data, mapIndex);
-          }
-        });
+      async getHistoryMapDataByHistoryId (historyId, mapIndex) {
+        let respBody = await HistoryService.getLayersByHistory(this, historyId)
+        if (respBody.code === 200) {
+          console.log(respBody.data)
+          this.mapData[mapIndex] = respBody.data;
+          this.setLayerSelect(respBody.data, mapIndex);
+        } else {
+          console.log('error', respBody.exception)
+        }
       },
       setLayerSelect: function (layerList, mapIndex) {
         let curSelectLayers = null;
@@ -355,8 +344,8 @@
 
     },
     mounted () {
-      this.maps[0] = this.initMap('map');
-      this.maps[1] = this.initMap('map2');
+      this.maps[0] = MapService.initMap('map')
+      this.maps[1] = MapService.initMap('map2')
       this.setHistoriesByMapId(this.mapId);
     }
   }
