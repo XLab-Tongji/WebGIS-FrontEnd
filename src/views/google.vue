@@ -47,7 +47,7 @@
     <!-- 图层操作条 -->
     <nav class="navbar navbar-default">
       <form class="form-inline">
-        <label>mapId: {{mapId}}</label>
+        <!--<label>mapId: {{mapId}}</label>-->
         <select v-model="curLayerId"  class="form-control">
           <option value="0">选择图层</option>
           <option v-for="selectLayer in selectLayers" :value="selectLayer.id">
@@ -363,19 +363,7 @@
 
       //根据点的状态创建一个点
       getColorWithStatus: function (status) {
-          switch(status) {
-            case "GOOD":
-                return "black";
-                break;
-            case "BREAK":
-                return "#FF0000";
-                break;
-            case "DIS":
-                return "#00FF00";
-                break;
-            default:
-              return "black";
-          }
+        return MARKER_COLOR[status] || 'black'
       },
       addPoint: function (pointStatus) {
         let radius = parseFloat(prompt('请输入半径', ''));

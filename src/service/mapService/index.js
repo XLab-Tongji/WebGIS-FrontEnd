@@ -102,6 +102,20 @@ function clearMapDataList (mapDataList) {
 }
 
 
+function createLine (lat, lat2, lng, lng2, color, map) {
+  let flightPath = new google.maps.Polyline({
+    path: [{lat: lat, lng: lng}, {lat: lat2, lng: lng2}],
+    geodesic: true,
+    strokeColor: color,
+    strokeOpacity: 1.0,
+    strokeWeight: 10,
+    // editable: true
+  })
+
+  flightPath.setMap(map)
+  return flightPath
+}
+
 export default {
   initMap,
   addClickListenerOnce,
@@ -118,6 +132,8 @@ export default {
   clearMapDataList,
 
   refreshComponent,
+
+  createLine,
 
   addListener: addListener
 }
