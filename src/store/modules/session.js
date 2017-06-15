@@ -6,7 +6,9 @@ import {
 const state = {
   login: localStorage.login || false,
 	userName: localStorage.userName || null,
-  userId: localStorage.userId || null
+  userId: localStorage.userId || null,
+  role: localStorage.role || null,
+  company: localStorage.company || null
 }
 
 const getters = {
@@ -18,9 +20,14 @@ const mutations = {
 	  state.login = true
 		state.userName = userData.username
     state.userId = userData.userId
+    state.role = userData.role
+    state.company = userData.company
+
     localStorage.login = state.login
     localStorage.userName = state.userName
     localStorage.userId = state.userId
+    localStorage.role = state.role
+    localStorage.company = state.company
 	},
 
 

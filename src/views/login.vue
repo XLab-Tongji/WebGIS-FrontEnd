@@ -47,7 +47,12 @@
           password: this.password
         });
         if (response.code === 200) {
-          this.login({username: this.username, userId: response.data.id})
+          this.login({
+            username: this.username,
+            userId: response.data.id,
+            role: response.data.role,
+            company: response.data.company
+          })
         }
         else {
           alert("密码错误！")

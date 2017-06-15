@@ -190,6 +190,7 @@
 
 <script>
   import utils from '../service/utils'
+  import HistoryService from '@/service/httpService/HistoryService'
   export default {
     name: 'GoogleMapPage',
     data: function () {
@@ -656,19 +657,17 @@
       reverseCurHistory: function () {
         this.curHistory = this.curHistory ? 0 : 1;
         this.curLayerId = 0;
-        if(this.curHistory)
+        if(this.curHistory) {
           this.setHistory();
+        }
       },
-      setHistory: function () {
-        let self = this;
-        this.$http.get(baseUrl + '/history/histories/mapId?mapId='+this.mapId, {
-          emulateJSON: true
-        }).then(function (response) {
-          let responseBody = response.body
-          if(responseBody.code===200){
-            self.histories = responseBody.data;
-          }
-        });
+      async setHistory () {
+        let respBody = await HistoryService.getById(this, this.mapId)
+        if (respBody.code === 200) {
+          this.histories = respBody.data
+        } else {
+          toastr.error('加载历史图层信息失败!')
+        }
       },
 
       createHistory: function () {
@@ -733,7 +732,7 @@
       /* #google map utils */
     },
     watch: {
-      curLayerId: function(newValue, oldValue) {
+      curLayerId: function(newValue) {
         var self = this;
         this.clearMap(true);
 
@@ -780,10 +779,15 @@
           this.curLine.setMap(this.map);
         }
       },
-      curHistory: function (newValue, oldValue) {
-        if(newValue!==1)
-          this.getLayerDatas(this.mapId,
-            baseUrl + '/history/histories/id?historyId='+newValue);
+      curHistory (newValue) {
+        if(newValue!==1) {
+          let respBody = HistoryService.getLayersByHistory(this, newValue)
+          if (respBody.code === 200) {
+            this.layerDatas= respBody.data;
+            console.log(this.layerDatas);
+            this.setLayerSelect(this.layerDatas.data);
+          }
+        }
       }
     },
     mounted(){

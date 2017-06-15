@@ -14,9 +14,13 @@ global.BACKEND_URL ={
   TASK_GET_ALL: '/task/tasks',
 
   LAYER_GET_ALL: '/layer/layers/all',
+  LAYER_GET_BY_LAYER_ID: '/layer/layer?layerId=',
 
   REPAIR_GET_BY_USER: '/repair/repair/userId?userId=',
-  REPAIR_UPDATE_STATE: '/repair/repair/state/'
+  REPAIR_UPDATE_STATE: '/repair/repair/state/',
+
+  HISTORY_GET_BU_MAP_ID: '/history/histories/mapId?mapId=',
+  HISTORY_GET_BY_HISTORY_ID: '/history/histories/id?historyId='
 }
 
 global.MARKER_COLOR = {
