@@ -119,6 +119,7 @@
         });
       },
       getUsers: function () {
+        console.log("[ 获取管理员 ] - " + baseUrl + "/account/accounts/admin?superAdminId=" + this.accoundId);
         this.$http.get(baseUrl + '/account/accounts/admin?superAdminId=' + this.accoundId,
           {
             emulateJSON: true
@@ -145,6 +146,8 @@
               var time = new Date(this.users[i].CreateTime);
               this.users[i].CreateTime = time.getFullYear() + "-" + time.getMonth() + "-" + time.getDay() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
             }
+
+            toastr.success("成功加载所有管理员！")
           }
           else if (responseBody.code == 500) {
             toastr.error("您不是超级管理员，无权进行任何操作！");

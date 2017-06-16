@@ -46,6 +46,7 @@
           username: this.username,
           password: this.password
         });
+        console.log("[ 登陆返回结果 ]",response);
         if (response.code === 200) {
           this.login({
             username: this.username,

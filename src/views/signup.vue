@@ -52,6 +52,7 @@
     },
     methods: {
       register: function() {
+        console.log("[ INFO ] - register start");
         this.$http.post(this.registerUrl, this.registerModel)
           .then(function(response){
             console.log("get a response after create a map");
@@ -64,7 +65,7 @@
               alert("注册失败!");
             }
           });
-
+        console.log("[ INFO ] - register end");
       }
     }
   }
