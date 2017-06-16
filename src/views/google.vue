@@ -62,7 +62,7 @@
             创建图层
           </button>
 
-          <span class="dropdown" v-if="curLayerType==='YJG'">
+          <span class="dropdown" v-if="curLayerType==='YJG' || curLayerType==='LD'">
             <button class="btn btn-default dropdown-toggle" type="button" id="createPointMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               添加点
               <span class="caret"></span>
@@ -131,6 +131,7 @@
                 <option value="0">图层类型</option>
                 <option value="YJG"> YJG </option>
                 <option value="XSG"> XSG </option>
+                <option value="LD"> LD </option>
               </select>
 
               <div class="checkbox">
@@ -328,10 +329,13 @@
 
       // 创建一个point
       createPoint:function (map,centerPos, pointStatus) {
-        return MapService.createWellMarker(centerPos, map, MARKER_COLOR[pointStatus])
+        if (this.curLayerType === 'YJG') {
+          return MapService.createWellMarker(centerPos, map, MARKER_COLOR[pointStatus])
+        } else if (this.curLayerType === 'LD') {
+          return MapService.createLampMarker(centerPos, map, MARKER_COLOR[pointStatus])
+        }
       },
       createPointDetail: function (pointPos, pointStatus, radius, specialId, url, pointId, repairIds, index) {
-        console.log('createPointDetail ', pointPos, pointStatus, specialId);
         var cityCircle = this.createPoint(this.map, pointPos, pointStatus);
 
         cityCircle.pointStatus = pointStatus;
@@ -475,12 +479,21 @@
       submitChange: function () {
         var curLayerData = null;
         var self = this;
-        var patchUrl = self.curLayerType==="YJG" ?
-          baseUrl + "/layer/layers/point/id":
-          baseUrl + "/layer/layers/line/id";
+        let patchUrl = ''
+        switch (this.curLayerType) {
+          case 'YJG':
+            patchUrl = baseUrl + "/layer/layers/point/id"
+            break
+          case 'LD':
+            patchUrl = baseUrl + "/layer/layers/lamp/id"
+            break
+          case 'XSG':
+            patchUrl = baseUrl + "/layer/layers/line/id"
+            break
+        }
         curLayerData = {type:self.curLayerType, pointList:[], lineList: []};
         this.curLayerMapDatas.forEach(function (curData) {
-          if(self.curLayerType==="YJG"){
+          if(self.curLayerType==="YJG" || self.curLayerType === 'LD'){
             curLayerData.pointList.push({
               x:curData.getPosition().lng(),
               y:curData.getPosition().lat(),
@@ -689,7 +702,7 @@
       },
 
       getLayerNameWithType: function (type) {
-        return type==='YJG'?'窨井盖':'道路维修';
+        return utils.getLayerNameFromType(type)
       },
 
       clearSelects () {
@@ -699,7 +712,11 @@
 
       onCurPointStatusChange (status) {
         this.curPoint.pointStatus = status;
-        MapService.changeWellColor(this.curPoint, MARKER_COLOR[status], this.map)
+        if(this.curLayerType === 'YJG') {
+          MapService.changeWellColor(this.curPoint, MARKER_COLOR[status], this.map)
+        } else {
+          MapService.changeLampColor(this.curPoint, MARKER_COLOR[status], this.map)
+        }
       },
 
       async getOwnRepairs () {
@@ -748,7 +765,7 @@
         this.curLayerType = layerDatas.type;
 
         console.log('curLayers', layerDatas)
-        if(this.curLayerType==="YJG"){
+        if(this.curLayerType==="YJG" || this.curLayerType === 'LD'){
           layerDatas.pointList.forEach((layerData, index) => {
             self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z,
               layerData.specialId, layerData.url, layerData.pointId, layerData.repairIds, index);

@@ -147,6 +147,24 @@
                 this.mapPoints.push(wellMarker)
               })
             }
+          } else if (newValue === 'LD') {
+            if(layer.data.type === newValue && layer.data.pointList) {
+              layer.data.pointList.forEach((point) => {
+                let wellMarker = MapService.createLampMarker({
+                    lat: point.y, lng: point.x
+                  },
+                  this.map,
+                  MARKER_COLOR[point.status]
+                )
+                MapService.addListener(wellMarker, 'click', () => {
+                  this.clickPoint = point
+                  this.curInfoWindow = MapService.createInfoWindow(
+                    'point-info-div', 'point-info-parent', 'point-info-close-btn',
+                    MapService.getUperPos({lat: point.y, lng: point.x}, this.map.getZoom()), this.map)
+                })
+                this.mapPoints.push(wellMarker)
+              })
+            }
           } else if (newValue === 'XSG') {
             if(layer.data.type === newValue && layer.data.lineList) {
               console.log(layer.data.lineList)

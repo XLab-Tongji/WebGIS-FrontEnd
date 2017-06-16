@@ -62,6 +62,15 @@ function createWellMarker (pos, map, color) {
   return createMarker(pos, map, iconUrl)
 }
 
+function createLampMarker (pos, map, color) {
+  let iconUrl = `../../static/img/light_${color}.png`
+  return createMarker(pos, map, iconUrl)
+}
+
+function changeLampColor (marker, color, map) {
+  let iconUrl = `../../static/img/light_${color}.png`
+  changeMarkerColor(marker, iconUrl, map)
+}
 function changeWellColor (marker, color, map) {
   let iconUrl = `../../static/img/well_${color}.png`
   changeMarkerColor(marker, iconUrl, map)
@@ -125,9 +134,11 @@ export default {
   updateCenter,
 
   createWellMarker,
+  createLampMarker,
   createMarker,
   changeMarkerColor,
   changeWellColor,
+  changeLampColor,
 
   clearMapDataList,
 

@@ -42,6 +42,8 @@ function getLayerNameFromType (type) {
       return '窨井盖'
     case 'XSG':
       return '道路维修'
+    case 'LD':
+      return '路灯'
     default:
       return null
   }
