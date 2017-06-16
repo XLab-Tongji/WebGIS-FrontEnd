@@ -17,7 +17,7 @@ async function getLayersByHistory (context, historyId) {
       for(let i = 0; i < layers.length; i ++) {
         let curResp = await httpService(context, BACKEND_URL.LAYER_GET_BY_LAYER_ID + layers[i].id, 'get')
         if (curResp.body.code === 200) {
-          if (layers[i].type === 'YJG') {
+          if (layers[i].type === 'YJG' || layers[i].type === 'LD') {
             layers[i].pointList = curResp.body.data.data.pointList
           } else {
             layers[i].lineList = curResp.body.data.data.lineList
