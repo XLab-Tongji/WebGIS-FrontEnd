@@ -238,6 +238,7 @@
     name: "myWeb",
     data(){
       return {
+        role:this.$store.state.session.role,
         accoundId: this.$store.state.session.userId,      //账户ID
         isList: false,    //查看类型，为True代表列表模式，否则为缩略图模式
         folderPath: [0],   //存储访问路径，最后一个元素代表当前所在文件夹ID，根目录为0

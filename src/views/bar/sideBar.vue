@@ -17,7 +17,7 @@
               </li>
 
               <li v-for="(item,index) in items" v-bind:class="{active:index==activeItem}" v-on:click="itemClick(index,$event)">
-                  <router-link :to="item.target" class="fa fa-th-large" :title="item.title"> <span class="nav-label"> {{item.title}}</span> </router-link>
+                  <router-link v-if="item.right=='ADMIN' || item.right == role" :to="item.target" class="fa fa-th-large" :title="item.title"> <span class="nav-label"> {{item.title}}</span> </router-link>
               </li>
           </ul>
 
@@ -31,31 +31,43 @@ export default {
   name: 'navBar',
   data () {
     return {
+      role:this.$store.state.session.role,
       activeItem:0,
       items: [
         {
           target: '/myMap',
-          title: ' MyMap'
+          title: ' MyMap',
+          right:'ADMIN'     //用户权限
         },
         {
             target: '/recycled',
-            title: 'Recycled'
+            title: 'Recycled',
+          right:'ADMIN'
         },
         {
           target: '/task',
-          title: 'Task'
+          title: 'Task',
+          right:'ADMIN'
         },
         {
           target: '/displayMap',
-          title: 'DisplayMap'
+          title: 'DisplayMap',
+          right:'ADMIN'
         },
         {
           target: '/userManagement',
-          title: 'UserManagement'
+          title: 'UserManagement',
+          right:'SUPER_ADMIN'
         },
         {
           target: '/commonMap',
-          title: 'CommonMap'
+          title: 'CommonMap',
+          right:'ADMIN'
+        },
+        {
+          target: '/personalInfo',
+          title: 'PersonalInfo',
+          right:'ADMIN'
         }
       ]
     }

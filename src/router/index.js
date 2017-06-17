@@ -11,6 +11,7 @@ import DisplayMap from '@/views/displayMap'
 import userManagement from '@/views/userManagement'
 
 import CommonMap from '@/views/CommonMap'
+import PersonalInfo from '@/views/personalInfo'
 
 Vue.use(Router)
 const router = new Router({
@@ -87,6 +88,13 @@ const router = new Router({
       name:'commonMap',
       components:{
         mainPage: CommonMap
+      }
+    },
+    {
+      path:'/personalInfo',
+      name:'personalInfo',
+      components:{
+        mainPage: PersonalInfo
       }
     },
     {
