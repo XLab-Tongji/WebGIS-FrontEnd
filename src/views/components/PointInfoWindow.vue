@@ -3,7 +3,10 @@
     <div id="point-info-div" class="info-window">
       <div class="icon-group">
         <i class="fa fa-dot-circle-o"></i>
-        <p>窨井盖</p>
+        <p>{{clickPoint.typeName}}</p>
+      </div>
+      <div class="icon-group">
+        <img :src="clickPoint.url" :alt="1">
       </div>
       <div class="icon-group">
         <i class="fa fa-info"></i>
@@ -119,4 +122,8 @@
     overflow: auto;
   }
   /* #info-window */
+
+  img {
+    width: 140px;
+  }
 </style>
