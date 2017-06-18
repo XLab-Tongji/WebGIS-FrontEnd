@@ -42,7 +42,7 @@ export default {
         {
             target: '/recycled',
             title: 'Recycled',
-          right:'ADMIN'
+          right:'SUPER_ADMIN'
         },
         {
           target: '/task',

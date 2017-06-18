@@ -58,11 +58,11 @@
             console.log("get a response after create a map");
             var responseBody = response.body;
             if (responseBody.code === 200 && responseBody.message === "successful") {
-              alert("注册成功!");
+              toastr.success("注册成功!");
               this.$router.push('/login');
             }
             else{
-              alert("注册失败!");
+              toastr.error("注册失败!");
             }
           });
         console.log("[ INFO ] - register end");

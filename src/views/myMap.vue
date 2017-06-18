@@ -2,7 +2,7 @@
   <div id="wrapper">
 
     <!--顶部按钮条-->
-    <div class="row btns white-bg ">
+    <div v-if="role == 'SUPER_ADMIN'" class="row btns white-bg ">
       <div class="col-lg-12 btn-content">
         <button type="button" class="btn btn-primary" id="showtoast" v-on:click="createMapInit" data-toggle="modal"
                 data-target="#popup">Create Map
@@ -60,7 +60,7 @@
               </div>
               <label class="name name-folder">{{ folderName.name }}</label>
             </div>
-            <div class="op" v-on:click="opClick('folder',index,$event)" v-on:mouseenter="fileMouseEnter(index,$event)"
+            <div v-if="role == 'SUPER_ADMIN'" class="op" v-on:click="opClick('folder',index,$event)" v-on:mouseenter="fileMouseEnter(index,$event)"
                  v-on:mouseleave="fileMouseLeave(index,$event)">
               <img class="op-icon" src="../assets/images/myMap/op-icon.png">
             </div>
@@ -78,7 +78,7 @@
             <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
             <div class="checkBox-map" v-if="isCheck"><input type="checkbox"
                                                             v-on:click="checkBoxCLick('map',index,$event)"/></div>
-            <div class="op-map" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"
+            <div class="op-map" v-if="role == 'SUPER_ADMIN'" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"
                  v-on:mouseleave="opMapMouseLeave(index,$event)">
               <img class="op-icon" src="../assets/images/myMap/op-icon.png">
             </div>
@@ -144,7 +144,7 @@
 
 
       <!--分页-->
-      <div class="pages">
+      <div class="pages" v-if="role == 'SUPER_ADMIN'">
         <ul class="pagination">
           <li v-if="pages.isLeft" v-on:click="getMapsByPage(pages.currentPage - 1,$event)"><a>&laquo;</a></li>
           <li v-if="pages.pages.length > 1" v-bind:class="{pageChoosed:index == pages.currentPage}"
@@ -867,14 +867,20 @@
         var folderId = this.folderPath.length > 0 ? this.folderPath[this.folderPath.length - 1] : 0;
 
         //访问后端获取地图数据
-        this.$http.get(baseUrl + '/map/maps/accountidandfolderidandpageid?accountId=' + this.accoundId + '&folderId=' + folderId + '&pageId=' + page,
+        var url = "";
+        if(this.role == "SUPER_ADMIN")url = baseUrl + '/map/maps/accountidandfolderidandpageid?accountId=' + this.accoundId + '&folderId=' + folderId + '&pageId=' + page;
+        else url = baseUrl + '/map/maps/admin?adminId=' + this.accoundId;
+        console.log(url);
+        this.$http.get(url,
           {
             emulateJSON: true
           }
         ).then(function (response) {
           var responseBody = response.body
           if (responseBody.code === 200) {
-            this.mapNames = responseBody.data.map;
+            console.log(response);
+            if(this.role == "SUPER_ADMIN")this.mapNames = responseBody.data.map;
+            else this.mapNames = responseBody.data;
             if (this.mapNames.length == 0 && page > 1)this.getMapsByPage(index - 1, event);
             this.pages.total = responseBody.data.pageNum;
 

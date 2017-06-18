@@ -56,7 +56,7 @@
           })
         }
         else {
-          alert("密码错误！")
+          toastr.error("密码错误！")
         }
       }
     }
