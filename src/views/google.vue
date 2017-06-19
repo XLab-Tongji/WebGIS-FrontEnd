@@ -726,6 +726,7 @@
       async getOwnRepairs () {
         let respBody = await RepairService.getAll(this)
         console.log('getOwnRepairs', respBody)
+        console.log('layerDatas', this.layerDatas)
         if(respBody.code === 200) {
           respBody.data.forEach((repair) => {
             repair.originState = repair.state
