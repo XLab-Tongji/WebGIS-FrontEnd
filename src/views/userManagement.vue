@@ -5,7 +5,7 @@
     <div class="row btns white-bg ">
       <div class="col-lg-12 btn-content">
         <button type="button" class="btn btn-primary" id="showtoast" data-toggle="modal"
-                data-target="#user-popup">Create User
+                data-target="#user-popup">创建用户
         </button>
       </div>
     </div>
@@ -16,11 +16,11 @@
         <table id="listTable">
           <tr>
             <td class="thead"><input type="checkbox" class="toggleAll" v-on:click="toggleAll()"/></td>
-            <td class="thead">Account</td>
-            <td class="thead">Password</td>
-            <td class="thead">Create Time</td>
-            <td class="thead">Company</td>
-            <td class="thead">Delete</td>
+            <td class="thead">用户名</td>
+            <td class="thead">密码</td>
+            <td class="thead">创建时间</td>
+            <td class="thead">公司</td>
+            <td class="thead">删除</td>
           </tr>
           <tr v-for="(user,index) in users">
             <td class="tList "><input type="checkbox" class="list-box"/></td>
@@ -29,7 +29,7 @@
             <td class="tList ">{{ user.CreateTime }}</td>
             <td class="tList ">{{ user.Company }}</td>
             <td class="tList ">
-              <button type="button" class="btn btn-danger" v-on:click="deleteUser(index)">delete</button>
+              <button type="button" class="btn btn-danger" v-on:click="deleteUser(index)">删除</button>
             </td>
 
           </tr>

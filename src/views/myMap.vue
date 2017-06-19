@@ -5,10 +5,10 @@
     <div v-if="role == 'SUPER_ADMIN'" class="row btns white-bg ">
       <div class="col-lg-12 btn-content">
         <button type="button" class="btn btn-primary" id="showtoast" v-on:click="createMapInit" data-toggle="modal"
-                data-target="#popup">Create Map
+                data-target="#popup">创建地图
         </button>
         <button type="button" class="btn btn-white" id="cleartoasts" v-on:click="createFolderInit" data-toggle="modal"
-                data-target="#popup">Create Folder
+                data-target="#popup">创建文件夹
         </button>
         <button type="button" class="btn btn-white" id="check-icon" v-on:click="checkIconClick($event)"></button>
         <button type="button" class="btn btn-white" id="back-btn" v-on:click="back"
@@ -18,7 +18,7 @@
         <div class="path">
           <label></label>
           <ul>
-            <li v-on:click="RootClick($event)"><label class="path-item">Root </label></li>
+            <li v-on:click="RootClick($event)"><label class="path-item">根 </label></li>
             <li v-on:click="pathClick(index,$event)" v-for="(item,index) in folderPathName">&nbsp;<span
               class='split'>/</span> <label class="path-item">{{ item }} </label></li>
           </ul>
@@ -92,11 +92,11 @@
           <tr>
             <td class="thead"><input v-if="isCheck" id="checkBoxAll" type="checkbox"
                                      v-on:click="checkBoxAllClick($event)"/></td>
-            <td class="thead">Name</td>
-            <td class="thead">Create Time</td>
-            <td class="thead">Latest Change Time</td>
-            <td class="thead">Rename</td>
-            <td class="thead">Delete</td>
+            <td class="thead">文件名</td>
+            <td class="thead">创建时间</td>
+            <td class="thead">最近更新时间</td>
+            <td class="thead">重命名</td>
+            <td class="thead">删除</td>
           </tr>
 
           <!--文件夹-->
