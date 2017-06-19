@@ -1,9 +1,9 @@
 <template>
-  <div class=" text-center animated fadeInDown">
+  <div class="text-center animated fadeInDown login-main">
     <div class=" text-center">
-      <h2 class="logo-name">WebGIS</h2>
+      <h2 class="brand-name">在线公共设施管理平台</h2>
     </div>
-    <h3>Welcome to WebGIS</h3>
+    <h3>欢迎来到在线公共设施管理平台</h3>
 
     <form class="m-t middle-box loginscreen" >
       <div class="form-group">
@@ -70,7 +70,12 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .logo-name {
-    font-size: 130px;
+  .brand-name {
+    font-size: 60px;
+    text-space: 2em;
+    color: whitesmoke;
+  }
+  .login-main {
+    padding-top: 50px;
   }
 </style>
