@@ -76,6 +76,6 @@
     color: whitesmoke;
   }
   .login-main {
-    padding-top: 50px;
+    padding-top: 8%;
   }
 </style>
