@@ -44,31 +44,31 @@
         items: [
           {
             target: '/myMap',
-            title: ' MyMap',
+            title: ' 我的地图',
             right:'ADMIN',     //用户权限
             iconName: 'fa-map-o'
           },
           {
             target: '/recycled',
-            title: 'Recycled',
+            title: '回收站',
             right:'SUPER_ADMIN',
             iconName: 'fa-recycle'
           },
           {
             target: '/userManagement',
-            title: 'UserManagement',
+            title: '用户管理',
             right:'SUPER_ADMIN',
             iconName: 'fa-address-book'
           },
           {
             target: '/commonMap',
-            title: 'CommonMap',
+            title: '地图展示',
             right:'ADMIN',
             iconName: 'fa-map-marker'
           },
           {
             target: '/personalInfo',
-            title: 'PersonalInfo',
+            title: '个人信息',
             right:'ADMIN',
             iconName: 'fa-user-o'
           }

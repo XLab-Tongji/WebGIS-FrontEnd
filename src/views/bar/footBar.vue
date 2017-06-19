@@ -4,7 +4,7 @@
         {{systemState}}
       </div>
       <div>
-        <strong>Time: {{currentTime}}</strong>
+        <strong>时间: {{currentTime}}</strong>
       </div>
   </div>
 </template>
@@ -15,7 +15,7 @@ export default {
   name: 'footBar',
   data () {
     return {
-      systemState: 'System Connecting....    ',
+      systemState: '',
       currentTime: new Date().toLocaleString()
     }
   },

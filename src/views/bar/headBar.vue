@@ -5,13 +5,13 @@
               <a class="minimalize-styl-2 btn btn-primary" @click="toggleMenu"><i class="fa fa-bars"></i> </a>
               <form role="search" class="navbar-form-custom" method="post" action="#">
                   <div class="form-group">
-                      <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                      <input type="text" placeholder="" class="form-control" name="top-search" id="top-search">
                   </div>
               </form>
           </div>
           <ul class="nav navbar-top-links navbar-right">
               <li>
-                  <router-link v-if="login" class="fa fa-sign-out" v-on:click.native="logout" to="#">{{userInfo.userName}} Log out</router-link>
+                  <router-link v-if="login" class="fa fa-sign-out" v-on:click.native="logout" to="#">{{userInfo.userName}} 登出</router-link>
               </li>
           </ul>
 
