@@ -129,9 +129,9 @@
             <form>
               <select class="form-control" v-model="createLayerType">
                 <option value="0">图层类型</option>
-                <option value="YJG"> YJG </option>
-                <option value="XSG"> XSG </option>
-                <option value="LD"> LD </option>
+                <option value="YJG"> 窨井盖 </option>
+                <option value="XSG"> 道路维修 </option>
+                <option value="LD"> 路灯 </option>
               </select>
 
               <div class="checkbox">
@@ -237,7 +237,6 @@
           let responseBody = response.body
           if (responseBody.code === 200) {
             self.layerDatas= responseBody.data;
-            console.log('sss', self.layerDatas);
             self.setLayerSelect(self.layerDatas.layerList);
           }
         });
@@ -285,14 +284,15 @@
         this.$http.post(postUrl, formData, postOptions).then(function (response){
           let responseBody = response.body
           if (responseBody.code === 200) {
-            self.getLayerDatas(self.mapId);
-            alert("创建成功！");
+            self.getLayerDatas(self.mapId)
+            toastr.success("创建成功！")
+            $('#create-layer-modal').modal('toggle')
           }
           else{
-            alert("创建失败！");
+            toastr.error("创建失败！")
           }
         }, function () {
-          alert("创建失败！");
+          toastr.error("创建失败！")
         });
       },
       previewFile: function (event) {
@@ -312,7 +312,7 @@
             if (responseBody.code === 200) {
               self.getLayerDatas(self.mapId);
               self.curLayerId = 0;
-              alert("删除成功！");
+              toastr.success("删除成功！")
             }
           });
         }
@@ -379,7 +379,8 @@
 
           if(this.checkPointConflict(latLng, radius)){
             google.maps.event.removeListener(mapClickListener);
-            alert('当前窨井盖与其他窨井盖有覆盖关系，无法创建！');
+
+            toastr.error('当前窨井盖与其他窨井盖有覆盖关系，无法创建！');
             return;
           }
 
@@ -554,6 +555,7 @@
           let layerDatas = this.getLayerData(this.curLayerId)
           console.log('layerDatas', layerDatas.pointList[point.index])
           this.clickPoint = layerDatas.pointList[point.index]
+          this.clickPoint.typeName = utils.getLayerNameFromType(this.curLayerType)
 
           this.curInfoWindow = MapService.createInfoWindow(
             'point-info-div', 'point-info-parent', 'point-info-close-btn',
@@ -661,11 +663,11 @@
         }).then(function (response) {
           let responseBody = response.body
           if(responseBody.code===200)
-            alert('创建成功！');
+            toastr.success('创建成功！');
           else
-            alert('创建失败！');
+            toastr.error('创建失败！');
         }, function (result) {
-          alert('创建失败！');
+          toastr.error('创建失败！');
         });
       },
       deleteHistory: function () {
@@ -678,12 +680,12 @@
               self.curHistory = 1;
               self.curLayerId = 0;
               self.selectLayers = [];
-              alert('删除成功！');
+              toastr.success('删除成功！');
             }
             else
-              alert('删除失败！');
+              toastr.error('删除失败！');
           }, function () {
-            alert('删除失败！');
+            toastr.error('删除失败！');
           });
       },
       compareHistoryMap: function () {
@@ -721,6 +723,7 @@
 
       async getOwnRepairs () {
         let respBody = await RepairService.getAll(this)
+        console.log('getOwnRepairs', respBody)
         if(respBody.code === 200) {
           respBody.data.forEach((repair) => {
             repair.originState = repair.state
@@ -732,12 +735,12 @@
       },
 
       onUpdateCenterClick (repairIndex) {
+        console.log('onUpdateCenterClick', repairIndex, this.ownRepairs[repairIndex])
         MapService.updateCenter(this.map, {
           lng: this.ownRepairs[repairIndex].point.x,
           lat: this.ownRepairs[repairIndex].point.y
         })
         this.isShowingOwnRepairs = false
-        console.log(repairIndex)
       },
       /* #utils */
 
@@ -766,6 +769,7 @@
 
         console.log('curLayers', layerDatas)
         if(this.curLayerType==="YJG" || this.curLayerType === 'LD'){
+          console.log(layerDatas.pointList)
           layerDatas.pointList.forEach((layerData, index) => {
             self.createPointDetail({lng:layerData.x,lat:layerData.y}, layerData.status, layerData.z,
               layerData.specialId, layerData.url, layerData.pointId, layerData.repairIds, index);

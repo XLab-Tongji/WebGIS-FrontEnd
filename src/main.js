@@ -9,6 +9,7 @@ import VueResource from 'vue-resource'
 
 import './global'
 
+require('../node_modules/font-awesome/css/font-awesome.min.css')
 Vue.use(VueResource);
 Vue.config.productionTip = false
 
