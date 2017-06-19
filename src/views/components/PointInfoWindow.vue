@@ -48,7 +48,7 @@
         <button id="point-info-close-btn" class="btn btn-danger btn-block">关闭</button>
       </div>
     </div>
-  </div>
+  </div >
 </template>
 
 <script>
