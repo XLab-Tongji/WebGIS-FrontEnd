@@ -732,6 +732,16 @@
             repair.originState = repair.state
           })
           this.ownRepairs = respBody.data
+          this.ownRepairs = respBody.data.filter((repair) => {
+            let flag = false
+            for(let i = 0; i < this.layerDatas.layerList.length; i++) {
+              if (repair.layerId === this.layerDatas.layerList[i].id) {
+                flag = true
+                break
+              }
+            }
+            return flag
+          })
         } else {
           toastr.error('加载用户报修失败！')
         }
