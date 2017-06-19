@@ -41,11 +41,11 @@
         <table id="listTable">
           <tr>
             <td class="thead"><input v-if="isCheck" id = "checkBoxAll" type="checkbox" v-on:click="selectAll($event)"/></td>
-            <td class="thead">Name</td>
-            <td class="thead">Create Time</td>
-            <td class="thead">Latest Change Time</td>
-            <td class="thead">Recover</td>
-            <td class="thead">Delete</td>
+            <td class="thead">文件名</td>
+            <td class="thead">创建时间</td>
+            <td class="thead">最近更新时间</td>
+            <td class="thead">重命名</td>
+            <td class="thead">删除</td>
           </tr>
 
           <!--文件-->
