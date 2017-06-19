@@ -6,7 +6,7 @@
         <p>{{clickPoint.typeName}}</p>
       </div>
       <div class="icon-group">
-        <img :src="clickPoint.url" :alt="1">
+        <img :src="clickPoint.url" :alt="clickPoint.typeName">
       </div>
       <div class="icon-group">
         <i class="fa fa-info"></i>

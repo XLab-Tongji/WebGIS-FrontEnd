@@ -723,6 +723,7 @@
 
       async getOwnRepairs () {
         let respBody = await RepairService.getAll(this)
+        console.log('getOwnRepairs', respBody)
         if(respBody.code === 200) {
           respBody.data.forEach((repair) => {
             repair.originState = repair.state
@@ -734,12 +735,12 @@
       },
 
       onUpdateCenterClick (repairIndex) {
+        console.log('onUpdateCenterClick', repairIndex, this.ownRepairs[repairIndex])
         MapService.updateCenter(this.map, {
           lng: this.ownRepairs[repairIndex].point.x,
           lat: this.ownRepairs[repairIndex].point.y
         })
         this.isShowingOwnRepairs = false
-        console.log(repairIndex)
       },
       /* #utils */
 
