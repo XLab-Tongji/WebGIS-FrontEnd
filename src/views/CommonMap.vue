@@ -140,6 +140,9 @@
                 )
                 MapService.addListener(wellMarker, 'click', () => {
                   this.clickPoint = point
+                  if (this.curInfoWindow) {
+                    this.curInfoWindow.ownClose()
+                  }
                   this.curInfoWindow = MapService.createInfoWindow(
                     'point-info-div', 'point-info-parent', 'point-info-close-btn',
                     MapService.getUperPos({lat: point.y, lng: point.x}, this.map.getZoom()), this.map)
@@ -158,6 +161,9 @@
                 )
                 MapService.addListener(wellMarker, 'click', () => {
                   this.clickPoint = point
+                  if (this.curInfoWindow) {
+                    this.curInfoWindow.ownClose()
+                  }
                   this.curInfoWindow = MapService.createInfoWindow(
                     'point-info-div', 'point-info-parent', 'point-info-close-btn',
                     MapService.getUperPos({lat: point.y, lng: point.x}, this.map.getZoom()), this.map)
@@ -172,6 +178,9 @@
                 let curLine = MapService.createLine(line.y, line.y2, line.x, line.x2, MARKER_COLOR[line.status], this.map)
                 MapService.addListener(curLine, 'click', () => {
                   this.clickLine = line
+                  if (this.curInfoWindow) {
+                    this.curInfoWindow.ownClose()
+                  }
                   this.curInfoWindow = MapService.createInfoWindow(
                     'line-info-div', 'line-info-parent', 'line-info-close-btn',
                     MapService.getUperPos({lat: line.y, lng: line.x}, this.map.getZoom()), this.map)

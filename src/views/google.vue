@@ -556,7 +556,9 @@
           console.log('layerDatas', layerDatas.pointList[point.index])
           this.clickPoint = layerDatas.pointList[point.index]
           this.clickPoint.typeName = utils.getLayerNameFromType(this.curLayerType)
-
+          if (this.curInfoWindow) {
+            this.curInfoWindow.ownClose()
+          }
           this.curInfoWindow = MapService.createInfoWindow(
             'point-info-div', 'point-info-parent', 'point-info-close-btn',
             MapService.getUperPos({lat: point.getPosition().lat(), lng: point.getPosition().lng()},
