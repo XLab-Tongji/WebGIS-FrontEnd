@@ -18,7 +18,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/commonMap'
+      redirect: '/login'
     },
     {
       path: '/google/:mapId',

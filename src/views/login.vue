@@ -57,6 +57,9 @@
             role: response.data.role,
             company: response.data.company
           })
+          this.$router.push({
+            name: 'commonMap'
+          })
         }
         else {
           toastr.error("密码错误！")
