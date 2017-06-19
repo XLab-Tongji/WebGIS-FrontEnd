@@ -748,12 +748,21 @@
       },
 
       onUpdateCenterClick (repairIndex) {
-        console.log('onUpdateCenterClick', repairIndex, this.ownRepairs[repairIndex])
+        console.log('onUpdateCenterClick', repairIndex, this.ownRepairs[repairIndex], this.curLayerMapDatas)
         MapService.updateCenter(this.map, {
           lng: this.ownRepairs[repairIndex].point.x,
           lat: this.ownRepairs[repairIndex].point.y
         })
         this.isShowingOwnRepairs = false
+        this.curLayerMapDatas.forEach((point) => {
+          if (point.specialId === this.ownRepairs[repairIndex].specialId) {
+            if(this.curLayerType === 'YJG') {
+              MapService.changeWellColor(point, MARKER_COLOR['HIGHLIGHT'], this.map)
+            } else {
+              MapService.changeLampColor(point, MARKER_COLOR['HIGHLIGHT'], this.map)
+            }
+          }
+        })
       },
       /* #utils */
 

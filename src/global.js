@@ -29,7 +29,8 @@ global.MARKER_COLOR = {
   'BREAK': 'red',
   'BLOCK': 'yellow',
   'GOOD': 'green',
-  'SERVICE': 'blue'
+  'SERVICE': 'blue',
+  'HIGHLIGHT': 'orange'
 }
 
 global.REPAIRE_COLOR = {
