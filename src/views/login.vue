@@ -42,11 +42,14 @@
       ]),
 
       userLogin: async function() {
+        if(this.username == "" || this.password == ""){
+          toastr.warning("输入不合法");
+          return;
+        }
         let response = await UserService.login(this, {
           username: this.username,
           password: this.password
         });
-        console.log("[ 登陆返回结果 ]",response);
         if (response.code === 200) {
           this.login({
             username: this.username,

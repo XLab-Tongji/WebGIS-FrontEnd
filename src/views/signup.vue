@@ -52,6 +52,10 @@
     },
     methods: {
       register: function() {
+        if(this.registerModel.name == "" || this.registerModel.username == "" || this.registerModel.password == ""){
+          toastr.warning("输入不合法");
+          return;
+        }
         console.log("[ INFO ] - register start");
         this.$http.post(this.registerUrl, this.registerModel)
           .then(function(response){
