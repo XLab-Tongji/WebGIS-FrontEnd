@@ -6,29 +6,19 @@
     <div class="hide" id="map-msg-line-parent">
       <div id="map-msg-line">
         <div class="form-group form-group-sm ">
-          <label>lng</label>
-          <span>{{lng}}</span>
-          <!--<input type="text" v-model="lng" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <label>lat</label>
-          <span>{{lat}}</span>
-          <!--<input type="text" v-model="lat" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
+          <i class="fa fa-map-marker icon"></i>
+          <label>起点</label>
+          <span>{{lng}}, {{lat}}</span>
         </div>
         <div class="form-group form-group-sm ">
-          <label>lng2</label>
-          <span>{{ lng2 }}</span>
-          <!--<input type="text" v-model="lng2" class="form-control inputPos" v-on:keyup="lngLat2OnChange">-->
+          <i class="fa fa-map-marker icon"></i>
+          <label>终点</label>
+          <span>{{lng2}}, {{lat2}}</span>
         </div>
         <div class="form-group form-group-sm">
-          <label>lat2</label>
-          <span>{{ lat2 }}</span>
-          <!--<input type="text" v-model="lat2" class="form-control inputPos" v-on:keyup="lngLat2OnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <label>dis</label>
+          <i class="fa fa-line-chart icon"></i>
+          <label>距离</label>
           <span>{{dis}}</span>
-          <!--<input type="text" v-model="dis" class="form-control inputPos" v-on:keyup="lngLat2OnChange">-->
         </div>
         <div class="form-group form-group-sm">
           <select v-model="curPointStatus" class="form-control">
@@ -875,5 +865,8 @@
   }
   .gis-icon:hover{
     color: #1ab394;
+  }
+  .icon {
+    width: 20px;
   }
 </style>
