@@ -159,7 +159,7 @@
             </table>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">&nbsp;取消&nbsp;</button>
+            <button type="button" class="btn99 btn-default" data-dismiss="modal">&nbsp;取消&nbsp;</button>
           </div>
         </div>
       </div>
