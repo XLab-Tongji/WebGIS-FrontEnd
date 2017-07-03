@@ -114,9 +114,12 @@
       </form>
     </nav>
 
-    <!-- google map -->
-    <div class="ibox-content" id="map" style="position: relative; height: 620px"></div>
-
+    <div id="withThree">
+      <div id="main-canvas" style="height:100%;width:50%;">
+      </div>
+      <!-- google map -->
+      <div class="ibox-content" id="map" style="position: relative; height: 620px"></div>
+    </div>
     <!-- create layer modal -->
     <div class="modal fade" id="create-layer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
@@ -161,6 +164,7 @@
       <RepairTable :ownRepairs="ownRepairs" @onUpdateCenterClick="onUpdateCenterClick"></RepairTable>
     </vodal>
   </div>
+
 </template>
 
 <script>
@@ -226,6 +230,10 @@
           center: {lat: global.MAP.INIT_LAT, lng: global.MAP.INIT_LNG },
           zoom: global.MAP.INIT_ZOOM
         });
+        if(false){
+          $('#main-canvas').css("display","block");
+          startThree(mockJson);
+        }
       },
       getLayerDatas: function (mapId) {
         var self = this;
@@ -875,5 +883,20 @@
   }
   .gis-icon:hover{
     color: #1ab394;
+  }
+  div#withThree {
+    position:relative;
+  }
+  div#main-canvas {
+    position:absolute;
+    top:0px; left:0; z-index:1;
+    display:none;
+    margin-right: -15px;
+    margin-left: -15px;
+    width: 600px;
+    height: 600px;
+    border-right: 3px solid dimgrey;
+    /*background: transparent;*/
+    background-color: rgba(238, 238, 238, 0.6);
   }
 </style>
