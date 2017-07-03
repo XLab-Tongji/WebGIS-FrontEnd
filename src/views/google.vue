@@ -6,29 +6,19 @@
     <div class="hide" id="map-msg-line-parent">
       <div id="map-msg-line">
         <div class="form-group form-group-sm ">
-          <label>lng</label>
-          <span>{{lng}}</span>
-          <!--<input type="text" v-model="lng" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <label>lat</label>
-          <span>{{lat}}</span>
-          <!--<input type="text" v-model="lat" class="form-control inputPos" v-on:keyup="lngLatOnChange">-->
+          <i class="fa fa-map-marker icon"></i>
+          <label>起点</label>
+          <span>{{lng}}, {{lat}}</span>
         </div>
         <div class="form-group form-group-sm ">
-          <label>lng2</label>
-          <span>{{ lng2 }}</span>
-          <!--<input type="text" v-model="lng2" class="form-control inputPos" v-on:keyup="lngLat2OnChange">-->
+          <i class="fa fa-map-marker icon"></i>
+          <label>终点</label>
+          <span>{{lng2}}, {{lat2}}</span>
         </div>
         <div class="form-group form-group-sm">
-          <label>lat2</label>
-          <span>{{ lat2 }}</span>
-          <!--<input type="text" v-model="lat2" class="form-control inputPos" v-on:keyup="lngLat2OnChange">-->
-        </div>
-        <div class="form-group form-group-sm">
-          <label>dis</label>
+          <i class="fa fa-line-chart icon"></i>
+          <label>距离</label>
           <span>{{dis}}</span>
-          <!--<input type="text" v-model="dis" class="form-control inputPos" v-on:keyup="lngLat2OnChange">-->
         </div>
         <div class="form-group form-group-sm">
           <select v-model="curPointStatus" class="form-control">
@@ -86,6 +76,7 @@
 
           <button type="button" @click="stopAddLine" class="btn btn-default" v-if="curLayerType==='XSG' && curPoint!==null">停止</button>
           <button type="button" @click="submitChange" class="btn btn-info">提交</button>
+          <button id="show3d" type="button" @click="show3d" class="btn btn-info">展示3D</button>
 
           <div class="form-group right-float">
             <button type="button" @click="reverseCurHistory" class="btn btn-info right-float">查看历史版本</button>
@@ -230,9 +221,17 @@
           center: {lat: global.MAP.INIT_LAT, lng: global.MAP.INIT_LNG },
           zoom: global.MAP.INIT_ZOOM
         });
-        if(false){
+        if(true){
           $('#main-canvas').css("display","block");
           startThree(mockJson);
+        }
+      },
+      show3d: function () {
+        if($("#main-canvas").css("display")==="none"){
+          $("#main-canvas").css("display","block")
+          startThree(mockJson)
+        }else{
+          $("#main-canvas").css("display","none")
         }
       },
       getLayerDatas: function (mapId) {
@@ -378,7 +377,8 @@
         return MARKER_COLOR[status] || 'black'
       },
       addPoint: function (pointStatus) {
-        let radius = parseFloat(prompt('请输入半径', ''));
+//        let radius = parseFloat(prompt('请输入半径', ''));
+        let radius = 1;
 
         var mapClickListener = google.maps.event.addListener(this.map, 'click', (event) => {
           var latLng = event.latLng;
@@ -840,7 +840,8 @@
             this.setLayerSelect(this.layerDatas.data, true)
           }
         }
-      }
+      },
+
     },
     mounted(){
       this.initMap();
@@ -888,9 +889,11 @@
     position:relative;
   }
   div#main-canvas {
-    position:absolute;
-    top:0px; left:0; z-index:1;
-    display:none;
+    position: absolute;
+    top: 0px;
+    left: 0;
+    z-index: 1;
+    display: none;
     margin-right: -15px;
     margin-left: -15px;
     width: 600px;
@@ -898,5 +901,8 @@
     border-right: 3px solid dimgrey;
     /*background: transparent;*/
     background-color: rgba(238, 238, 238, 0.6);
+  }
+  .icon {
+    width: 20px;
   }
 </style>
