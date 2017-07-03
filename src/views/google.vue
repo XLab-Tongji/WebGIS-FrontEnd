@@ -228,9 +228,11 @@
       },
       show3d: function () {
         if($("#main-canvas").css("display")==="none"){
+          $("#show3d").html("隐藏3D")
           $("#main-canvas").css("display","block")
-          startThree(mockJson)
+//          startThree(mockJson)
         }else{
+          $("#show3d").html("展示3D")
           $("#main-canvas").css("display","none")
         }
       },

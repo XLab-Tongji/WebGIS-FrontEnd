@@ -18,6 +18,9 @@
           <input type="password" class="form-control" placeholder="密码"  v-model="registerModel.password">
         </div>
         <div class="form-group">
+          <input type="password" class="form-control" placeholder="确认密码"  v-model="registerModel.confirmPassword">
+        </div>
+        <div class="form-group">
           <div class="checkbox i-checks"><label> <input type="checkbox"><i></i> 同意相关条款与政策 </label></div>
         </div>
         <button type="button" class="btn btn-primary block full-width m-b" @click="register">注册</button>
@@ -44,7 +47,8 @@
         registerModel: {
           name: '',
           username: '',
-          password: ''
+          password: '',
+          confirmPassword:''
         },
 
       }
@@ -52,8 +56,12 @@
     },
     methods: {
       register: function() {
-        if(this.registerModel.name == "" || this.registerModel.username == "" || this.registerModel.password == ""){
+        if(this.registerModel.name === "" || this.registerModel.username === "" || this.registerModel.password === ""){
           toastr.warning("输入不合法");
+          return;
+        }
+        if(this.registerModel.password !== this.registerModel.confirmPassword){
+          toastr.warning("两次密码不一致");
           return;
         }
         console.log("[ INFO ] - register start");
