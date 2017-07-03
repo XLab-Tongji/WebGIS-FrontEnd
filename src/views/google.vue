@@ -360,7 +360,8 @@
         return MARKER_COLOR[status] || 'black'
       },
       addPoint: function (pointStatus) {
-        let radius = parseFloat(prompt('请输入半径', ''));
+//        let radius = parseFloat(prompt('请输入半径', ''));
+        let radius = 1;
 
         var mapClickListener = google.maps.event.addListener(this.map, 'click', (event) => {
           var latLng = event.latLng;
