@@ -70,7 +70,7 @@ function initCamera()
 
 function initOrbitControl()
 {
-    orbitControl = new THREE.OrbitControls(camera);
+    orbitControl = new THREE.OrbitControls(camera,renderer.domElement);
     orbitControl.addEventListener("change", render);
 
 }

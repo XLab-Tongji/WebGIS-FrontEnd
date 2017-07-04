@@ -75,7 +75,8 @@
                  v-on:mouseleave="mapMouseLeave(index,$event)">
               <img class="map-img" src="../assets/images/myMap/myMap.jpg">
             </div>
-            <label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>
+            <!--<label class="name" v-on:click="mapRename(index,$event)">{{ mapName.name }}</label>-->
+            <label class="name">{{ mapName.name }}</label>
             <div class="checkBox-map" v-if="isCheck"><input type="checkbox"
                                                             v-on:click="checkBoxCLick('map',index,$event)"/></div>
             <div class="op-map" v-if="role == 'SUPER_ADMIN'" v-on:click="opClick('map',index,$event)" v-on:mouseenter="opMapMouseEnter(index,$event)"

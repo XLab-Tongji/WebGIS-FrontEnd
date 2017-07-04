@@ -464,7 +464,7 @@
       stopAddLine: function () {
         google.maps.event.removeListener(this.mapClickListener);
         this.mapClickListener = null;
-        if(this.tmpPoint!==null){
+        if(this.tmpPoint!==null && this.tmpPoint!== undefined){
           this.tmpPoint.setMap(null);
           this.tmpPoint = null;
         }
