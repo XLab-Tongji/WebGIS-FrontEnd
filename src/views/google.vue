@@ -221,16 +221,17 @@
           center: {lat: global.MAP.INIT_LAT, lng: global.MAP.INIT_LNG },
           zoom: global.MAP.INIT_ZOOM
         });
-        if(true){
+        if(false){
           $('#main-canvas').css("display","block");
           startThree(mockJson);
         }
       },
       show3d: function () {
         if($("#main-canvas").css("display")==="none"){
-          $("#show3d").html("隐藏3D")
-          $("#main-canvas").css("display","block")
-//          startThree(mockJson)
+          $("#show3d").html("隐藏3D");
+          $("#main-canvas").css("display","block");
+          $('#main-canvas').html("");
+          startThree(mockJson);
         }else{
           $("#show3d").html("展示3D")
           $("#main-canvas").css("display","none")
@@ -588,7 +589,7 @@
       },
       addLineClickListener: function (line) {
         let self = this;
-        google.maps.event.addListener(line,'click',function () {
+        google.maps.event.addListener(line,'click',function (event) {
           self.curLine = line;
           self.curPointStatus = line.lineStatus||"BREAK";
           self.displayLine(line);

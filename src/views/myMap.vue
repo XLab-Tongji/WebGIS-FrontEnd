@@ -169,7 +169,9 @@
       <li v-on:click="Rename($event)" data-toggle="modal" data-target="#popup"><img
         src="../assets/images/myMap/rename-icon.png"><label>重命名</label></li>
       <li v-on:click="Delete($event)" data-toggle="modal" data-target="#popup"><img
-        src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
+      src="../assets/images/myMap/delete-icon.png"><label>删除</label></li>
+      <li v-on:click="MoveUpperFoler($event)" data-toggle="modal" data-target="#popup"><img
+        src="../assets/images/myMap/movefolder-icon.png"><label>移至上层文件夹</label></li>
       <li v-on:click="getUsers()" v-if="currentFile.type == 'map'" data-toggle="modal" data-target="#manage-popup"><img
         src="../assets/images/myMap/manage-icon.png"><label>分配管理员</label></li>
     </ul>
@@ -486,6 +488,29 @@
         });
         this.isLoading = false;
       },
+      mapUpperFolder: function (event) {
+        this.isLoading = true;
+        let folderIndex = this.folderPath.length - 2;
+        if(folderIndex<0) folderIndex=0;
+        this.$http.patch(baseUrl + "/map/maps/id",
+          {
+            emulateJSON: true,
+            id: this.mapNames[this.currentFile.index].id,
+            name: this.mapNames[this.currentFile.index].name,
+            folder: this.folderPath[folderIndex],
+            accoundId: this.accoundId
+          }).then(function (response) {
+          var responseBody = response.body;
+          if (responseBody.code === 200 && responseBody.message == "successful") {
+            this.getMaps(this.folderPath[this.folderPath.length - 1]);
+            this.msgResult("success", "Successful move the map " + name + "!")
+          }
+          else {
+            this.msgResult("error", "Failed to move the map " + name + "!")
+          }
+        });
+        this.isLoading = false;
+      },
       deleteMap: function (index, event) {
         this.isLoading = true;
 //        this.$http.delete(baseUrl + "/map/maps/id?mapId=" + this.mapNames[index].id,
@@ -791,6 +816,12 @@
         var name = this.currentFile.type == "folder" ? this.folderNames[this.currentFile.index].name : this.mapNames[this.currentFile.index].name;
         this.popup.msg = "Do you really want to delete the " + name;
       },
+      MoveUpperFoler: function (event) {
+        this.popup.type = "moveUpperFolder";
+        this.popup.title = "MoveUpperFolder";
+        var name = this.mapNames[this.currentFile.index].name;
+        this.popup.msg = "Do you really want to move the " + name+" to upper folder?";
+      },
       RenameList: function (type, index, event) {
         this.currentFile.type = type;
         this.currentFile.index = index;
@@ -972,6 +1003,19 @@
           }
           else if (this.currentFile.type == "map" && name != null && name != "") {
             this.mapRename(name, event);
+          }
+        }
+
+        //移动文件
+        else if (this.popup.type === "moveUpperFolder") {
+//          if (this.currentFile.type == "folder" && name != null && name != "") {
+//            this.folderRename(name, event);
+//          }
+//          else if (this.currentFile.type == "map" && name != null && name != "") {
+//            this.mapRename(name, event);
+//          }
+          if (this.currentFile.type === "map") {
+            this.mapUpperFolder(event);
           }
         }
 
