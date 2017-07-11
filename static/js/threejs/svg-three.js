@@ -1,4 +1,5 @@
 //xtd
+// 每次外部调用startThree的时候需要清空上层main-canvas: $("#main-canvas").html("")，否则旧的canvas画布不会消失
 var container, projector, mouse = {x:0, y:0};
 var targetList = [];
 var renderer;
@@ -127,6 +128,28 @@ function addPipeWithInfoArray(pipeArrayWithInfo)
       if(pipe.info.status ==0) color = "#FF0000";
       addSingleTubeWithUserData(pipe.points[currentpoint], pipe.points[currentpoint + 1],pipe.info,color);
     }
+  }
+}
+
+function addPipeWithLineArray(originPoint,lineArray)
+{
+  let zoomsize = 1000000;
+  for(let i=0; i<lineArray.length;i++){
+    let color = "#59ea40";
+    let lineInfo = lineArray[i];
+    let xpos = (lineInfo.x - originPoint.x)*zoomsize;
+    let ypos = -(lineInfo.y - originPoint.y)*zoomsize;
+    let zpos = lineInfo.z;
+    let startPoint = new THREE.Vector3(xpos, zpos, ypos);
+
+    let xpos2 = (lineInfo.x2 - originPoint.x)*zoomsize;
+    let ypos2 = -(lineInfo.y2 - originPoint.y)*zoomsize;
+    let zpos2 = lineInfo.z2;
+    let endPoint = new THREE.Vector3(xpos2, zpos2, ypos2);
+    if(lineInfo.status === "BREAK") color = "#FF0000";
+    if(lineInfo.status === "BAD") color = "#000000";
+
+    addSingleTubeWithUserData(startPoint, endPoint,null,color);
   }
 }
 
@@ -309,6 +332,31 @@ function startThree(DynamicMockJson)
   // JsonParse(mockJson, pipeArray);
   JsonParseWithInfo(DynamicMockJson,pipeArrayWithInfo);
   addPipeWithInfoArray(pipeArrayWithInfo);
+
+  projector = new THREE.Projector();
+  // when the mouse moves, call the given function
+  // document.getElementById("withThree").addEventListener( 'mousedown', onDocumentMouseDown, false );
+  // document.getElementById("withThree").addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+  document.getElementById("main-canvas").addEventListener( 'mousedown', onDocumentMouseDown, false );
+  document.getElementById("main-canvas").addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+  renderer.render(scene, camera);
+}
+
+function startHeyuThree(originPoint,lineArray)
+{
+  if(scene != null && scene != undefined){
+    release();
+  }
+  initRenderer();
+  initScene();
+  initLight();
+  initCamera();
+  initOrbitControl();
+  addAxis();
+
+  addPipeWithLineArray(originPoint,lineArray);
 
   projector = new THREE.Projector();
   // when the mouse moves, call the given function
